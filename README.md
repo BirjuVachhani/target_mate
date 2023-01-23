@@ -1,6 +1,6 @@
 <img src="assets/logo_trimmed.png" width="200px">
 
-A target calculator for reaching required hours for Toggl time tracker.
+A companion app for [Toggl track](https://toggl.com/track/) to track & manage your month target hours.
 
 ```
 // TODO:
