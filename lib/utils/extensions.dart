@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:screwdriver/screwdriver.dart';
 
 import '../model/time_entry.dart';
 
@@ -35,5 +36,13 @@ extension ColorExt on Color {
     var f = 1 - percent / 100;
     return Color.fromARGB(
         alpha, (red * f).round(), (green * f).round(), (blue * f).round());
+  }
+}
+
+extension DoubleExt on double {
+  String toFormattedStringAsFixed(int fractionDigits) {
+    final double value = roundToPrecision(fractionDigits);
+    if (value.isWhole) return value.toStringAsFixed(0);
+    return value.toStringAsFixed(fractionDigits);
   }
 }

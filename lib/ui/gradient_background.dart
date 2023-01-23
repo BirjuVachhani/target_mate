@@ -13,22 +13,19 @@ class GradientBackground extends StatelessWidget {
       children: [
         Positioned(
           top: 0,
-          right: 0,
           left: 0,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              height: 280,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                gradient: LinearGradient(
-                  colors: [
-                    context.theme.colorScheme.primary,
-                    context.theme.backgroundColor.withOpacity(0.1),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
+          right: 0,
+          child: Container(
+            height: 320,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              gradient: LinearGradient(
+                colors: [
+                  context.theme.colorScheme.primary,
+                  Colors.transparent,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),

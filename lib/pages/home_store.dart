@@ -43,18 +43,62 @@ abstract class _HomeStore with Store {
   @observable
   Duration completed = Duration.zero;
 
+  @observable
+  Map<DateTime, Duration> durationPerDay = {};
+
+  @computed
+  Duration get todayDuration => durationPerDay[today] ?? Duration.zero;
+
+  @computed
+  Duration get completedTillToday => completed - todayDuration;
+
   @computed
   bool get isLoadingWithData => isLoading && (timeEntries?.isNotEmpty == true);
 
   @computed
-  Duration get remaining => (targetStore.requiredTargetDuration) - completed;
+  Duration get remaining {
+    final diff = targetStore.requiredTargetDuration - completed;
+    if (diff.inSeconds % 60 > 0) {
+      // round to 1 more minute if there are seconds less than a minute.
+      return Duration(minutes: diff.inSeconds ~/ 60 + 1);
+    }
+    return diff;
+  }
+
+  @computed
+  Duration get remainingTillToday {
+    final diff = targetStore.requiredTargetDuration - completedTillToday;
+    if (diff.inSeconds % 60 > 0) {
+      // round to 1 more minute if there are seconds less than a minute.
+      return Duration(minutes: diff.inSeconds ~/ 60 + 1);
+    }
+    return diff;
+  }
 
   @observable
   Map<DateTime, List<TimeEntry>> groupedEntries = {};
 
   @computed
-  Duration get dailyTargetForRemaining =>
-      Duration(seconds: remaining.inSeconds ~/ targetStore.daysRemaining);
+  Duration get dailyAverageTarget => Duration(
+      minutes:
+          (remaining.inMinutes / targetStore.daysRemainingAfterToday).round());
+
+  @computed
+  Duration get dailyAverageTargetTillToday {
+    return Duration(
+        minutes:
+            (remainingTillToday.inMinutes / targetStore.daysRemaining).round());
+  }
+
+  @computed
+  double get todayPercentage =>
+      (todayDuration.inSeconds / dailyAverageTargetTillToday.inSeconds)
+          .roundToPrecision(2);
+
+  @computed
+  Duration get effectiveAverageTarget {
+    return todayPercentage > 1 ? dailyAverageTarget : dailyAverageTarget;
+  }
 
   late String apiKey;
   late String fullName;
@@ -113,6 +157,7 @@ abstract class _HomeStore with Store {
   Future<void> refreshData() async {
     isLoading = true;
     try {
+      // await Future.delayed(5.seconds);
       final List<TimeEntry>? data = await fetchData();
       if (data == null) {
         error = 'Error fetching data';
@@ -122,6 +167,7 @@ abstract class _HomeStore with Store {
       processTimeEntries(data);
       timeEntries = data;
       isLoading = false;
+      lastUpdated = DateTime.now();
     } catch (error, stackTrace) {
       log('Error', error: error, stackTrace: stackTrace);
       this.error = error.toString();
@@ -156,20 +202,27 @@ abstract class _HomeStore with Store {
     groupedEntries = filtered.groupBy((entry) =>
         DateTime(entry.start.year, entry.start.month, entry.start.day));
 
-    final List<Duration> durationPerDay = groupedEntries.entries.map((entry) {
-      final List<TimeEntry> entries = entry.value;
+    durationPerDay = groupedEntries.map((key, values) {
+      final List<TimeEntry> entries = values;
       final Duration duration = entries.fold<Duration>(Duration.zero,
           (previousValue, element) => previousValue + element.duration);
-      return duration;
-    }).toList();
+      return MapEntry(key, duration);
+    });
 
-    completed = durationPerDay.fold<Duration>(
-        Duration.zero, (previousValue, element) => previousValue + element);
-
-    lastUpdated = DateTime.now();
+    completed = durationPerDay.values.fold<Duration>(
+        Duration.zero, (previousValue, duration) => previousValue + duration);
 
     log('Total duration: ${completed.inHours}:${completed.inMinutes.remainder(60)}');
     log('Required target: ${targetStore.requiredTargetDuration.inHours}:${targetStore.requiredTargetDuration.inMinutes.remainder(60)}');
     log('remaining: ${remaining.inHours}:${remaining.inMinutes.remainder(60)}');
+    log('remainingTillToday: ${remainingTillToday}');
+    log('currentDay: ${targetStore.currentDay}');
+    log('daysRemainingAfterToday: ${targetStore.daysRemainingAfterToday}');
+    log('effectiveDays: ${targetStore.effectiveDays.length}');
+    log('dailyAverageTarget: ${dailyAverageTarget}');
+    log('dailyAverageTargetTillToday: ${dailyAverageTargetTillToday}');
+    log('today: ${todayDuration}');
+    log('todayPercentage: ${todayPercentage}');
+    log('effectiveAverageTarget: ${effectiveAverageTarget}');
   }
 }

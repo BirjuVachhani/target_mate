@@ -3,7 +3,7 @@ import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:toggl_target/utils/extensions.dart';
 
 ThemeData getTheme(Color primaryColor) {
-  final Color backgroundColor = primaryColor.darken(90);
+  final Color backgroundColor = primaryColor.darken(95);
   return ThemeData(
     primarySwatch: primaryColor.toMaterialColor(),
     primaryColor: primaryColor,

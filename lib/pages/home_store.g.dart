@@ -9,6 +9,20 @@ part of 'home_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$HomeStore on _HomeStore, Store {
+  Computed<Duration>? _$todayDurationComputed;
+
+  @override
+  Duration get todayDuration =>
+      (_$todayDurationComputed ??= Computed<Duration>(() => super.todayDuration,
+              name: '_HomeStore.todayDuration'))
+          .value;
+  Computed<Duration>? _$completedTillTodayComputed;
+
+  @override
+  Duration get completedTillToday => (_$completedTillTodayComputed ??=
+          Computed<Duration>(() => super.completedTillToday,
+              name: '_HomeStore.completedTillToday'))
+      .value;
   Computed<bool>? _$isLoadingWithDataComputed;
 
   @override
@@ -23,12 +37,41 @@ mixin _$HomeStore on _HomeStore, Store {
       (_$remainingComputed ??= Computed<Duration>(() => super.remaining,
               name: '_HomeStore.remaining'))
           .value;
-  Computed<Duration>? _$dailyTargetForRemainingComputed;
+  Computed<Duration>? _$remainingTillTodayComputed;
 
   @override
-  Duration get dailyTargetForRemaining => (_$dailyTargetForRemainingComputed ??=
-          Computed<Duration>(() => super.dailyTargetForRemaining,
-              name: '_HomeStore.dailyTargetForRemaining'))
+  Duration get remainingTillToday => (_$remainingTillTodayComputed ??=
+          Computed<Duration>(() => super.remainingTillToday,
+              name: '_HomeStore.remainingTillToday'))
+      .value;
+  Computed<Duration>? _$dailyAverageTargetComputed;
+
+  @override
+  Duration get dailyAverageTarget => (_$dailyAverageTargetComputed ??=
+          Computed<Duration>(() => super.dailyAverageTarget,
+              name: '_HomeStore.dailyAverageTarget'))
+      .value;
+  Computed<Duration>? _$dailyAverageTargetTillTodayComputed;
+
+  @override
+  Duration get dailyAverageTargetTillToday =>
+      (_$dailyAverageTargetTillTodayComputed ??= Computed<Duration>(
+              () => super.dailyAverageTargetTillToday,
+              name: '_HomeStore.dailyAverageTargetTillToday'))
+          .value;
+  Computed<double>? _$todayPercentageComputed;
+
+  @override
+  double get todayPercentage => (_$todayPercentageComputed ??= Computed<double>(
+          () => super.todayPercentage,
+          name: '_HomeStore.todayPercentage'))
+      .value;
+  Computed<Duration>? _$effectiveAverageTargetComputed;
+
+  @override
+  Duration get effectiveAverageTarget => (_$effectiveAverageTargetComputed ??=
+          Computed<Duration>(() => super.effectiveAverageTarget,
+              name: '_HomeStore.effectiveAverageTarget'))
       .value;
 
   late final _$lastUpdatedAtom =
@@ -110,6 +153,22 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  late final _$durationPerDayAtom =
+      Atom(name: '_HomeStore.durationPerDay', context: context);
+
+  @override
+  Map<DateTime, Duration> get durationPerDay {
+    _$durationPerDayAtom.reportRead();
+    return super.durationPerDay;
+  }
+
+  @override
+  set durationPerDay(Map<DateTime, Duration> value) {
+    _$durationPerDayAtom.reportWrite(value, super.durationPerDay, () {
+      super.durationPerDay = value;
+    });
+  }
+
   late final _$groupedEntriesAtom =
       Atom(name: '_HomeStore.groupedEntries', context: context);
 
@@ -142,10 +201,17 @@ timeEntries: ${timeEntries},
 isLoading: ${isLoading},
 error: ${error},
 completed: ${completed},
+durationPerDay: ${durationPerDay},
 groupedEntries: ${groupedEntries},
+todayDuration: ${todayDuration},
+completedTillToday: ${completedTillToday},
 isLoadingWithData: ${isLoadingWithData},
 remaining: ${remaining},
-dailyTargetForRemaining: ${dailyTargetForRemaining}
+remainingTillToday: ${remainingTillToday},
+dailyAverageTarget: ${dailyAverageTarget},
+dailyAverageTargetTillToday: ${dailyAverageTargetTillToday},
+todayPercentage: ${todayPercentage},
+effectiveAverageTarget: ${effectiveAverageTarget}
     ''';
   }
 }

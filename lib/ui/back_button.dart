@@ -6,11 +6,13 @@ import 'gesture_detector_with_cursor.dart';
 class CustomBackButton extends StatelessWidget {
   final VoidCallback? onBack;
   final bool disabled;
+  final bool usePrimaryColor;
 
   const CustomBackButton({
     super.key,
     this.onBack,
     this.disabled = false,
+    this.usePrimaryColor = true,
   });
 
   @override
@@ -25,7 +27,7 @@ class CustomBackButton extends StatelessWidget {
                   if (onBack != null) {
                     onBack?.call();
                   } else {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).maybePop();
                   }
                 },
           child: Row(
@@ -36,8 +38,10 @@ class CustomBackButton extends StatelessWidget {
                 child: Icon(
                   Icons.arrow_right_alt_rounded,
                   color: hovering
-                      ? context.theme.colorScheme.primary
-                      : Colors.white.withOpacity(0.2),
+                      ? usePrimaryColor
+                          ? context.theme.colorScheme.primary
+                          : context.theme.colorScheme.onSurface
+                      : Colors.white.withOpacity(0.3),
                 ),
               ),
               const SizedBox(width: 8),
@@ -45,8 +49,11 @@ class CustomBackButton extends StatelessWidget {
                 'Back',
                 style: TextStyle(
                   color: hovering && !disabled
-                      ? context.theme.colorScheme.primary
-                      : Colors.white.withOpacity(0.2),
+                      ? usePrimaryColor
+                          ? context.theme.colorScheme.primary
+                          : context.theme.colorScheme.onSurface
+                      : Colors.white.withOpacity(0.3),
+                  height: 1.2,
                 ),
               ),
             ],

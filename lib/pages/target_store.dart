@@ -15,6 +15,7 @@ class TargetStore = _TargetStore with _$TargetStore;
 
 abstract class _TargetStore with Store {
   late final Box box = getTargetBox();
+  late final Box secretsBox = getSecretsBox();
 
   _TargetStore() {
     init();
@@ -62,11 +63,15 @@ abstract class _TargetStore with Store {
 
   @computed
   int get currentDay {
-    return effectiveDays.indexWhere((date) => date.day >= DateTime.now().day);
+    return effectiveDays.indexWhere((date) => date.day >= DateTime.now().day) +
+        1;
   }
 
   @computed
-  int get daysRemaining => (effectiveDays.length) - currentDay;
+  int get daysRemaining => (effectiveDays.length) - currentDay + 1;
+
+  @computed
+  int get daysRemainingAfterToday => (effectiveDays.length) - currentDay;
 
   @computed
   List<DateTime> get effectiveDays {
@@ -142,6 +147,7 @@ abstract class _TargetStore with Store {
       await box.put(HiveKeys.weekDays, selectedWeekDays);
       await box.put(HiveKeys.workingHours, workingHours);
       await box.put(HiveKeys.maxMonthlyWorkingHours, maxMonthlyWorkingHours);
+      await box.put(HiveKeys.hasCustomDaysSelection, hasCustomDaysSelection);
       return true;
     } catch (err, stacktrace) {
       log(err.toString());

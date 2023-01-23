@@ -18,6 +18,7 @@ import '../main.dart';
 import '../resources/colors.dart';
 import '../ui/back_button.dart';
 import '../ui/custom_dropdown.dart';
+import '../ui/custom_safe_area.dart';
 import '../ui/dropdown_button3.dart';
 import '../utils/utils.dart';
 
@@ -74,94 +75,102 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: GradientBackground(
-        child: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: SizedBox(
-                width: 350,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CustomBackButton(),
-                    const SizedBox(height: 16),
-                    const SetupTitle('Select theme color'),
-                    const SizedBox(height: 8),
-                    Observer(
-                      builder: (context) {
-                        return ColorsView(
-                          current: store.themeColor,
-                          onSelected: (color) {
-                            store.setThemeColor(color);
-                            AdaptiveTheme.of(context).setTheme(
-                                light: getTheme(color), dark: getTheme(color));
-                          },
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    const FieldLabel('Refresh frequency'),
-                    Observer(
-                      builder: (context) {
-                        return CustomDropdown<Duration>(
-                          value: store.refreshFrequency,
-                          isExpanded: true,
-                          onSelected: (value) => store.setRefreshFrequency(value),
-                          selectedItemBuilder: (context, item) => Text(
-                            formatDuration(store.refreshFrequency),
-                          ),
-                          itemBuilder: (context, item) =>
-                              CustomDropdownMenuItem<Duration>(
-                            value: item,
-                            child: item.inMinutes != 5
-                                ? Text(
-                                    formatDuration(item),
-                                  )
-                                : Text.rich(
-                                    TextSpan(
-                                      text: formatDuration(item),
-                                      children: [
-                                        TextSpan(
-                                          text: ' (Recommended)',
-                                          style: TextStyle(
-                                            color: store.refreshFrequency == item
-                                                ? context
-                                                    .theme.colorScheme.onPrimary
-                                                : Colors.white.withOpacity(0.5),
-                                            fontStyle: FontStyle.italic,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                          ),
-                          items: [
-                            1.minutes,
-                            5.minutes,
-                            10.minutes,
-                            15.minutes,
-                            30.minutes,
-                            1.hours,
-                          ],
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 40),
-                    Center(
-                      child: TextButton.icon(
-                        onPressed: onLogout,
-                        style: TextButton.styleFrom(
-                          foregroundColor: Colors.red,
-                          backgroundColor: Colors.red.withOpacity(0.1),
+        child: CustomSafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: SizedBox(
+              width: 350,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const CustomBackButton(usePrimaryColor: false),
+                  const SizedBox(height: 16),
+                  const SetupTitle('Select theme color'),
+                  const SizedBox(height: 8),
+                  Observer(
+                    builder: (context) {
+                      return ColorsView(
+                        current: store.themeColor,
+                        onSelected: (color) {
+                          store.setThemeColor(color);
+                          AdaptiveTheme.of(context).setTheme(
+                              light: getTheme(color), dark: getTheme(color));
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  const FieldLabel('Refresh frequency'),
+                  Observer(
+                    builder: (context) {
+                      return CustomDropdown<Duration>(
+                        value: store.refreshFrequency,
+                        isExpanded: true,
+                        onSelected: (value) => store.setRefreshFrequency(value),
+                        selectedItemBuilder: (context, item) => Text(
+                          formatDuration(store.refreshFrequency),
                         ),
-                        icon: const Icon(Icons.logout_rounded),
-                        label: const Text('Logout'),
+                        itemBuilder: (context, item) =>
+                            CustomDropdownMenuItem<Duration>(
+                          value: item,
+                          child: item.inMinutes != 5
+                              ? Text(
+                                  formatDuration(item),
+                                )
+                              : Text.rich(
+                                  TextSpan(
+                                    text: formatDuration(item),
+                                    children: [
+                                      TextSpan(
+                                        text: ' (Recommended)',
+                                        style: TextStyle(
+                                          color: store.refreshFrequency == item
+                                              ? context
+                                                  .theme.colorScheme.onPrimary
+                                              : Colors.white.withOpacity(0.5),
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                        ),
+                        items: [
+                          1.minutes,
+                          5.minutes,
+                          10.minutes,
+                          15.minutes,
+                          30.minutes,
+                          1.hours,
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 40),
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: onLogout,
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        backgroundColor: Colors.red.withOpacity(0.1),
                       ),
+                      icon: const Icon(Icons.logout_rounded),
+                      label: const Text('Logout'),
                     ),
-                  ],
-                ),
+                  ),
+                  const Spacer(),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.all(16),
+                    child: Image.asset(
+                      'assets/logo_trimmed.png',
+                      width: 100,
+                      color: context.theme.colorScheme.primary,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

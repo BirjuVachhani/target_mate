@@ -18,6 +18,7 @@ import 'package:toggl_target/utils/extensions.dart';
 
 import '../model/time_entry.dart';
 import '../resources/colors.dart';
+import '../ui/custom_safe_area.dart';
 import '../ui/gradient_background.dart';
 import 'home_store.dart';
 
@@ -58,7 +59,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: GradientBackground(
         child: SafeArea(
-          top: false,
+          bottom: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -71,10 +72,11 @@ class _HomePageState extends State<HomePage> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SpinKitDancingSquare(
-                            size: 80,
+                          SpinKitPouringHourGlassRefined(
+                            size: 64,
                             color: context.theme.colorScheme.primary
                                 .withOpacity(0.25),
+                            duration: const Duration(milliseconds: 2000),
                           ),
                           const SizedBox(height: 16),
                           const Text(
@@ -241,70 +243,73 @@ class _BottomBarState extends State<BottomBar>
           ),
         ),
       ),
-      child: Observer(builder: (context) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            if (store.isLoadingWithData) ...[
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: SizedBox.square(
-                  dimension: 14,
-                  child: CircularProgressIndicator(
-                    color: context.theme.colorScheme.primary,
-                    strokeWidth: 1.5,
+      child: SafeArea(
+        top: false,
+        child: Observer(builder: (context) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              if (store.isLoading) ...[
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: SizedBox.square(
+                    dimension: 14,
+                    child: CircularProgressIndicator(
+                      color: context.theme.colorScheme.primary,
+                      strokeWidth: 1.5,
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Text(
-                  'Syncing...',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
+                Expanded(
+                  child: Text(
+                    'Syncing...',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                  ),
+                )
+              ],
+              if (store.lastUpdated != null && !store.isLoadingWithData)
+                Padding(
+                  padding: const EdgeInsets.only(right: 4),
+                  child: Icon(
+                    Icons.sync,
                     color: Colors.white.withOpacity(0.7),
+                    size: 14,
                   ),
                 ),
-              )
-            ],
-            if (store.lastUpdated != null && !store.isLoadingWithData)
-              Padding(
-                padding: const EdgeInsets.only(right: 4),
-                child: Icon(
-                  Icons.sync,
-                  color: Colors.white.withOpacity(0.7),
-                  size: 14,
-                ),
-              ),
-            if (store.lastUpdated != null && !store.isLoadingWithData)
-              Expanded(
-                child: Text(
-                  formatLastUpdated(
-                      DateTime.now().difference(store.lastUpdated!)),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white.withOpacity(0.7),
+              if (store.lastUpdated != null && !store.isLoadingWithData)
+                Expanded(
+                  child: Text(
+                    formatLastUpdated(
+                        DateTime.now().difference(store.lastUpdated!)),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
                   ),
                 ),
-              ),
-            Icon(
-              Icons.schedule_rounded,
-              color: Colors.white.withOpacity(0.7),
-              size: 14,
-            ),
-            const SizedBox(width: 4),
-            Text(
-              'Every ${formatFrequency(settingsStore.refreshFrequency)}',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w300,
+              Icon(
+                Icons.schedule_rounded,
                 color: Colors.white.withOpacity(0.7),
+                size: 14,
               ),
-            ),
-          ],
-        );
-      }),
+              const SizedBox(width: 4),
+              Text(
+                'Every ${formatFrequency(settingsStore.refreshFrequency)}',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w300,
+                  color: Colors.white.withOpacity(0.7),
+                ),
+              ),
+            ],
+          );
+        }),
+      ),
     );
   }
 
@@ -376,7 +381,7 @@ class PerDayTimeEntryView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  DateFormat('EEE, dd MMM').format(date),
+                  formatDate(date),
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -502,6 +507,12 @@ class PerDayTimeEntryView extends StatelessWidget {
     final seconds = duration.inSeconds % 60;
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
+
+  String formatDate(DateTime date) {
+    if (date.isToday) return 'Today';
+    if (date.isYesterday) return 'Yesterday';
+    return DateFormat('EEE, dd MMM').format(date);
+  }
 }
 
 class HomeHeader extends StatelessWidget {
@@ -514,42 +525,38 @@ class HomeHeader extends StatelessWidget {
     final HomeStore store = context.read<HomeStore>();
     final TargetStore targetStore = GetIt.instance.get<TargetStore>();
 
-    return Container(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        // color: AppColors.backgroundColorDarker,
-        // gradient: LinearGradient(
-        //   colors: [
-        //     context.theme.colorScheme.primary,
-        //     AppColors.backgroundColorDarker.withOpacity(0.1),
-        //   ],
-        //   begin: Alignment.topCenter,
-        //   end: Alignment.bottomCenter,
-        // ),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(24),
-          bottomRight: Radius.circular(24),
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (context.theme.platform.isDesktop)
             SizedBox(
-              height: 32,
+              height: kMacOSTopPadding,
               child: Center(
-                child: Text(
-                  'Toggl Target',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: context.theme.colorScheme.onPrimary.withOpacity(0.8),
-                  ),
+                child: Image.asset(
+                  'assets/logo_trimmed.png',
+                  fit: BoxFit.fitHeight,
+                  height: 16,
+                  color: context.theme.backgroundColor,
                 ),
               ),
             ),
-          const SizedBox(height: 16),
+          // SizedBox(
+          //     height: kMacOSTopPadding,
+          //     child: Center(
+          //       child: Text(
+          //         'Toggl Target',
+          //         style: TextStyle(
+          //           fontSize: 13,
+          //           fontWeight: FontWeight.w500,
+          //           color: context.theme.colorScheme.onPrimary.withOpacity(0.8),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          const SizedBox(height: 8),
           LayoutBuilder(
             builder: (context, constraints) {
               return Row(
@@ -680,7 +687,7 @@ class HomeHeader extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
@@ -736,7 +743,7 @@ class HomeHeader extends StatelessWidget {
                               ),
                             ],
                             style: const TextStyle(
-                              fontSize: 22,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -765,7 +772,7 @@ class HomeHeader extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -805,11 +812,22 @@ class HomeHeader extends StatelessWidget {
                               else
                                 TextSpan(
                                   text: formatDailyTargetDuration(
-                                    store,
-                                    targetStore,
-                                  ),
+                                      store.effectiveAverageTarget),
                                 ),
-                              const TextSpan(text: ' '),
+                              const TextSpan(
+                                text: ' / day',
+                                style: TextStyle(
+                                  color: Colors.white60,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              const TextSpan(
+                                text: ' ',
+                                style: TextStyle(
+                                  color: Colors.white60,
+                                  fontSize: 24,
+                                ),
+                              ),
                             ],
                           ),
                           style: const TextStyle(
@@ -862,7 +880,98 @@ class HomeHeader extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Observer(
+                  builder: (context) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            const Expanded(
+                              child: Text(
+                                "Today's Progress",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.2,
+                                  color: Colors.white60,
+                                ),
+                              ),
+                            ),
+                            if (!store.isLoading || store.isLoadingWithData)
+                              Text(
+                                formatTodayProgressPercentage(store),
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
+                            const SizedBox(width: 2),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Observer(
+                          builder: (context) {
+                            return SizedBox(
+                              height: 24,
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: LinearProgressIndicator(
+                                        value: store.todayPercentage,
+                                        minHeight: 24,
+                                        backgroundColor:
+                                            Colors.white.withOpacity(0.15),
+                                        valueColor: AlwaysStoppedAnimation(
+                                          ColorTween(
+                                            begin: Colors.red,
+                                            end: Colors.green,
+                                          ).transform(store.todayPercentage),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  if (!store.isLoading ||
+                                      store.isLoadingWithData)
+                                    Positioned(
+                                      top: 4,
+                                      bottom: 0,
+                                      right: 8,
+                                      child: Builder(builder: (context) {
+                                        return Text(
+                                          store.todayPercentage >= 1
+                                              ? 'Completed'
+                                              : 'Remaining: ${formatDailyTargetDuration(store.dailyAverageTargetTillToday - store.todayDuration)}',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            letterSpacing: 0.2,
+                                          ),
+                                        );
+                                      }),
+                                    )
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 4),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
         ],
       ),
     );
@@ -874,7 +983,7 @@ class HomeHeader extends StatelessWidget {
     //     ? completed.toStringAsFixed(0)
     //     : completed.toStringAsFixed(2);
 
-    return '${store.completed.inHours}h ${store.completed.inMinutes.remainder(60)}m ';
+    return '${store.completed.inHours > 0 ? '${store.completed.inHours}h ' : ''}${store.completed.inMinutes.remainder(60)}m ';
   }
 
   String formatTotalDuration(HomeStore store, TargetStore targetStore) {
@@ -885,11 +994,11 @@ class HomeHeader extends StatelessWidget {
     return '/ $totalString';
   }
 
-  String formatDailyTargetDuration(HomeStore store, TargetStore targetStore) {
-    int hours = store.dailyTargetForRemaining.inHours;
-    int minutes = store.dailyTargetForRemaining.inMinutes % 60;
+  String formatDailyTargetDuration(Duration duration) {
+    int hours = duration.inHours;
+    int minutes = duration.inMinutes % 60;
 
-    return '$hours h ${minutes.toString().padLeft(2, '0')} min';
+    return '${hours > 0 ? '$hours h ' : ''}${minutes > 0 ? minutes.toString().padLeft(hours > 0 ? 2 : 1, '0') : '1'} min';
   }
 
   void openSettings(BuildContext context) {
@@ -902,5 +1011,13 @@ class HomeHeader extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String formatTodayProgressPercentage(HomeStore store) {
+    final double percentage = (store.todayDuration.inSeconds /
+            store.dailyAverageTargetTillToday.inSeconds *
+            100)
+        .clamp(0, 100);
+    return '${percentage.toFormattedStringAsFixed(2)}%';
   }
 }

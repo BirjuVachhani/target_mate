@@ -44,6 +44,13 @@ mixin _$TargetStore on _TargetStore, Store {
       (_$daysRemainingComputed ??= Computed<int>(() => super.daysRemaining,
               name: '_TargetStore.daysRemaining'))
           .value;
+  Computed<int>? _$daysRemainingAfterTodayComputed;
+
+  @override
+  int get daysRemainingAfterToday => (_$daysRemainingAfterTodayComputed ??=
+          Computed<int>(() => super.daysRemainingAfterToday,
+              name: '_TargetStore.daysRemainingAfterToday'))
+      .value;
   Computed<List<DateTime>>? _$effectiveDaysComputed;
 
   @override
@@ -228,6 +235,7 @@ requiredTarget: ${requiredTarget},
 requiredTargetDuration: ${requiredTargetDuration},
 currentDay: ${currentDay},
 daysRemaining: ${daysRemaining},
+daysRemainingAfterToday: ${daysRemainingAfterToday},
 effectiveDays: ${effectiveDays}
     ''';
   }
