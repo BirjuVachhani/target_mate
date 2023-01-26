@@ -21,17 +21,21 @@ import 'utils/utils.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await initializeData();
+
   final bool isFirstRun =
       !Hive.box(HiveKeys.secrets).containsKey(HiveKeys.firstRun);
 
-  await initialize();
-
   await setupWindowManager(isFirstRun: isFirstRun);
+
+  if (!Hive.box(HiveKeys.secrets).containsKey(HiveKeys.firstRun)) {
+    await Hive.box(HiveKeys.secrets).put(HiveKeys.firstRun, false);
+  }
 
   runApp(const MyApp());
 }
 
-Future<void> initialize() async {
+Future<void> initializeData() async {
   await Hive.initFlutter();
 
   const secureStorage = FlutterSecureStorage(
@@ -53,7 +57,7 @@ Future<void> initialize() async {
   }
   log('Encryption key: $key');
 
-  final secretsBox = await Hive.openBox(HiveKeys.secrets,
+  await Hive.openBox(HiveKeys.secrets,
       encryptionCipher: HiveAesCipher(encryptionKey));
 
   await Hive.openBox(HiveKeys.target);
@@ -68,10 +72,6 @@ Future<void> initialize() async {
     TargetStore(),
     dispose: (store) => store.dispose(),
   );
-
-  if (!secretsBox.containsKey(HiveKeys.firstRun)) {
-    await secretsBox.put(HiveKeys.firstRun, false);
-  }
 }
 
 /// Sets up the window on desktop platforms.

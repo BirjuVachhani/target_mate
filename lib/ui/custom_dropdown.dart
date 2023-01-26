@@ -47,7 +47,7 @@ class CustomMaterialDropdown<T> extends StatelessWidget {
             hint: hint != null ? Text(hint!) : null,
             style: Theme.of(context)
                 .textTheme
-                .bodyText1!
+                .bodyLarge!
                 .copyWith(fontWeight: FontWeight.w400, height: 1),
             // underline: const SizedBox.shrink(),
             // dropdownColor: Colors.red,
@@ -152,7 +152,7 @@ class CustomDropdown<T> extends StatelessWidget {
           // searchController: searchable ? searchController : null,
           buttonPadding: const EdgeInsets.only(right: 12),
           underline: const SizedBox.shrink(),
-          style: Theme.of(context).textTheme.bodyText1!.copyWith(
+          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                 fontWeight: FontWeight.w400,
                 height: 1,
               ),
@@ -219,7 +219,7 @@ class SearchBar extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
               fontWeight: FontWeight.w400,
               height: 1.2,
             ),

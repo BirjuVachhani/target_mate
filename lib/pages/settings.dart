@@ -196,7 +196,7 @@ class _SettingsPageState extends State<SettingsPage> {
     await Hive.deleteFromDisk();
     await GetIt.instance.reset(dispose: true);
 
-    await initialize();
+    await initializeData();
 
     navigator.pushAndRemoveUntil(
       FadeScalePageRoute(child: const AuthPageWrapper()),

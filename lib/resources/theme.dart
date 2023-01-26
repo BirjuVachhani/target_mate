@@ -5,12 +5,8 @@ import 'package:toggl_target/utils/extensions.dart';
 ThemeData getTheme(Color primaryColor) {
   final Color backgroundColor = primaryColor.darken(95);
   return ThemeData(
-    primarySwatch: primaryColor.toMaterialColor(),
     primaryColor: primaryColor,
-    // colorSchemeSeed: primaryColor,
-    backgroundColor: backgroundColor,
     scaffoldBackgroundColor: backgroundColor,
-    brightness: Brightness.dark,
     fontFamily: 'Inter',
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -45,5 +41,9 @@ ThemeData getTheme(Color primaryColor) {
         borderSide: BorderSide(color: primaryColor),
       ),
     ),
+    colorScheme: ColorScheme.fromSwatch(
+      primarySwatch: primaryColor.toMaterialColor(),
+      brightness: Brightness.dark,
+    ).copyWith(background: backgroundColor),
   );
 }

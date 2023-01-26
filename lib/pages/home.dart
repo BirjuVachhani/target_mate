@@ -539,7 +539,7 @@ class HomeHeader extends StatelessWidget {
                   'assets/logo_trimmed.png',
                   fit: BoxFit.fitHeight,
                   height: 16,
-                  color: context.theme.backgroundColor,
+                  color: context.theme.colorScheme.background,
                 ),
               ),
             ),

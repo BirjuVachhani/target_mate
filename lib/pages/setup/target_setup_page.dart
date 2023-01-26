@@ -657,7 +657,7 @@ class CustomDayTile extends StatelessWidget {
                     : date.weekday == DateTime.saturday ||
                             date.weekday == DateTime.sunday
                         ? Theme.of(context).disabledColor
-                        : Theme.of(context).textTheme.bodyText1!.color,
+                        : Theme.of(context).textTheme.bodyLarge!.color,
                 fontSize: 14,
               ),
             ),
