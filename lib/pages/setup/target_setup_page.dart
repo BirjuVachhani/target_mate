@@ -253,8 +253,9 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
                       ),
                       Observer(
                         builder: (context) {
-                          if (store.error == null)
+                          if (store.error == null) {
                             return const SizedBox.shrink();
+                          }
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(

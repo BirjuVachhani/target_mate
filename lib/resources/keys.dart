@@ -25,4 +25,5 @@ class HiveKeys {
   static const String avatarUrl = 'avatar_url';
   static const String primaryColor = 'primary_color';
   static const String refreshFrequency = 'refresh_frequency';
+  static const String firstRun = 'first_run';
 }

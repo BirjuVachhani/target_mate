@@ -212,17 +212,19 @@ abstract class _HomeStore with Store {
     completed = durationPerDay.values.fold<Duration>(
         Duration.zero, (previousValue, duration) => previousValue + duration);
 
+    log('-------------------------------------------------------------------');
     log('Total duration: ${completed.inHours}:${completed.inMinutes.remainder(60)}');
     log('Required target: ${targetStore.requiredTargetDuration.inHours}:${targetStore.requiredTargetDuration.inMinutes.remainder(60)}');
     log('remaining: ${remaining.inHours}:${remaining.inMinutes.remainder(60)}');
-    log('remainingTillToday: ${remainingTillToday}');
+    log('remainingTillToday: $remainingTillToday');
     log('currentDay: ${targetStore.currentDay}');
     log('daysRemainingAfterToday: ${targetStore.daysRemainingAfterToday}');
     log('effectiveDays: ${targetStore.effectiveDays.length}');
-    log('dailyAverageTarget: ${dailyAverageTarget}');
-    log('dailyAverageTargetTillToday: ${dailyAverageTargetTillToday}');
-    log('today: ${todayDuration}');
-    log('todayPercentage: ${todayPercentage}');
-    log('effectiveAverageTarget: ${effectiveAverageTarget}');
+    log('dailyAverageTarget: $dailyAverageTarget');
+    log('dailyAverageTargetTillToday: $dailyAverageTargetTillToday');
+    log('today: $todayDuration');
+    log('todayPercentage: $todayPercentage');
+    log('effectiveAverageTarget: $effectiveAverageTarget');
+    log('-------------------------------------------------------------------');
   }
 }

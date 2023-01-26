@@ -26,8 +26,8 @@ class MainFlutterWindow: NSWindow {
           self.setIsZoomed(true)
 
           // Disable full screen button.
-          // let button = self.standardWindowButton(NSWindow.ButtonType.zoomButton)
-          // button?.isEnabled = false
+          let button = self.standardWindowButton(NSWindow.ButtonType.zoomButton)
+          button?.isEnabled = false
 
       }
 

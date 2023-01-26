@@ -2,12 +2,15 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:toggl_target/pages/target_store.dart';
 import 'package:toggl_target/resources/keys.dart';
+import 'package:toggl_target/utils/extensions.dart';
+import 'package:window_manager/window_manager.dart';
 
 import 'pages/home.dart';
 import 'pages/setup/auth_page.dart';
@@ -17,7 +20,14 @@ import 'utils/utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final bool isFirstRun =
+      !Hive.box(HiveKeys.secrets).containsKey(HiveKeys.firstRun);
+
   await initialize();
+
+  await setupWindowManager(isFirstRun: isFirstRun);
+
   runApp(const MyApp());
 }
 
@@ -43,9 +53,8 @@ Future<void> initialize() async {
   }
   log('Encryption key: $key');
 
-  final Box encryptedBox = await Hive.openBox(HiveKeys.secrets,
+  final secretsBox = await Hive.openBox(HiveKeys.secrets,
       encryptionCipher: HiveAesCipher(encryptionKey));
-  encryptedBox.containsKey(HiveKeys.apiKey);
 
   await Hive.openBox(HiveKeys.target);
   final appSettings = await Hive.openBox(HiveKeys.settings);
@@ -59,6 +68,31 @@ Future<void> initialize() async {
     TargetStore(),
     dispose: (store) => store.dispose(),
   );
+
+  if (!secretsBox.containsKey(HiveKeys.firstRun)) {
+    await secretsBox.put(HiveKeys.firstRun, false);
+  }
+}
+
+/// Sets up the window on desktop platforms.
+Future<void> setupWindowManager({required bool isFirstRun}) async {
+  /// Windows are only supported on desktop platforms.
+  if (kIsWeb || !defaultTargetPlatform.isDesktop) return;
+
+  await windowManager.ensureInitialized();
+  WindowOptions windowOptions = WindowOptions(
+    // Preserve window size if it is not the first run.
+    size: !isFirstRun ? const Size(420, 800) : null,
+    backgroundColor: Colors.transparent,
+    titleBarStyle: TitleBarStyle.hidden,
+    title: 'Toggl Target',
+    minimumSize: const Size(360, 450),
+  );
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+    windowManager.setSkipTaskbar(false);
+  });
 }
 
 class MyApp extends StatefulWidget {

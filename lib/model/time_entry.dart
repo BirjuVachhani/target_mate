@@ -49,7 +49,8 @@ class TimeEntry with EquatableMixin {
   });
 
   factory TimeEntry.fromJson(Map<String, dynamic> json) {
-    json['isRunning'] = json['stop'] == null || (json['stop'] is int && json['stop'] < 0);
+    json['isRunning'] =
+        json['stop'] == null || (json['stop'] is int && json['stop'] < 0);
     return _$TimeEntryFromJson(json);
   }
 
