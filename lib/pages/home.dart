@@ -950,7 +950,7 @@ class HomeHeader extends StatelessWidget {
                                         return Text(
                                           store.todayPercentage >= 1
                                               ? 'Completed'
-                                              : 'Remaining: ${formatDailyTargetDuration(store.dailyAverageTargetTillToday - store.todayDuration)}',
+                                              : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
                                           style: const TextStyle(
                                             fontSize: 12,
                                             letterSpacing: 0.2,
@@ -1014,10 +1014,7 @@ class HomeHeader extends StatelessWidget {
   }
 
   String formatTodayProgressPercentage(HomeStore store) {
-    final double percentage = (store.todayDuration.inSeconds /
-            store.dailyAverageTargetTillToday.inSeconds *
-            100)
-        .clamp(0, 100);
+    final double percentage = (store.todayPercentage * 100).clamp(0, 100);
     return '${percentage.toFormattedStringAsFixed(2)}%';
   }
 }

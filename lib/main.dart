@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:system_tray/system_tray.dart';
 import 'package:toggl_target/pages/target_store.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/utils/extensions.dart';
@@ -72,6 +73,11 @@ Future<void> initializeData() async {
     TargetStore(),
     dispose: (store) => store.dispose(),
   );
+
+  if (!kIsWeb && defaultTargetPlatform.isDesktop) {
+    GetIt.instance.registerSingleton<SystemTray>(SystemTray());
+    GetIt.instance.registerSingleton<AppWindow>(AppWindow());
+  }
 }
 
 /// Sets up the window on desktop platforms.

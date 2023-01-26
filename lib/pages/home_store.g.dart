@@ -66,6 +66,13 @@ mixin _$HomeStore on _HomeStore, Store {
           () => super.todayPercentage,
           name: '_HomeStore.todayPercentage'))
       .value;
+  Computed<Duration>? _$remainingForTodayComputed;
+
+  @override
+  Duration get remainingForToday => (_$remainingForTodayComputed ??=
+          Computed<Duration>(() => super.remainingForToday,
+              name: '_HomeStore.remainingForToday'))
+      .value;
   Computed<Duration>? _$effectiveAverageTargetComputed;
 
   @override
@@ -211,6 +218,7 @@ remainingTillToday: ${remainingTillToday},
 dailyAverageTarget: ${dailyAverageTarget},
 dailyAverageTargetTillToday: ${dailyAverageTargetTillToday},
 todayPercentage: ${todayPercentage},
+remainingForToday: ${remainingForToday},
 effectiveAverageTarget: ${effectiveAverageTarget}
     ''';
   }

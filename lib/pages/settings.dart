@@ -1,4 +1,5 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
@@ -7,12 +8,14 @@ import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:system_tray/system_tray.dart';
 import 'package:toggl_target/pages/setup/auth_page.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/resources/theme.dart';
 import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/ui/gradient_background.dart';
 import 'package:toggl_target/ui/widgets.dart';
+import 'package:toggl_target/utils/extensions.dart';
 
 import '../main.dart';
 import '../resources/colors.dart';
@@ -194,8 +197,11 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> onLogout() async {
     final navigator = Navigator.of(context);
     await Hive.deleteFromDisk();
-    await GetIt.instance.reset(dispose: true);
+    if (!kIsWeb && defaultTargetPlatform.isDesktop) {
+      GetIt.instance.get<SystemTray>().destroy();
+    }
 
+    await GetIt.instance.reset(dispose: true);
     await initializeData();
 
     navigator.pushAndRemoveUntil(

@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:system_tray/system_tray.dart';
 import 'package:toggl_target/model/time_entry.dart';
 import 'package:toggl_target/pages/target_store.dart';
+import 'package:toggl_target/utils/extensions.dart';
 import 'package:toggl_target/utils/utils.dart';
 
 import '../resources/keys.dart';
@@ -92,8 +95,20 @@ abstract class _HomeStore with Store {
 
   @computed
   double get todayPercentage =>
-      (todayDuration.inSeconds / dailyAverageTargetTillToday.inSeconds)
-          .roundToPrecision(2);
+      (todayDuration.inMinutes / dailyAverageTargetTillToday.inMinutes)
+          .roundToPrecision(4);
+
+  @computed
+  Duration get remainingForToday {
+    final diff = dailyAverageTargetTillToday - todayDuration;
+    if (diff.isNegative) return Duration.zero;
+
+    if (diff.inSeconds % 60 > 0) {
+      // round to 1 more minute if there are seconds less than a minute.
+      return Duration(minutes: diff.inMinutes + 1);
+    }
+    return diff;
+  }
 
   @computed
   Duration get effectiveAverageTarget {
@@ -106,13 +121,79 @@ abstract class _HomeStore with Store {
   late String timezone;
   late String avatarUrl;
 
+  late final AppWindow appWindow = GetIt.instance.get<AppWindow>();
+  late final SystemTray systemTray = GetIt.instance.get<SystemTray>();
+
   Future<void> init() async {
     apiKey = secretsBox.get(HiveKeys.apiKey);
     fullName = secretsBox.get(HiveKeys.fullName);
     email = secretsBox.get(HiveKeys.email);
     timezone = secretsBox.get(HiveKeys.timezone);
     avatarUrl = secretsBox.get(HiveKeys.avatarUrl) ?? '';
-    refreshData();
+
+    await initSystemTray();
+    await refreshData();
+  }
+
+  Future<void> initSystemTray() async {
+    if (kIsWeb || !defaultTargetPlatform.isDesktop) return;
+
+    String path = defaultTargetPlatform.isWindows
+        ? 'assets/icon_system_tray.ico'
+        : 'assets/icon_system_tray.png';
+
+    // We first init the systray menu
+    await systemTray.initSystemTray(
+      title: 'Toggl Target',
+      toolTip: 'Toggl Target',
+      iconPath: path,
+    );
+
+    // create context menu
+    final Menu menu = Menu();
+    await menu.buildFrom([
+      MenuItemLabel(label: 'Refresh', onClicked: (menuItem) => refreshData()),
+      MenuItemLabel(label: 'Show', onClicked: (menuItem) => appWindow.show()),
+      MenuItemLabel(label: 'Hide', onClicked: (menuItem) => appWindow.hide()),
+      MenuItemLabel(label: 'Exit', onClicked: (menuItem) => appWindow.close()),
+    ]);
+
+    // set context menu
+    await systemTray.setContextMenu(menu);
+
+    // handle system tray event
+    systemTray.registerSystemTrayEventHandler((eventName) {
+      log('eventName: $eventName');
+      if (eventName == kSystemTrayEventClick) {
+        defaultTargetPlatform.isWindows
+            ? appWindow.show()
+            : systemTray.popUpContextMenu();
+      } else if (eventName == kSystemTrayEventRightClick) {
+        defaultTargetPlatform.isWindows
+            ? systemTray.popUpContextMenu()
+            : appWindow.show();
+      }
+    });
+  }
+
+  void updateSystemTrayText() {
+    if (kIsWeb || !defaultTargetPlatform.isDesktop) return;
+
+    String text;
+    final percentage = (todayPercentage * 100).floor();
+    if (percentage >= 100) {
+      text = 'Completed';
+    } else {
+      text = '$percentage%';
+    }
+
+    systemTray.setTitle(text);
+  }
+
+  Future<void> destroySystemTray() async {
+    if (kIsWeb || !defaultTargetPlatform.isDesktop) return;
+
+    await systemTray.destroy();
   }
 
   Future<List<TimeEntry>?> fetchData() async {
@@ -168,6 +249,7 @@ abstract class _HomeStore with Store {
       timeEntries = data;
       isLoading = false;
       lastUpdated = DateTime.now();
+      updateSystemTrayText();
     } catch (error, stackTrace) {
       log('Error', error: error, stackTrace: stackTrace);
       this.error = error.toString();
@@ -225,6 +307,7 @@ abstract class _HomeStore with Store {
     log('today: $todayDuration');
     log('todayPercentage: $todayPercentage');
     log('effectiveAverageTarget: $effectiveAverageTarget');
+    log('remainingForToday: $remainingForToday');
     log('-------------------------------------------------------------------');
   }
 }
