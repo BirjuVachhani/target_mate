@@ -10,12 +10,12 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:toggl_target/model/day_entry.dart';
 import 'package:toggl_target/pages/settings.dart';
 import 'package:toggl_target/pages/setup/target_setup_page.dart';
 import 'package:toggl_target/pages/target_store.dart';
 import 'package:toggl_target/utils/extensions.dart';
 
-import '../model/time_entry.dart';
 import '../resources/colors.dart';
 import '../ui/custom_safe_area.dart';
 import '../ui/gradient_background.dart';
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 2),
                     child: ListView.separated(
-                      itemCount: store.groupedEntries.length,
+                      itemCount: store.dayEntries.length,
                       primary: false,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 16),
@@ -117,11 +117,8 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(height: 16),
                       itemBuilder: (context, index) {
                         return PerDayTimeEntryView(
-                          date: store.groupedEntries.keys.elementAt(index),
-                          entries: store.groupedEntries.values.elementAt(index),
-                          dailyTarget: Duration(
-                              seconds: (store.targetStore.workingHours! * 3600)
-                                  .round()),
+                          date: store.dayEntries.keys.elementAt(index),
+                          entry: store.dayEntries.values.elementAt(index),
                         );
                       },
                     ),
@@ -195,10 +192,10 @@ class _BottomBarState extends State<BottomBar>
     final lastUpdated = store.lastUpdated;
     if (lastUpdated == null) return;
     // Enable this to see timer logs
-    final Duration nextRefreshTime = lastUpdated
-        .add(settingsStore.refreshFrequency)
-        .difference(DateTime.now());
-    log('Next data refresh in ${nextRefreshTime.inMinutes}:${nextRefreshTime.inSeconds % 60}');
+    // final Duration nextRefreshTime = lastUpdated
+    //     .add(settingsStore.refreshFrequency)
+    //     .difference(DateTime.now());
+    // log('Next data refresh in ${nextRefreshTime.inMinutes}:${nextRefreshTime.inSeconds % 60}');
     if (lastUpdated
         .add(settingsStore.refreshFrequency)
         .isBefore(DateTime.now())) {
@@ -332,19 +329,18 @@ class PerDayTimeEntryView extends StatelessWidget {
   const PerDayTimeEntryView({
     super.key,
     required this.date,
-    required this.entries,
-    required this.dailyTarget,
+    required this.entry,
   });
 
   final DateTime date;
-  final List<TimeEntry> entries;
-  final Duration dailyTarget;
+  final DayEntry entry;
 
   @override
   Widget build(BuildContext context) {
-    final totalDuration = entries.total;
+    final totalDuration = entry.duration;
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 14),
+      padding: const EdgeInsets.only(top: 0, bottom: 0),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
         color: context.theme.colorScheme.primary.withOpacity(0.05),
@@ -353,16 +349,19 @@ class PerDayTimeEntryView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+          Container(
+            color: context.theme.colorScheme.primary.withOpacity(0.05),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  formatDate(date),
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                Expanded(
+                  child: Text(
+                    formatDate(date),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 Text(
@@ -370,7 +369,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: totalDuration >= dailyTarget
+                    color: entry.isTargetAchieved
                         ? Colors.greenAccent.shade700
                         : Colors.red,
                   ),
@@ -378,17 +377,16 @@ class PerDayTimeEntryView extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 14),
           const Divider(height: 1, thickness: 1),
           const SizedBox(height: 14),
           ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             padding: const EdgeInsets.symmetric(horizontal: 14),
-            itemCount: entries.length,
+            itemCount: entry.entries.length,
             separatorBuilder: (context, index) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
-              final item = entries[index];
+              final item = entry.entries[index];
               return Row(
                 children: [
                   if (item.isRunning)
@@ -426,7 +424,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
-                                  color: entries[index].description == null
+                                  color: item.description == null
                                       ? Colors.white.withOpacity(0.4)
                                       : Colors.white70,
                                 ),
@@ -445,7 +443,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w300,
-                          color: entries[index].description == null
+                          color: item.description == null
                               ? Colors.white.withOpacity(0.4)
                               : Colors.white70,
                         ),
@@ -466,6 +464,48 @@ class PerDayTimeEntryView extends StatelessWidget {
               );
             },
           ),
+          const SizedBox(height: 14),
+          if (entry.isWorkingDay) ...[
+            const Divider(height: 0.5, thickness: 0.5),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text.rich(
+                    TextSpan(
+                      text: '',
+                      children: [
+                        const TextSpan(
+                          text: 'Goal: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        TextSpan(
+                          text: formatTotalDuration(entry.target),
+                        ),
+                      ],
+                    ),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withOpacity(0.8),
+                      // color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    '${((entry.duration.inMinutes / entry.target.inMinutes) * 100).clamp(0, 100).floor()}% Achieved',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.white.withOpacity(0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -757,6 +797,22 @@ class HomeHeader extends StatelessWidget {
               Expanded(
                 child: Observer(
                   builder: (context) {
+                    if (store.isMonthlyTargetAchieved) {
+                      return const SizedBox(
+                        height: 50,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Goal achieved! ✌🏻🎉',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -858,98 +914,111 @@ class HomeHeader extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Observer(
-                  builder: (context) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                "Today's Progress",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.2,
-                                  color: Colors.white60,
-                                ),
-                              ),
-                            ),
-                            if (!store.isLoading || store.isLoadingWithData)
-                              Text(
-                                formatTodayProgressPercentage(store),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.2,
-                                ),
-                              ),
-                            const SizedBox(width: 2),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Observer(
-                          builder: (context) {
-                            return SizedBox(
-                              height: 24,
-                              child: Stack(
+          const SizedBox(height: 10),
+          Observer(
+            builder: (context) {
+              if (store.isMonthlyTargetAchieved) {
+                return const SizedBox.shrink();
+              }
+              return Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Observer(
+                        builder: (context) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
                                 children: [
-                                  Positioned.fill(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: LinearProgressIndicator(
-                                        value: store.todayPercentage,
-                                        minHeight: 24,
-                                        backgroundColor:
-                                            Colors.white.withOpacity(0.15),
-                                        valueColor: AlwaysStoppedAnimation(
-                                          ColorTween(
-                                            begin: Colors.red,
-                                            end: Colors.green,
-                                          ).transform(store.todayPercentage),
-                                        ),
+                                  const Expanded(
+                                    child: Text(
+                                      "Today's Progress",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.2,
+                                        color: Colors.white60,
                                       ),
                                     ),
                                   ),
                                   if (!store.isLoading ||
                                       store.isLoadingWithData)
-                                    Positioned(
-                                      top: 4,
-                                      bottom: 0,
-                                      right: 8,
-                                      child: Builder(builder: (context) {
-                                        return Text(
-                                          store.todayPercentage >= 1
-                                              ? 'Completed'
-                                              : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            letterSpacing: 0.2,
-                                          ),
-                                        );
-                                      }),
-                                    )
+                                    Text(
+                                      formatTodayProgressPercentage(store),
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                  const SizedBox(width: 2),
                                 ],
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 4),
-                      ],
-                    );
-                  },
+                              const SizedBox(height: 6),
+                              Observer(
+                                builder: (context) {
+                                  return SizedBox(
+                                    height: 24,
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(4),
+                                            child: LinearProgressIndicator(
+                                              value: store.todayPercentage,
+                                              minHeight: 24,
+                                              backgroundColor: Colors.white
+                                                  .withOpacity(0.15),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                ColorTween(
+                                                  begin: Colors.red,
+                                                  end: Colors.green,
+                                                ).transform(
+                                                    store.todayPercentage),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        if (!store.isLoading ||
+                                            store.isLoadingWithData)
+                                          Positioned(
+                                            top: 4,
+                                            bottom: 0,
+                                            right: 8,
+                                            child: Builder(builder: (context) {
+                                              return Text(
+                                                store.todayPercentage >= 1
+                                                    ? 'Completed'
+                                                    : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  letterSpacing: 0.2,
+                                                ),
+                                              );
+                                            }),
+                                          )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 4),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
+              );
+            },
           ),
-          const SizedBox(height: 8),
         ],
       ),
     );

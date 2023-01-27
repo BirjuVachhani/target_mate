@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:toggl_target/model/day_entry.dart';
 import 'package:toggl_target/model/time_entry.dart';
 import 'package:toggl_target/pages/target_store.dart';
 import 'package:toggl_target/utils/system_tray_manager.dart';
@@ -46,11 +47,8 @@ abstract class _HomeStore with Store {
   @observable
   Duration completed = Duration.zero;
 
-  @observable
-  Map<DateTime, Duration> durationPerDay = {};
-
   @computed
-  Duration get todayDuration => durationPerDay[today] ?? Duration.zero;
+  Duration get todayDuration => dayEntries[today]?.duration ?? Duration.zero;
 
   @computed
   Duration get completedTillToday => completed - todayDuration;
@@ -60,6 +58,7 @@ abstract class _HomeStore with Store {
 
   @computed
   Duration get remaining {
+    if (completed > targetStore.requiredTargetDuration) return Duration.zero;
     final diff = targetStore.requiredTargetDuration - completed;
     if (diff.inSeconds % 60 > 0) {
       // round to 1 more minute if there are seconds less than a minute.
@@ -70,6 +69,10 @@ abstract class _HomeStore with Store {
 
   @computed
   Duration get remainingTillToday {
+    if (completedTillToday >= targetStore.requiredTargetDuration) {
+      return Duration.zero;
+    }
+
     final diff = targetStore.requiredTargetDuration - completedTillToday;
     if (diff.inSeconds % 60 > 0) {
       // round to 1 more minute if there are seconds less than a minute.
@@ -79,24 +82,34 @@ abstract class _HomeStore with Store {
   }
 
   @observable
-  Map<DateTime, List<TimeEntry>> groupedEntries = {};
+  Map<DateTime, DayEntry> dayEntries = {};
 
   @computed
-  Duration get dailyAverageTarget => Duration(
-      minutes:
-          (remaining.inMinutes / targetStore.daysRemainingAfterToday).round());
+  Duration get dailyAverageTarget {
+    if (targetStore.daysRemainingAfterToday == 0) return remaining;
 
-  @computed
-  Duration get dailyAverageTargetTillToday {
     return Duration(
         minutes:
-            (remainingTillToday.inMinutes / targetStore.daysRemaining).round());
+            (remaining.inMinutes / targetStore.daysRemainingAfterToday).ceil());
   }
 
   @computed
-  double get todayPercentage =>
-      (todayDuration.inMinutes / dailyAverageTargetTillToday.inMinutes)
-          .roundToPrecision(4);
+  Duration get dailyAverageTargetTillToday {
+    if (targetStore.daysRemaining == 0) return remainingTillToday;
+    if (remainingTillToday <= Duration.zero) return Duration.zero;
+
+    return Duration(
+        minutes:
+            (remainingTillToday.inMinutes / targetStore.daysRemaining).ceil());
+  }
+
+  @computed
+  double get todayPercentage {
+    if (dailyAverageTargetTillToday <= Duration.zero) return 0;
+
+    return (todayDuration.inMinutes / dailyAverageTargetTillToday.inMinutes)
+        .roundToPrecision(4);
+  }
 
   @computed
   Duration get remainingForToday {
@@ -112,8 +125,14 @@ abstract class _HomeStore with Store {
 
   @computed
   Duration get effectiveAverageTarget {
-    return todayPercentage > 1 ? dailyAverageTarget : dailyAverageTarget;
+    return todayPercentage > 1
+        ? dailyAverageTarget
+        : dailyAverageTargetTillToday;
   }
+
+  @computed
+  bool get isMonthlyTargetAchieved =>
+      completed >= targetStore.requiredTargetDuration;
 
   late String apiKey;
   late String fullName;
@@ -231,24 +250,38 @@ abstract class _HomeStore with Store {
       return true;
     }).toList();
 
-    // group entries
-    groupedEntries = filtered.groupBy((entry) =>
-        DateTime(entry.start.year, entry.start.month, entry.start.day));
+    // Group entries by day and convert to DayEntry.
+    final Map<DateTime, DayEntry> groupedEntries = {};
+    Duration completedDuration = Duration.zero;
+    for (final item in filtered) {
+      final day = item.start.dateOnly;
 
-    durationPerDay = groupedEntries.map((key, values) {
-      final List<TimeEntry> entries = values;
-      final Duration duration = entries.fold<Duration>(Duration.zero,
-          (previousValue, element) => previousValue + element.duration);
-      return MapEntry(key, duration);
-    });
+      final DayEntry dayEntry = groupedEntries[day] ??
+          DayEntry(
+            date: day,
+            target:
+                Duration(seconds: (targetStore.workingHours! * 3600).round()),
+            isWorkingDay: targetStore.effectiveDays.contains(day),
+          );
 
-    completed = durationPerDay.values.fold<Duration>(
-        Duration.zero, (previousValue, duration) => previousValue + duration);
+      dayEntry.addEntry(item);
+      groupedEntries[day] = dayEntry;
+      completedDuration += item.duration;
+    }
+    final Duration monthlyTarget = targetStore.requiredTargetDuration;
+
+    completed = completedDuration;
+    dayEntries = calculateDailyTarget(
+      groupedEntries: groupedEntries,
+      effectiveDays: targetStore.effectiveDays,
+      monthlyTarget: monthlyTarget,
+    );
 
     log('-------------------------------------------------------------------');
-    log('Total duration: ${completed.inHours}:${completed.inMinutes.remainder(60)}');
-    log('Required target: ${targetStore.requiredTargetDuration.inHours}:${targetStore.requiredTargetDuration.inMinutes.remainder(60)}');
-    log('remaining: ${remaining.inHours}:${remaining.inMinutes.remainder(60)}');
+    log('completed: $completed');
+    log('completedTillToday: $completedTillToday');
+    log('requiredTargetDuration: ${targetStore.requiredTargetDuration}');
+    log('remaining: $remaining');
     log('remainingTillToday: $remainingTillToday');
     log('currentDay: ${targetStore.currentDay}');
     log('daysRemainingAfterToday: ${targetStore.daysRemainingAfterToday}');
@@ -259,6 +292,7 @@ abstract class _HomeStore with Store {
     log('todayPercentage: $todayPercentage');
     log('effectiveAverageTarget: $effectiveAverageTarget');
     log('remainingForToday: $remainingForToday');
+    log('isMonthlyTargetAchieved: $isMonthlyTargetAchieved');
     log('-------------------------------------------------------------------');
   }
 }

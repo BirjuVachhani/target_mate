@@ -91,7 +91,7 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = WindowOptions(
     // Preserve window size if it is not the first run.
-    size: !isFirstRun ? const Size(420, 800) : null,
+    size: isFirstRun ? const Size(420, 800) : null,
     backgroundColor: Colors.transparent,
     titleBarStyle: TitleBarStyle.hidden,
     title: 'Toggl Target',

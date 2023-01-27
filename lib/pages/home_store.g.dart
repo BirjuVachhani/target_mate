@@ -80,6 +80,13 @@ mixin _$HomeStore on _HomeStore, Store {
           Computed<Duration>(() => super.effectiveAverageTarget,
               name: '_HomeStore.effectiveAverageTarget'))
       .value;
+  Computed<bool>? _$isMonthlyTargetAchievedComputed;
+
+  @override
+  bool get isMonthlyTargetAchieved => (_$isMonthlyTargetAchievedComputed ??=
+          Computed<bool>(() => super.isMonthlyTargetAchieved,
+              name: '_HomeStore.isMonthlyTargetAchieved'))
+      .value;
 
   late final _$lastUpdatedAtom =
       Atom(name: '_HomeStore.lastUpdated', context: context);
@@ -160,35 +167,19 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
-  late final _$durationPerDayAtom =
-      Atom(name: '_HomeStore.durationPerDay', context: context);
+  late final _$dayEntriesAtom =
+      Atom(name: '_HomeStore.dayEntries', context: context);
 
   @override
-  Map<DateTime, Duration> get durationPerDay {
-    _$durationPerDayAtom.reportRead();
-    return super.durationPerDay;
+  Map<DateTime, DayEntry> get dayEntries {
+    _$dayEntriesAtom.reportRead();
+    return super.dayEntries;
   }
 
   @override
-  set durationPerDay(Map<DateTime, Duration> value) {
-    _$durationPerDayAtom.reportWrite(value, super.durationPerDay, () {
-      super.durationPerDay = value;
-    });
-  }
-
-  late final _$groupedEntriesAtom =
-      Atom(name: '_HomeStore.groupedEntries', context: context);
-
-  @override
-  Map<DateTime, List<TimeEntry>> get groupedEntries {
-    _$groupedEntriesAtom.reportRead();
-    return super.groupedEntries;
-  }
-
-  @override
-  set groupedEntries(Map<DateTime, List<TimeEntry>> value) {
-    _$groupedEntriesAtom.reportWrite(value, super.groupedEntries, () {
-      super.groupedEntries = value;
+  set dayEntries(Map<DateTime, DayEntry> value) {
+    _$dayEntriesAtom.reportWrite(value, super.dayEntries, () {
+      super.dayEntries = value;
     });
   }
 
@@ -208,8 +199,7 @@ timeEntries: ${timeEntries},
 isLoading: ${isLoading},
 error: ${error},
 completed: ${completed},
-durationPerDay: ${durationPerDay},
-groupedEntries: ${groupedEntries},
+dayEntries: ${dayEntries},
 todayDuration: ${todayDuration},
 completedTillToday: ${completedTillToday},
 isLoadingWithData: ${isLoadingWithData},
@@ -219,7 +209,8 @@ dailyAverageTarget: ${dailyAverageTarget},
 dailyAverageTargetTillToday: ${dailyAverageTargetTillToday},
 todayPercentage: ${todayPercentage},
 remainingForToday: ${remainingForToday},
-effectiveAverageTarget: ${effectiveAverageTarget}
+effectiveAverageTarget: ${effectiveAverageTarget},
+isMonthlyTargetAchieved: ${isMonthlyTargetAchieved}
     ''';
   }
 }

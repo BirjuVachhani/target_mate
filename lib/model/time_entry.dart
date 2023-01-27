@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:screwdriver/screwdriver.dart';
 
@@ -47,6 +48,24 @@ class TimeEntry with EquatableMixin {
     required this.isDeleted,
     this.isRunning = false,
   });
+
+  @visibleForTesting
+  TimeEntry.basic({
+    required this.start,
+    required this.duration,
+    this.isDeleted = false,
+  })  : id = -1,
+        workspaceId = -1,
+        projectId = -1,
+        taskId = -1,
+        description = '',
+        stop = start + duration,
+        userId = -1,
+        uid = -1,
+        wid = -1,
+        pid = -1,
+        billable = false,
+        isRunning = false;
 
   factory TimeEntry.fromJson(Map<String, dynamic> json) {
     json['isRunning'] =
