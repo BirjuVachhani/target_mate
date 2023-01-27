@@ -291,7 +291,7 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
     } else {
       await getSecretsBox().put(HiveKeys.onboarded, true);
       navigator.pushAndRemoveUntil(
-        FadeScalePageRoute(child: const HomePageWrapper()),
+        FadeScalePageRoute(child: const HomePage()),
         (route) => true,
       );
     }

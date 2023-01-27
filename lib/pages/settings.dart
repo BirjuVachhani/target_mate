@@ -1,28 +1,23 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
-import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:system_tray/system_tray.dart';
-import 'package:toggl_target/pages/setup/auth_page.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/resources/theme.dart';
 import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/ui/gradient_background.dart';
 import 'package:toggl_target/ui/widgets.dart';
-import 'package:toggl_target/utils/extensions.dart';
 
-import '../main.dart';
 import '../resources/colors.dart';
 import '../ui/back_button.dart';
 import '../ui/custom_dropdown.dart';
 import '../ui/custom_safe_area.dart';
 import '../ui/dropdown_button3.dart';
+import '../utils/system_tray_manager.dart';
 import '../utils/utils.dart';
 
 part 'settings.g.dart';
@@ -72,7 +67,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late final SettingsStore store = context.read<SettingsStore>();
+  late final SettingsStore store = GetIt.instance.get<SettingsStore>();
+  late final SystemTrayManager systemTrayManager =
+      GetIt.instance.get<SystemTrayManager>();
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +107,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       return CustomDropdown<Duration>(
                         value: store.refreshFrequency,
                         isExpanded: true,
-                        onSelected: (value) => store.setRefreshFrequency(value),
+                        onSelected: (value) {
+                          store.setRefreshFrequency(value);
+                          systemTrayManager.setSyncInterval(value);
+                        },
                         selectedItemBuilder: (context, item) => Text(
                           formatDuration(store.refreshFrequency),
                         ),
@@ -140,21 +140,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                 ),
                         ),
-                        items: [
-                          1.minutes,
-                          5.minutes,
-                          10.minutes,
-                          15.minutes,
-                          30.minutes,
-                          1.hours,
-                        ],
+                        items: intervals,
                       );
                     },
                   ),
                   const SizedBox(height: 40),
                   Center(
                     child: TextButton.icon(
-                      onPressed: onLogout,
+                      onPressed: logout,
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.red,
                         backgroundColor: Colors.red.withOpacity(0.1),
@@ -192,22 +185,6 @@ class _SettingsPageState extends State<SettingsPage> {
       final hours = minutes ~/ 60;
       return '$hours hour${hours == 1 ? '' : 's'}';
     }
-  }
-
-  Future<void> onLogout() async {
-    final navigator = Navigator.of(context);
-    await Hive.deleteFromDisk();
-    if (!kIsWeb && defaultTargetPlatform.isDesktop) {
-      GetIt.instance.get<SystemTray>().destroy();
-    }
-
-    await GetIt.instance.reset(dispose: true);
-    await initializeData();
-
-    navigator.pushAndRemoveUntil(
-      FadeScalePageRoute(child: const AuthPageWrapper()),
-      (route) => false,
-    );
   }
 }
 

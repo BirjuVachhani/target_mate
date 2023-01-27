@@ -1,17 +1,15 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:system_tray/system_tray.dart';
 import 'package:toggl_target/model/time_entry.dart';
 import 'package:toggl_target/pages/target_store.dart';
-import 'package:toggl_target/utils/extensions.dart';
+import 'package:toggl_target/utils/system_tray_manager.dart';
 import 'package:toggl_target/utils/utils.dart';
 
 import '../resources/keys.dart';
@@ -23,6 +21,8 @@ class HomeStore = _HomeStore with _$HomeStore;
 
 abstract class _HomeStore with Store {
   late final TargetStore targetStore = GetIt.instance.get<TargetStore>();
+  late final SystemTrayManager systemTrayManager =
+      GetIt.instance.get<SystemTrayManager>();
 
   late final Box secretsBox = getSecretsBox();
   late final Box settingsBox = getAppSettingsBox();
@@ -38,7 +38,7 @@ abstract class _HomeStore with Store {
   List<TimeEntry>? timeEntries;
 
   @observable
-  bool isLoading = false;
+  bool isLoading = true;
 
   @observable
   String? error;
@@ -121,9 +121,6 @@ abstract class _HomeStore with Store {
   late String timezone;
   late String avatarUrl;
 
-  late final AppWindow appWindow = GetIt.instance.get<AppWindow>();
-  late final SystemTray systemTray = GetIt.instance.get<SystemTray>();
-
   Future<void> init() async {
     apiKey = secretsBox.get(HiveKeys.apiKey);
     fullName = secretsBox.get(HiveKeys.fullName);
@@ -131,54 +128,11 @@ abstract class _HomeStore with Store {
     timezone = secretsBox.get(HiveKeys.timezone);
     avatarUrl = secretsBox.get(HiveKeys.avatarUrl) ?? '';
 
-    await initSystemTray();
+    await systemTrayManager.init();
     await refreshData();
   }
 
-  Future<void> initSystemTray() async {
-    if (kIsWeb || !defaultTargetPlatform.isDesktop) return;
-
-    String path = defaultTargetPlatform.isWindows
-        ? 'assets/icon_system_tray.ico'
-        : 'assets/icon_system_tray.png';
-
-    // We first init the systray menu
-    await systemTray.initSystemTray(
-      title: 'Toggl Target',
-      toolTip: 'Toggl Target',
-      iconPath: path,
-    );
-
-    // create context menu
-    final Menu menu = Menu();
-    await menu.buildFrom([
-      MenuItemLabel(label: 'Refresh', onClicked: (menuItem) => refreshData()),
-      MenuItemLabel(label: 'Show', onClicked: (menuItem) => appWindow.show()),
-      MenuItemLabel(label: 'Hide', onClicked: (menuItem) => appWindow.hide()),
-      MenuItemLabel(label: 'Exit', onClicked: (menuItem) => appWindow.close()),
-    ]);
-
-    // set context menu
-    await systemTray.setContextMenu(menu);
-
-    // handle system tray event
-    systemTray.registerSystemTrayEventHandler((eventName) {
-      log('eventName: $eventName');
-      if (eventName == kSystemTrayEventClick) {
-        defaultTargetPlatform.isWindows
-            ? appWindow.show()
-            : systemTray.popUpContextMenu();
-      } else if (eventName == kSystemTrayEventRightClick) {
-        defaultTargetPlatform.isWindows
-            ? systemTray.popUpContextMenu()
-            : appWindow.show();
-      }
-    });
-  }
-
   void updateSystemTrayText() {
-    if (kIsWeb || !defaultTargetPlatform.isDesktop) return;
-
     String text;
     final percentage = (todayPercentage * 100).floor();
     if (percentage >= 100) {
@@ -187,13 +141,7 @@ abstract class _HomeStore with Store {
       text = '$percentage%';
     }
 
-    systemTray.setTitle(text);
-  }
-
-  Future<void> destroySystemTray() async {
-    if (kIsWeb || !defaultTargetPlatform.isDesktop) return;
-
-    await systemTray.destroy();
+    systemTrayManager.setTitle(text);
   }
 
   Future<List<TimeEntry>?> fetchData() async {
@@ -237,8 +185,9 @@ abstract class _HomeStore with Store {
   @action
   Future<void> refreshData() async {
     isLoading = true;
+    systemTrayManager.setRefreshOption(enabled: false, label: 'Syncing...');
     try {
-      // await Future.delayed(5.seconds);
+      // await Future.delayed(3.seconds);
       final List<TimeEntry>? data = await fetchData();
       if (data == null) {
         error = 'Error fetching data';
@@ -254,6 +203,8 @@ abstract class _HomeStore with Store {
       log('Error', error: error, stackTrace: stackTrace);
       this.error = error.toString();
       isLoading = false;
+    } finally {
+      systemTrayManager.setRefreshOption(enabled: true);
     }
   }
 

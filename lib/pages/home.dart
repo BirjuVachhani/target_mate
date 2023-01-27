@@ -9,7 +9,6 @@ import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/pages/settings.dart';
 import 'package:toggl_target/pages/setup/target_setup_page.dart';
@@ -22,27 +21,6 @@ import '../ui/custom_safe_area.dart';
 import '../ui/gradient_background.dart';
 import 'home_store.dart';
 
-class HomePageWrapper extends StatelessWidget {
-  const HomePageWrapper({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        Provider(
-          create: (_) => SettingsStore(),
-          dispose: (_, SettingsStore store) => store.dispose(),
-        ),
-        Provider(
-          create: (_) => HomeStore(),
-          dispose: (_, HomeStore store) => store.dispose(),
-        ),
-      ],
-      child: const HomePage(),
-    );
-  }
-}
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -51,7 +29,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final HomeStore store = context.read<HomeStore>();
+  late final HomeStore store = GetIt.instance.get<HomeStore>();
   late final TargetStore targetStore = GetIt.instance.get<TargetStore>();
 
   @override
@@ -90,7 +68,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   }
-                  if (store.timeEntries == null) {
+                  if (store.timeEntries == null && store.error != null) {
                     return Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -122,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   }
-                  if (store.timeEntries!.isEmpty) {
+                  if (store.timeEntries == null || store.timeEntries!.isEmpty) {
                     return const Center(
                       child: Text('No entries found'),
                     );
@@ -179,8 +157,8 @@ class BottomBar extends StatefulWidget {
 
 class _BottomBarState extends State<BottomBar>
     with SingleTickerProviderStateMixin {
-  late final store = context.read<HomeStore>();
-  late final settingsStore = context.read<SettingsStore>();
+  late final store = GetIt.instance.get<HomeStore>();
+  late final settingsStore = GetIt.instance.get<SettingsStore>();
 
   late DateTime _initialTime;
   late DateTime _now;
@@ -217,10 +195,10 @@ class _BottomBarState extends State<BottomBar>
     final lastUpdated = store.lastUpdated;
     if (lastUpdated == null) return;
     // Enable this to see timer logs
-    // final Duration nextRefreshTime = lastUpdated
-    //     .add(settingsStore.refreshFrequency)
-    //     .difference(DateTime.now());
-    // log('Next data refresh in ${nextRefreshTime.inMinutes}:${nextRefreshTime.inSeconds % 60}');
+    final Duration nextRefreshTime = lastUpdated
+        .add(settingsStore.refreshFrequency)
+        .difference(DateTime.now());
+    log('Next data refresh in ${nextRefreshTime.inMinutes}:${nextRefreshTime.inSeconds % 60}');
     if (lastUpdated
         .add(settingsStore.refreshFrequency)
         .isBefore(DateTime.now())) {
@@ -231,7 +209,7 @@ class _BottomBarState extends State<BottomBar>
 
   @override
   Widget build(BuildContext context) {
-    final store = context.read<HomeStore>();
+    final store = GetIt.instance.get<HomeStore>();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -522,7 +500,7 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeStore store = context.read<HomeStore>();
+    final HomeStore store = GetIt.instance.get<HomeStore>();
     final TargetStore targetStore = GetIt.instance.get<TargetStore>();
 
     return Padding(
@@ -1002,13 +980,9 @@ class HomeHeader extends StatelessWidget {
   }
 
   void openSettings(BuildContext context) {
-    final settingsStore = context.read<SettingsStore>();
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => Provider.value(
-          value: settingsStore,
-          child: const SettingsPage(),
-        ),
+        builder: (_) => const SettingsPage(),
       ),
     );
   }

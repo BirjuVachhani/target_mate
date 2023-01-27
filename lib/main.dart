@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:system_tray/system_tray.dart';
+import 'package:toggl_target/pages/home_store.dart';
+import 'package:toggl_target/pages/settings.dart';
 import 'package:toggl_target/pages/target_store.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/utils/extensions.dart';
@@ -17,6 +18,7 @@ import 'pages/home.dart';
 import 'pages/setup/auth_page.dart';
 import 'resources/colors.dart';
 import 'resources/theme.dart';
+import 'utils/system_tray_manager.dart';
 import 'utils/utils.dart';
 
 void main() async {
@@ -68,16 +70,17 @@ Future<void> initializeData() async {
     appSettings.put(HiveKeys.primaryColor, AppColors.primaryColor.value);
   }
 
+  // Initialize GetIt registry.
   GetIt.instance.registerSingleton<FlutterSecureStorage>(secureStorage);
-  GetIt.instance.registerSingleton<TargetStore>(
-    TargetStore(),
-    dispose: (store) => store.dispose(),
-  );
+  GetIt.instance.registerLazySingleton<TargetStore>(() => TargetStore(),
+      dispose: (store) => store.dispose());
 
-  if (!kIsWeb && defaultTargetPlatform.isDesktop) {
-    GetIt.instance.registerSingleton<SystemTray>(SystemTray());
-    GetIt.instance.registerSingleton<AppWindow>(AppWindow());
-  }
+  GetIt.instance.registerSingleton<SystemTrayManager>(SystemTrayManager(),
+      dispose: (manager) => manager.dispose());
+  GetIt.instance.registerLazySingleton(() => HomeStore(),
+      dispose: (store) => store.dispose());
+  GetIt.instance.registerLazySingleton(() => SettingsStore(),
+      dispose: (store) => store.dispose());
 }
 
 /// Sets up the window on desktop platforms.
@@ -122,9 +125,10 @@ class _MyAppState extends State<MyApp> {
       builder: (theme, darkTheme) => MaterialApp(
         title: 'Toggl Target',
         debugShowCheckedModeBanner: false,
+        navigatorKey: navigatorKey,
         theme: theme,
         darkTheme: darkTheme,
-        home: isOnboarded ? const HomePageWrapper() : const AuthPageWrapper(),
+        home: isOnboarded ? const HomePage() : const AuthPageWrapper(),
       ),
     );
   }
