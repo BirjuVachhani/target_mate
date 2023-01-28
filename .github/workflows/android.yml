@@ -2,7 +2,7 @@ name: Android Build
 
 on:
   release:
-    types: [published]
+    types: [ published ]
   workflow_dispatch:
 
 jobs:
@@ -10,9 +10,16 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v1
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "11.x"
+          cache: 'gradle'
+      - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          cache: true
       - name: Flutter version
         run: flutter --version
       - name: Install dependencies
