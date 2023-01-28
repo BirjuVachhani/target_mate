@@ -1,2 +1,6 @@
 codegen: flutter pub run build_runner build --delete-conflicting-outputs
 format: dart format --fix .
+clean: flutter clean && flutter pub get
+build:
+  apk: flutter build apk --release
+  aab: flutter build appbundle --release
