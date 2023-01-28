@@ -28,7 +28,8 @@ jobs:
         id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
-          fileName: 'android/keystore/release.jks'
+          fileName: 'release.jks'
+          fileDir: './android/keystore/'
           encodedString: ${{ secrets.KEYSTORE_FILE }}
       - name: Create keystore.properties file
         run: |
