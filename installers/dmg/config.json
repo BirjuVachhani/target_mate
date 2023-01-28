@@ -1,0 +1,26 @@
+{
+  "title": "Toggl Target",
+  "icon": "AppIcon.icns",
+  "background": "background.png",
+  "icon-size": 132,
+  "window": {
+    "size": {
+      "width": 600,
+      "height": 360
+    }
+  },
+  "contents": [
+    {
+      "x": 458,
+      "y": 180,
+      "type": "link",
+      "path": "/Applications"
+    },
+    {
+      "x": 142,
+      "y": 180,
+      "type": "file",
+      "path": "../../build/macos/Build/Products/Release/toggl_target.app"
+    }
+  ]
+}

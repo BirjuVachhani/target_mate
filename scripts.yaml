@@ -4,3 +4,10 @@ clean: flutter clean && flutter pub get
 build:
   apk: flutter build apk --release
   aab: flutter build appbundle --release
+  macos: flutter build macos
+  dmg:
+    - flutter build macos
+    - sh installers/dmg/dmg.sh
+bundle:
+  dmg: cd installers/dmg && sh create.sh
+#  dmg: cd installers/dmg && appdmg "config.json" "../../Toggl Track.dmg"
