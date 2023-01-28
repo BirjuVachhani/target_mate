@@ -1,8 +1,7 @@
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
+    localPropertiesFile.withReader('UTF-8') { reader -> localProperties.load(reader)
     }
 }
 
@@ -43,7 +42,6 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "dev.birju.togglTarget"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
@@ -53,13 +51,37 @@ android {
         versionName flutterVersionName
     }
 
-    buildTypes {
+    signingConfigs {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+//            def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+//            def allFilesFromDir = new File(tmpFilePath).listFiles()
+//
+//            if (allFilesFromDir != null) {
+//                def keystoreFile = allFilesFromDir.first()
+//                keystoreFile.renameTo("keystore/release.jks")
+//            }
+            def keystoreProperties = new Properties()
+            def keystoreFile = rootProject.file('keystore.properties')
+            if (keystoreFile.exists()) {
+                keystoreFile.withReader('UTF-8') { reader -> keystoreProperties.load(reader)
+                }
+            } else {
+                throw new GradleException("keystore.properties file not found. Cannot sign release build.")
+            }
+
+            storeFile = file(keystoreProperties.getProperty("KEYSTORE_FILE_PATH"))
+            storePassword keystoreProperties.getProperty("SIGNING_STORE_PASSWORD")
+            keyAlias keystoreProperties.getProperty("SIGNING_KEY_ALIAS")
+            keyPassword keystoreProperties.getProperty("SIGNING_KEY_PASSWORD")
         }
     }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+    namespace 'dev.birju.togglTarget'
 }
 
 flutter {
