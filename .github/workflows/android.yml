@@ -31,10 +31,7 @@ jobs:
           fileDir: './android/keystore/'
           encodedString: ${{ secrets.KEYSTORE_FILE }}
       - name: Create keystore.properties file
-        run: |
-          echo "${{ secrets.KEYSTORE_PROPERTIES }}" > android/keystore.properties
-          cat android/keystore.properties
-          ls android/keystore
+        run: echo "${{ secrets.KEYSTORE_PROPERTIES }}" > android/keystore.properties
       - name: Build APK
         run: flutter build apk --release
       - name: Build AAB
