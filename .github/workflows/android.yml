@@ -25,7 +25,6 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Create keystore file
-        id: decode_keystore
         uses: timheuer/base64-to-file@v1
         with:
           fileName: 'release.jks'
