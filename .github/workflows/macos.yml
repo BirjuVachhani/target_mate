@@ -1,0 +1,31 @@
+name: MacOS Build
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Flutter version
+        run: flutter --version
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build App
+        run: flutter build macos
+      - name: Create dmg
+        run: cd installers/dmg && sh create.sh
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: app.dmg
+          path: Toggl Track.dmg
+          if-no-files-found: error
+          retention-days: 5
