@@ -1,6 +1,13 @@
-<img src="assets/logo_trimmed.png" width="200px">
+<img src="assets/app_icon.png" width="200px" align="left" style="margin-right:20px">
+<br/>
+<br/>
+<img src="assets/logo_trimmed.png" height="40px">
 
-A companion app for [Toggl track](https://toggl.com/track/) to track & manage your month target hours.
+A companion app for [Toggl track](https://toggl.com/track/) to track & manage your monthly target hours.
+Built with love ❤️ in <img src=".github/assets/flutter.png" />
+
+<br/>
+<br/>
 
 ```
 // TODO:
