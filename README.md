@@ -1,6 +1,8 @@
 ![Banner](.github/assets/banner.png)
 
 <!-- <img src=".github/assets/logo.svg" width="100px" /> -->
+
+<br/>
 <img src=".github/assets/text_logo.svg" width="200px" />
 
 A companion app for [Toggl track][toggl] to track & manage your working hours to achieve your monthly goals. If you're using [Toggl Track][toggl] to track your time then, this app can help you manage your monthly working hours.
@@ -13,6 +15,14 @@ A companion app for [Toggl track][toggl] to track & manage your working hours to
 - Auto syncs stats at configurable intervals.
 - Beautiful themes to select from.
 - Tracks per day average working hours based on already tracked hours.
+- Displays today's progress in system tray on desktop.
+- Integrates with system tray on desktop for quick controls.
+
+## Supported Platforms
+
+| Android  | iOS   | macOS   | Windows  | Linux  | Web   |
+|---|---|---|---|---|---|
+| ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 
 ### Disclaimer
 
@@ -28,7 +38,7 @@ I was tired of manually keeping track of my daily and monthly goals and limits t
 
 ## How to get API key from Toggl Track
 
-You can navigate to your [profile](https://track.toggl.com/profile) on Toggl Track to get your access token. Make sure you're logged in!
+You can navigate to your [profile](https://track.toggl.com/profile) on [Toggl Track][toggl] to get your access token. Make sure you're logged in!
 
 ![api_key](.github/assets/api_key.png)
 
@@ -36,8 +46,7 @@ You can navigate to your [profile](https://track.toggl.com/profile) on Toggl Tra
 
 1. Clone the repo
 2. Install dependencies with `flutter pub get`
-3. Run `flutter build web --release --web-renderer html --csp`
-4. Load the `build/web` directory to your browser
+3. Run app with `flutter run` on supported platforms.
 
 ## Contribution
 
@@ -56,10 +65,6 @@ Want to support my work?
 Or You can
 
 <a href="https://www.buymeacoffee.com/birjuvachhani" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-blue.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
-
-```
-// TODO:
-```
 
 ```
 MIT License
