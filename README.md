@@ -1,11 +1,9 @@
-<p align="center"> <img src="assets/logo.svg" width="200px" /></p>
-<p align="center"> <img src="assets/text_logo.svg" width="100px" /></p>
+![Banner](.github/assets/banner.png)
 
-A companion app for [Toggl track](https://toggl.com/track/) to track & manage your monthly target hours.
-Built with love ❤️ in <img src=".github/assets/flutter.png" />
+<!-- <img src=".github/assets/logo.svg" width="100px" /> -->
+<img src=".github/assets/text_logo.svg" width="200px" />
 
-<br/>
-<br/>
+A companion app for [Toggl track](https://toggl.com/track/) to track & manage your working hours to achieve your monthly goals.
 
 ```
 // TODO:
