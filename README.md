@@ -1,7 +1,5 @@
-<img src="assets/app_icon.png" width="200px" align="left" style="margin-right:20px">
-<br/>
-<br/>
-<img src="assets/logo_trimmed.png" height="40px">
+<p align="center"> <img src="assets/logo.svg" width="200px" /></p>
+<p align="center"> <img src="assets/text_logo.svg" width="100px" /></p>
 
 A companion app for [Toggl track](https://toggl.com/track/) to track & manage your monthly target hours.
 Built with love ❤️ in <img src=".github/assets/flutter.png" />
