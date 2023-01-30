@@ -47,11 +47,13 @@ jobs:
         run: flutter build macos
       - name: Create dmg
         run: cd installers/dmg && sh create.sh
+      - name: list files
+        run: ls -la
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
           name: app.dmg
-          path: Toggl Track.dmg
+          path: "Toggl Track.dmg"
           if-no-files-found: error
           retention-days: 5
       - name: Clean up keychain and provisioning profile
