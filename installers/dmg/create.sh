@@ -11,6 +11,6 @@ create-dmg \
   --icon "Toggl Target.app" 142 180 \
   --hide-extension "Toggl Target.app" \
   --app-drop-link 458 180 \
-  "../../Toggl Track.dmg" \
+  "../../TogglTrack.dmg" \
   "source_folder/"
 rm -rf "source_folder"
