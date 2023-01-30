@@ -58,16 +58,16 @@ jobs:
       - name: list files
         run: ls -la build/macos/Build/Products/Release/
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: app.dmg
           path: TogglTrack.dmg
           if-no-files-found: error
           retention-days: 5
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: app.dmg
+          name: build.app
           path: build/macos/Build/Products/Release/toggl_track.app/*
           if-no-files-found: error
           retention-days: 5
