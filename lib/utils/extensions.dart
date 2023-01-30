@@ -46,3 +46,12 @@ extension DoubleExt on double {
     return value.toStringAsFixed(fractionDigits);
   }
 }
+
+extension DateTimeListExt on Iterable<DateTime> {
+  /// Returns true if the list contains a date that is equal to the given [date].
+  bool containsDate(DateTime date) =>
+      any((item) => item.dateOnly == date.dateOnly);
+
+  /// Returns true if the list contains a date that is equal to the given [day].
+  bool containsDay(int day) => any((item) => item.day == day);
+}

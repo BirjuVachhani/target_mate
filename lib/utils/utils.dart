@@ -117,3 +117,10 @@ Map<DateTime, DayEntry> calculateDailyTarget({
   }
   return entries;
 }
+
+String formatDailyTargetDuration(Duration duration) {
+  int hours = duration.inHours;
+  int minutes = duration.inMinutes % 60;
+
+  return '${hours > 0 ? '$hours h ' : ''}${minutes > 0 ? minutes.toString().padLeft(hours > 0 ? 2 : 1, '0') : '1'} min';
+}

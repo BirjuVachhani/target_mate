@@ -58,6 +58,13 @@ mixin _$TargetStore on _TargetStore, Store {
           Computed<List<DateTime>>(() => super.effectiveDays,
               name: '_TargetStore.effectiveDays'))
       .value;
+  Computed<bool>? _$isTodayWorkingDayComputed;
+
+  @override
+  bool get isTodayWorkingDay => (_$isTodayWorkingDayComputed ??= Computed<bool>(
+          () => super.isTodayWorkingDay,
+          name: '_TargetStore.isTodayWorkingDay'))
+      .value;
 
   late final _$hasCustomDaysSelectionAtom =
       Atom(name: '_TargetStore.hasCustomDaysSelection', context: context);
@@ -236,7 +243,8 @@ requiredTargetDuration: ${requiredTargetDuration},
 currentDay: ${currentDay},
 daysRemaining: ${daysRemaining},
 daysRemainingAfterToday: ${daysRemainingAfterToday},
-effectiveDays: ${effectiveDays}
+effectiveDays: ${effectiveDays},
+isTodayWorkingDay: ${isTodayWorkingDay}
     ''';
   }
 }

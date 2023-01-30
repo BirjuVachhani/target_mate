@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/resources/keys.dart';
+import 'package:toggl_target/utils/extensions.dart';
 
 import '../utils/utils.dart';
 
@@ -86,6 +87,9 @@ abstract class _TargetStore with Store {
         .map((e) => DateTime(thisMonth.year, thisMonth.month, e))
         .toList();
   }
+
+  @computed
+  bool get isTodayWorkingDay => effectiveDays.containsDay(today.day);
 
   late final TextEditingController workingHoursController =
       TextEditingController();
