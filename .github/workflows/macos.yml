@@ -64,13 +64,6 @@ jobs:
           path: TogglTrack.dmg
           if-no-files-found: error
           retention-days: 5
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: build.app
-          path: build/macos/Build/Products/Release/toggl_track.app/*
-          if-no-files-found: error
-          retention-days: 5
       - name: Clean up keychain and provisioning profile
         if: ${{ always() }}
         run: |
