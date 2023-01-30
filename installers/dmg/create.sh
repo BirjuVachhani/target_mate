@@ -1,5 +1,5 @@
 #!/bin/sh
-test -f "../../Toggl Target.dmg" && rm "../../Toggl Target.dmg"
+test -f "../../TogglTarget.dmg" && rm "../../TogglTarget.dmg"
 mkdir -p source_folder
 cp -R "../../build/macos/Build/Products/Release/toggl_target.app/" "source_folder/Toggl Target.app"
 create-dmg \

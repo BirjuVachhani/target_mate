@@ -51,6 +51,8 @@ jobs:
         run: flutter build macos
       - name: Verify Build
         run: test -d build/macos/Build/Products/Release/toggl_target.app
+      - name: Install create-dmg
+        run: brew install create-dmg
       - name: Create dmg
         run: cd installers/dmg && sh create.sh
       - name: list files
@@ -59,9 +61,14 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: app.dmg
-          path: |
-            TogglTrack.dmg
-            build/macos/Build/Products/Release/toggl_track.app/*
+          path: TogglTrack.dmg
+          if-no-files-found: error
+          retention-days: 5
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: app.dmg
+          path: build/macos/Build/Products/Release/toggl_track.app/*
           if-no-files-found: error
           retention-days: 5
       - name: Clean up keychain and provisioning profile
