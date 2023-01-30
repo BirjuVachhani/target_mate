@@ -45,6 +45,8 @@ jobs:
           cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles
       - name: Build App
         run: flutter build macos
+      - name: Verify Build
+        run: test -d build/macos/Build/Products/Release/toggl_target.app
       - name: Create dmg
         run: cd installers/dmg && sh create.sh
       - name: list files
