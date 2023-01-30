@@ -50,3 +50,8 @@ jobs:
           path: build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 5
+      - name: Clean up keystore and keystore.properties
+        if: ${{ always() }}
+        run: |
+          rm android/keystore.properties
+          rm android/keystore/release.jks
