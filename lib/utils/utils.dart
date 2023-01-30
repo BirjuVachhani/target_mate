@@ -84,6 +84,7 @@ Map<DateTime, DayEntry> calculateDailyTarget({
       // If it is not a working day, then we don't care about daily target
       // for it so we set target to zero to make isTargetAchieved return true.
       dayEntry.target = Duration.zero;
+      durationTillDate += dayEntry.duration;
       continue;
     }
 
@@ -94,7 +95,6 @@ Map<DateTime, DayEntry> calculateDailyTarget({
     final target = Duration(
         seconds: (remainingDuration.inSeconds / remainingDays).floor());
     dayEntry.target = target;
-    durationTillDate += dayEntry.duration;
 
     if (log) {
       debugPrint(
@@ -106,9 +106,14 @@ Map<DateTime, DayEntry> calculateDailyTarget({
       debugPrint('Target: ${dayEntry.target}');
       debugPrint('Duration: ${dayEntry.duration}');
       debugPrint('Is target achieved: ${dayEntry.isTargetAchieved}');
+      debugPrint('Duration till date: $durationTillDate');
+      debugPrint(
+          'Duration including date: ${durationTillDate + dayEntry.duration}');
       debugPrint(
           '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n');
     }
+
+    durationTillDate += dayEntry.duration;
   }
   return entries;
 }
