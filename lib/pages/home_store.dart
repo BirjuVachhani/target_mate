@@ -174,7 +174,7 @@ abstract class _HomeStore with Store {
           format.format(DateTime(targetStore.year, targetStore.month + 1, 1));
       final uri = Uri.parse(
           'https://api.track.toggl.com/api/v9/me/time_entries?start_date=$startDate&end_date=$endDate');
-      log('Fetching data from $startDate to $endDate...');
+      log('Fetching data from $startDate until $endDate...');
       log('URL: $uri');
       final apiKey = secretsBox.get(HiveKeys.apiKey);
       final authKey = base64Encode('$apiKey:api_token'.codeUnits);
@@ -190,8 +190,6 @@ abstract class _HomeStore with Store {
         log('Error', error: response.body);
         return null;
       }
-
-      print(JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)));
 
       final List<JsonMap> data = List<JsonMap>.from(jsonDecode(response.body));
 
@@ -278,7 +276,7 @@ abstract class _HomeStore with Store {
       groupedEntries: groupedEntries,
       effectiveDays: targetStore.effectiveDays,
       monthlyTarget: monthlyTarget,
-      log: true,
+      // log: true,
     );
 
     log('-------------------------------------------------------------------');
