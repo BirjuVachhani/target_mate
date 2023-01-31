@@ -169,8 +169,9 @@ abstract class _HomeStore with Store {
       final DateFormat format = DateFormat('yyyy-MM-dd');
       final String startDate =
           format.format(DateTime(targetStore.year, targetStore.month, 1));
+      // endDate is exclusive, so we need use 1st of next month.
       final String endDate =
-          format.format(DateTime(targetStore.year, targetStore.month + 1, 0));
+          format.format(DateTime(targetStore.year, targetStore.month + 1, 1));
       final uri = Uri.parse(
           'https://api.track.toggl.com/api/v9/me/time_entries?start_date=$startDate&end_date=$endDate');
       log('Fetching data from $startDate to $endDate...');
@@ -189,6 +190,8 @@ abstract class _HomeStore with Store {
         log('Error', error: response.body);
         return null;
       }
+
+      print(JsonEncoder.withIndent('  ').convert(jsonDecode(response.body)));
 
       final List<JsonMap> data = List<JsonMap>.from(jsonDecode(response.body));
 
@@ -275,6 +278,7 @@ abstract class _HomeStore with Store {
       groupedEntries: groupedEntries,
       effectiveDays: targetStore.effectiveDays,
       monthlyTarget: monthlyTarget,
+      log: true,
     );
 
     log('-------------------------------------------------------------------');
