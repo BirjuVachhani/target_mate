@@ -88,6 +88,10 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
   /// Windows are only supported on desktop platforms.
   if (kIsWeb || !defaultTargetPlatform.isDesktop) return;
 
+  if(isFirstRun) {
+    log('Setting up window manager for the first time.');
+  }
+
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = WindowOptions(
     // Preserve window size if it is not the first run.

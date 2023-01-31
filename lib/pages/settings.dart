@@ -1,10 +1,12 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/resources/theme.dart';
@@ -70,6 +72,8 @@ class _SettingsPageState extends State<SettingsPage> {
   late final SettingsStore store = GetIt.instance.get<SettingsStore>();
   late final SystemTrayManager systemTrayManager =
       GetIt.instance.get<SystemTrayManager>();
+
+  late final Future<PackageInfo> packageInfo = PackageInfo.fromPlatform();
 
   @override
   Widget build(BuildContext context) {
@@ -159,13 +163,32 @@ class _SettingsPageState extends State<SettingsPage> {
                   const Spacer(),
                   Container(
                     alignment: Alignment.center,
-                    padding: const EdgeInsets.all(16),
                     child: Image.asset(
                       'assets/logo_trimmed.png',
                       width: 100,
                       color: context.theme.colorScheme.primary,
                     ),
                   ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: FutureBuilder<PackageInfo>(
+                      future: packageInfo,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return const SizedBox.shrink();
+                        final data = snapshot.data;
+                        if (data == null) return const SizedBox.shrink();
+                        return Text(
+                          'v${data.version}${data.packageName.contains('dev') || kDebugMode ? '-dev' : ''}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                 ],
               ),
             ),
