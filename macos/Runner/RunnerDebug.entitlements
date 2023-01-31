@@ -12,7 +12,7 @@
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)dev.birju.togglTarget</string>
+		<string>$(AppIdentifierPrefix)dev.birju.togglTarget.dev</string>
 	</array>
 </dict>
 </plist>

@@ -178,11 +178,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         final data = snapshot.data;
                         if (data == null) return const SizedBox.shrink();
                         return Text(
-                          'v${data.version}${data.packageName.contains('dev') || kDebugMode ? '-dev' : ''}',
+                          'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            color: Colors.white70,
+                            color: Colors.white60,
                             fontSize: 12,
+                            letterSpacing: 0.8,
                           ),
                         );
                       },

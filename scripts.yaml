@@ -7,7 +7,7 @@ build:
   macos: flutter build macos
   dmg:
     - flutter build macos
-    - sh installers/dmg/dmg.sh
+    - cd installers/dmg && sh create.sh
 bundle:
   dmg: cd installers/dmg && sh create.sh
 #  dmg: cd installers/dmg && appdmg "config.json" "../../Toggl Track.dmg"
