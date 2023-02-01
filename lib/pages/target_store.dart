@@ -100,7 +100,8 @@ abstract class _TargetStore with Store {
   void init() {
     month = box.get(HiveKeys.month, defaultValue: DateTime.now().month);
     year = box.get(HiveKeys.year, defaultValue: DateTime.now().year);
-    selectedDays = box.get(HiveKeys.workingDays, defaultValue: <int>[]);
+    selectedDays =
+        List<int>.from(box.get(HiveKeys.workingDays, defaultValue: <int>[]));
     selectedWeekDays = box.get(HiveKeys.weekDays, defaultValue: <int>[
       DateTime.monday,
       DateTime.tuesday,
@@ -124,6 +125,24 @@ abstract class _TargetStore with Store {
           ? maxMonthlyWorkingHours!.toStringAsFixed(0)
           : maxMonthlyWorkingHours!.toStringAsFixed(1);
     }
+
+    updateIfMonthChanged();
+  }
+
+  @action
+  void updateIfMonthChanged() {
+    if (month == today.month) return;
+    // Update local data.
+    month = today.month;
+    year = today.year;
+    selectedDays = <int>[];
+    hasCustomDaysSelection = false;
+
+    // Update stored data.
+    box.put(HiveKeys.month, today.month);
+    box.put(HiveKeys.year, today.year);
+    box.put(HiveKeys.hasCustomDaysSelection, false);
+    box.put(HiveKeys.workingDays, <int>[]);
   }
 
   @action
