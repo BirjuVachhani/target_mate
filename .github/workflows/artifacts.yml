@@ -140,5 +140,5 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/artifact/*
-          tag: ${{ github.event.inputs.tag ?? github.ref }}
+          tag: ${{ github.event.inputs.tag != '' ? github.event.inputs.tag : github.ref }}
           file_glob: true
