@@ -57,10 +57,17 @@ Future<void> initializeData() async {
   }
   log('Encryption key: $key');
 
+  // Secrets box
   await Hive.openBox(HiveKeys.secrets,
       encryptionCipher: HiveAesCipher(encryptionKey));
 
+  // window settings box
+  await Hive.openBox(HiveKeys.window);
+
+  // target box
   await Hive.openBox(HiveKeys.target);
+
+  // app settings box.
   final appSettings = await Hive.openBox(HiveKeys.settings);
 
   if (!appSettings.containsKey(HiveKeys.primaryColor)) {
@@ -82,19 +89,27 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
     log('Setting up window manager for the first time.');
   }
 
+  final double width =
+      Hive.box(HiveKeys.window).get(HiveKeys.width, defaultValue: 420.0);
+  final double height =
+      Hive.box(HiveKeys.window).get(HiveKeys.height, defaultValue: 800.0);
+
   await windowManager.ensureInitialized();
   WindowOptions windowOptions = WindowOptions(
     // Preserve window size if it is not the first run.
-    size: isFirstRun ? const Size(420, 800) : null,
+    size: Size(width, height),
     backgroundColor: Colors.transparent,
     titleBarStyle: TitleBarStyle.hidden,
     title: 'Toggl Target',
-    minimumSize: const Size(360, 450),
+    minimumSize: const Size(360, 520),
   );
   windowManager.waitUntilReadyToShow(windowOptions, () async {
     await windowManager.show();
     await windowManager.focus();
     windowManager.setSkipTaskbar(false);
+
+    // This will save window size on resize.
+    windowManager.addListener(WindowResizeListener());
   });
 }
 
@@ -132,5 +147,14 @@ class _MyAppState extends State<MyApp> {
     Hive.close();
     GetIt.instance.reset(dispose: true);
     super.dispose();
+  }
+}
+
+class WindowResizeListener extends WindowListener {
+  @override
+  void onWindowResized() async {
+    final Size size = await windowManager.getSize();
+    Hive.box(HiveKeys.window).put(HiveKeys.width, size.width);
+    Hive.box(HiveKeys.window).put(HiveKeys.height, size.height);
   }
 }

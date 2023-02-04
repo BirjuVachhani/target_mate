@@ -3,9 +3,12 @@ class HiveKeys {
 
   static const String key = 'key';
   static const String settings = 'settings';
+  static const String window = 'window';
+  static const String width = 'width';
+  static const String height = 'height';
   static const String secrets = 'secrets';
   static const String target = 'target';
-  static const String apiKey = 'api_key';
+  static const String authKey = 'auth_key';
   static const String onboarded = 'onboarded';
   static const String workspaceId = 'workspace_id';
   static const String workspaceName = 'workspace_name';

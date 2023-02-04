@@ -14,7 +14,6 @@ import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/resources/theme.dart';
 import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
-import 'package:toggl_target/ui/gradient_background.dart';
 import 'package:toggl_target/ui/widgets.dart';
 
 import '../resources/colors.dart';
@@ -97,122 +96,134 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GradientBackground(
-        child: CustomSafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: SizedBox(
-              width: 350,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CustomBackButton(usePrimaryColor: false),
-                  const SizedBox(height: 16),
-                  const SetupTitle('Select theme color'),
-                  const SizedBox(height: 8),
-                  Observer(
-                    builder: (context) {
-                      return ColorsView(
-                        current: store.themeColor,
-                        onSelected: (color) {
-                          store.setThemeColor(color);
-                          AdaptiveTheme.of(context).setTheme(
-                              light: getTheme(color), dark: getTheme(color));
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  const FieldLabel('Refresh frequency'),
-                  Observer(
-                    builder: (context) {
-                      return CustomDropdown<Duration>(
-                        value: store.refreshFrequency,
-                        isExpanded: true,
-                        onSelected: (value) {
-                          store.setRefreshFrequency(value);
-                          systemTrayManager.setSyncInterval(value);
-                        },
-                        selectedItemBuilder: (context, item) => Text(
-                          formatDuration(store.refreshFrequency),
+      body: CustomSafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: SizedBox(
+                    width: 350,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const CustomBackButton(usePrimaryColor: false),
+                        const SizedBox(height: 16),
+                        const SetupTitle('Select theme color'),
+                        const SizedBox(height: 8),
+                        Observer(
+                          builder: (context) {
+                            return ColorsView(
+                              current: store.themeColor,
+                              onSelected: (color) {
+                                store.setThemeColor(color);
+                                AdaptiveTheme.of(context).setTheme(
+                                    light: getTheme(color),
+                                    dark: getTheme(color));
+                              },
+                            );
+                          },
                         ),
-                        itemBuilder: (context, item) =>
-                            CustomDropdownMenuItem<Duration>(
-                          value: item,
-                          child: item.inMinutes != 5
-                              ? Text(
-                                  formatDuration(item),
-                                )
-                              : Text.rich(
-                                  TextSpan(
-                                    text: formatDuration(item),
-                                    children: [
-                                      TextSpan(
-                                        text: ' (Recommended)',
-                                        style: TextStyle(
-                                          color: store.refreshFrequency == item
-                                              ? context
-                                                  .theme.colorScheme.onPrimary
-                                              : Colors.white.withOpacity(0.5),
-                                          fontStyle: FontStyle.italic,
-                                          fontSize: 12,
+                        const SizedBox(height: 24),
+                        const FieldLabel('Refresh frequency'),
+                        Observer(
+                          builder: (context) {
+                            return CustomDropdown<Duration>(
+                              value: store.refreshFrequency,
+                              isExpanded: true,
+                              onSelected: (value) {
+                                store.setRefreshFrequency(value);
+                                systemTrayManager.setSyncInterval(value);
+                              },
+                              selectedItemBuilder: (context, item) => Text(
+                                formatDuration(store.refreshFrequency),
+                              ),
+                              itemBuilder: (context, item) =>
+                                  CustomDropdownMenuItem<Duration>(
+                                value: item,
+                                child: item.inMinutes != 5
+                                    ? Text(
+                                        formatDuration(item),
+                                      )
+                                    : Text.rich(
+                                        TextSpan(
+                                          text: formatDuration(item),
+                                          children: [
+                                            TextSpan(
+                                              text: ' (Recommended)',
+                                              style: TextStyle(
+                                                color:
+                                                    store.refreshFrequency ==
+                                                            item
+                                                        ? context
+                                                            .theme
+                                                            .colorScheme
+                                                            .onPrimary
+                                                        : Colors.white
+                                                            .withOpacity(0.5),
+                                                fontStyle: FontStyle.italic,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
+                              ),
+                              items: intervals,
+                            );
+                          },
                         ),
-                        items: intervals,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 40),
-                  Center(
-                    child: TextButton.icon(
-                      onPressed: logout,
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.red,
-                        backgroundColor: Colors.red.withOpacity(0.1),
-                      ),
-                      icon: const Icon(Icons.logout_rounded),
-                      label: const Text('Logout'),
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      'assets/logo_trimmed.png',
-                      width: 100,
-                      color: context.theme.colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: FutureBuilder<PackageInfo>(
-                      future: packageInfo,
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) return const SizedBox.shrink();
-                        final data = snapshot.data;
-                        if (data == null) return const SizedBox.shrink();
-                        return Text(
-                          'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white60,
-                            fontSize: 12,
-                            letterSpacing: 0.8,
+                        const SizedBox(height: 40),
+                        Center(
+                          child: TextButton.icon(
+                            onPressed: logout,
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                              backgroundColor: Colors.red.withOpacity(0.1),
+                            ),
+                            icon: const Icon(Icons.logout_rounded),
+                            label: const Text('Logout'),
                           ),
-                        );
-                      },
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 8),
-                ],
+                ),
               ),
             ),
-          ),
+            Container(
+              alignment: Alignment.center,
+              child: Image.asset(
+                'assets/logo_trimmed.png',
+                width: 100,
+                color: context.theme.colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Center(
+              child: FutureBuilder<PackageInfo>(
+                future: packageInfo,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return const SizedBox.shrink();
+                  final data = snapshot.data;
+                  if (data == null) return const SizedBox.shrink();
+                  return Text(
+                    'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white60,
+                      fontSize: 12,
+                      letterSpacing: 0.8,
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
         ),
       ),
     );

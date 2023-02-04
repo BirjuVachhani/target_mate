@@ -134,14 +134,14 @@ abstract class _HomeStore with Store {
   bool get isMonthlyTargetAchieved =>
       completed >= targetStore.requiredTargetDuration;
 
-  late String apiKey;
+  late String authKey;
   late String fullName;
   late String email;
   late String timezone;
   late String avatarUrl;
 
   Future<void> init() async {
-    apiKey = secretsBox.get(HiveKeys.apiKey);
+    authKey = secretsBox.get(HiveKeys.authKey);
     fullName = secretsBox.get(HiveKeys.fullName);
     email = secretsBox.get(HiveKeys.email);
     timezone = secretsBox.get(HiveKeys.timezone);
@@ -176,8 +176,6 @@ abstract class _HomeStore with Store {
           'https://api.track.toggl.com/api/v9/me/time_entries?start_date=$startDate&end_date=$endDate');
       log('Fetching data from $startDate until $endDate...');
       log('URL: $uri');
-      final apiKey = secretsBox.get(HiveKeys.apiKey);
-      final authKey = base64Encode('$apiKey:api_token'.codeUnits);
       final response = await http.get(
         uri,
         headers: {

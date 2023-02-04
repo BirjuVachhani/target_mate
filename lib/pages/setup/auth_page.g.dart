@@ -55,6 +55,53 @@ mixin _$AuthStore on _AuthStore, Store {
     });
   }
 
+  late final _$loginWithAPIKeyAtom =
+      Atom(name: '_AuthStore.loginWithAPIKey', context: context);
+
+  @override
+  bool get loginWithAPIKey {
+    _$loginWithAPIKeyAtom.reportRead();
+    return super.loginWithAPIKey;
+  }
+
+  @override
+  set loginWithAPIKey(bool value) {
+    _$loginWithAPIKeyAtom.reportWrite(value, super.loginWithAPIKey, () {
+      super.loginWithAPIKey = value;
+    });
+  }
+
+  late final _$emailAtom = Atom(name: '_AuthStore.email', context: context);
+
+  @override
+  String get email {
+    _$emailAtom.reportRead();
+    return super.email;
+  }
+
+  @override
+  set email(String value) {
+    _$emailAtom.reportWrite(value, super.email, () {
+      super.email = value;
+    });
+  }
+
+  late final _$passwordAtom =
+      Atom(name: '_AuthStore.password', context: context);
+
+  @override
+  String get password {
+    _$passwordAtom.reportRead();
+    return super.password;
+  }
+
+  @override
+  set password(String value) {
+    _$passwordAtom.reportWrite(value, super.password, () {
+      super.password = value;
+    });
+  }
+
   late final _$saveAndContinueAsyncAction =
       AsyncAction('_AuthStore.saveAndContinue', context: context);
 
@@ -63,12 +110,29 @@ mixin _$AuthStore on _AuthStore, Store {
     return _$saveAndContinueAsyncAction.run(() => super.saveAndContinue());
   }
 
+  late final _$_AuthStoreActionController =
+      ActionController(name: '_AuthStore', context: context);
+
+  @override
+  void setLoginWithAPIKey(bool value) {
+    final _$actionInfo = _$_AuthStoreActionController.startAction(
+        name: '_AuthStore.setLoginWithAPIKey');
+    try {
+      return super.setLoginWithAPIKey(value);
+    } finally {
+      _$_AuthStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 isLoading: ${isLoading},
 error: ${error},
-apiKey: ${apiKey}
+apiKey: ${apiKey},
+loginWithAPIKey: ${loginWithAPIKey},
+email: ${email},
+password: ${password}
     ''';
   }
 }

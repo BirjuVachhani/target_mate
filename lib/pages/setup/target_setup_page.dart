@@ -11,7 +11,6 @@ import 'package:paged_vertical_calendar/paged_vertical_calendar.dart';
 import 'package:paged_vertical_calendar/utils/date_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:toggl_target/ui/custom_switch.dart';
-import 'package:toggl_target/ui/gradient_background.dart';
 import 'package:toggl_target/ui/widgets.dart';
 import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -61,8 +60,8 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
         return true;
       },
       child: Scaffold(
-        body: GradientBackground(
-          child: CustomSafeArea(
+        body: CustomSafeArea(
+          child: Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: SingleChildScrollView(

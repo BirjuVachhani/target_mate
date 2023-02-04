@@ -163,7 +163,7 @@ class WorkspaceSelectionStore = _WorkspaceSelectionStore
 abstract class _WorkspaceSelectionStore with Store {
   _WorkspaceSelectionStore(this.workspaces) {
     selectedWorkspaceId = workspaces.first['id'];
-    apiKey = box.get(HiveKeys.apiKey);
+    authKey = box.get(HiveKeys.authKey);
   }
 
   late final Box box = getSecretsBox();
@@ -175,7 +175,7 @@ abstract class _WorkspaceSelectionStore with Store {
   String? error;
 
   final List<Map<String, dynamic>> workspaces;
-  late final String apiKey;
+  late final String authKey;
 
   List<Map<String, dynamic>> projects = [];
 
@@ -188,7 +188,6 @@ abstract class _WorkspaceSelectionStore with Store {
     isLoading = true;
     error = null;
     try {
-      final authKey = base64Encode('$apiKey:api_token'.codeUnits);
 
       // Load projects.
       final response = await http.get(

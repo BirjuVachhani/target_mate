@@ -53,7 +53,8 @@ Future<void> logout({bool navigate = true}) async {
   final adaptiveTheme = AdaptiveTheme.of(navigator.context);
 
   // Delete saved data.
-  await Hive.deleteFromDisk();
+  await Hive.deleteBoxFromDisk(HiveKeys.secrets);
+  await Hive.deleteBoxFromDisk(HiveKeys.settings);
 
   // Delete data from secure storage. (Encryption key)
   await GetIt.instance.get<FlutterSecureStorage>().deleteAll();

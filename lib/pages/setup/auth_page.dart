@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -47,10 +48,10 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-  late final AuthStore store = context.read<AuthStore>();
-
   late final TapGestureRecognizer recognizer = TapGestureRecognizer()
-    ..onTap = () => launchUrlString('https://track.toggl.com/profile');
+    ..onTap = () => launchUrlString('https://toggl.com/track');
+
+  late final AuthStore store = context.read<AuthStore>();
 
   late bool restoreTheme = widget.restoreTheme;
 
@@ -66,79 +67,69 @@ class _AuthPageState extends State<AuthPage> {
           padding: const EdgeInsets.all(32),
           child: SizedBox(
             width: 350,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SetupTitle('API key'),
-                // https://track.toggl.com/profile
-                Text.rich(
-                  TextSpan(
-                    text: 'You can find your API key in your profile settings '
-                        'on Toggl Track. ',
-                    children: [
-                      TextSpan(
-                        text: 'Go to profile settings.',
-                        recognizer: recognizer,
-                        style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.w600,
-                          color: context.theme.colorScheme.primary,
+            child: AnimatedSize(
+              alignment: Alignment.topCenter,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'Welcome to',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      'assets/logo_trimmed.png',
+                      fit: BoxFit.fitWidth,
+                      width: 200,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text.rich(
+                    TextSpan(
+                      text: 'A companion app for  ',
+                      children: [
+                        TextSpan(
+                          text: 'Toggl Track.',
+                          recognizer: recognizer,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: context.theme.colorScheme.primary,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  style: subtitleTextStyle,
-                ),
-                const SizedBox(height: 16),
-                Observer(builder: (context) {
-                  return TextFormField(
-                    controller: store.apiKeyController,
-                    onChanged: (value) {
-                      store.apiKey = value;
-                      store.error = null;
-                    },
-                    maxLength: 32,
-                    maxLines: 1,
-                    readOnly: store.isLoading,
-                    textInputAction: TextInputAction.go,
-                    onFieldSubmitted: (_) => store.saveAndContinue(),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[a-f0-9]')),
-                    ],
-                    decoration: const InputDecoration(
-                      hintText: 'Enter your 32 digit API key',
-                      counterText: '',
+                      ],
                     ),
-                  );
-                }),
-                const SizedBox(height: 32),
-                Observer(
-                  builder: (context) => ElevatedButton(
-                    onPressed: store.apiKey.isEmpty ? null : onNext,
-                    child: store.isLoading
-                        ? FittedBox(
-                            child: SpinKitThreeBounce(
-                              color: context.theme.colorScheme.onPrimary,
-                              size: 18,
-                            ),
-                          )
-                        : const Text('Next'),
-                  ),
-                ),
-                Observer(builder: (context) {
-                  if (store.error == null) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      'Error: ${store.error}',
-                      style: const TextStyle(
-                        color: Colors.red,
-                      ),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white70,
                     ),
-                  );
-                }),
-              ],
+                  ),
+                  const SizedBox(height: 48),
+                  Observer(
+                    builder: (context) => AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      reverseDuration: const Duration(milliseconds: 250),
+                      switchInCurve: Curves.easeInOut,
+                      switchOutCurve: Curves.easeInOut,
+                      child: store.loginWithAPIKey
+                          ? ApiKeyUI(onNext: onNext)
+                          : BasicAuthUI(onNext: onNext),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -168,11 +159,292 @@ class _AuthPageState extends State<AuthPage> {
   }
 }
 
+class ApiKeyUI extends StatefulWidget {
+  final VoidCallback onNext;
+
+  const ApiKeyUI({super.key, required this.onNext});
+
+  @override
+  State<ApiKeyUI> createState() => _ApiKeyUIState();
+}
+
+class _ApiKeyUIState extends State<ApiKeyUI> {
+  late final TapGestureRecognizer recognizer = TapGestureRecognizer()
+    ..onTap = () => launchUrlString('https://track.toggl.com/profile');
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.read<AuthStore>();
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SetupTitle('API key'),
+        // https://track.toggl.com/profile
+        Text.rich(
+          TextSpan(
+            text: 'You can find your API key in your profile settings '
+                'on Toggl Track. ',
+            children: [
+              TextSpan(
+                text: 'Go to profile settings.',
+                recognizer: recognizer,
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.w600,
+                  color: context.theme.colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+          style: subtitleTextStyle,
+        ),
+        const SizedBox(height: 16),
+        Observer(
+          builder: (context) {
+            if (store.error == null) return const SizedBox.shrink();
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: context.theme.colorScheme.error.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: context.theme.colorScheme.error.withOpacity(0.2),
+                ),
+              ),
+              child: Text(
+                '${store.error}',
+                style: const TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            );
+          },
+        ),
+        Observer(builder: (context) {
+          return TextFormField(
+            controller: store.apiKeyController,
+            onChanged: (value) {
+              store.apiKey = value;
+              store.error = null;
+            },
+            maxLength: 32,
+            maxLines: 1,
+            readOnly: store.isLoading,
+            textInputAction: TextInputAction.go,
+            onFieldSubmitted: (_) => widget.onNext(),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[a-f0-9]')),
+            ],
+            decoration: const InputDecoration(
+              hintText: 'Enter your 32 digit API key',
+              counterText: '',
+            ),
+          );
+        }),
+        const SizedBox(height: 32),
+        Observer(
+          builder: (context) => ElevatedButton(
+            onPressed: store.apiKey.isEmpty ? null : widget.onNext,
+            child: store.isLoading
+                ? FittedBox(
+                    child: SpinKitThreeBounce(
+                      color: context.theme.colorScheme.onPrimary,
+                      size: 18,
+                    ),
+                  )
+                : const Text('Next'),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: Text(
+            'OR',
+            style: subtitleTextStyle,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: GestureDetectorWithCursor(
+            onTap: () => store.setLoginWithAPIKey(false),
+            child: Text(
+              'Login with credentials.',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: context.theme.colorScheme.primary,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    recognizer.dispose();
+    super.dispose();
+  }
+}
+
+class BasicAuthUI extends StatefulWidget {
+  final VoidCallback onNext;
+
+  const BasicAuthUI({super.key, required this.onNext});
+
+  @override
+  State<BasicAuthUI> createState() => _BasicAuthUIState();
+}
+
+class _BasicAuthUIState extends State<BasicAuthUI> {
+  late final TapGestureRecognizer recognizer = TapGestureRecognizer()
+    ..onTap = () => launchUrlString('https://toggl.com/track');
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.read<AuthStore>();
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SetupTitle('Login with Credentials'),
+        Text.rich(
+          TextSpan(
+            text: 'Login with your credentials for ',
+            children: [
+              TextSpan(
+                text: 'Toggl Track.',
+                recognizer: recognizer,
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  fontWeight: FontWeight.w600,
+                  color: context.theme.colorScheme.onSurface.withOpacity(0.8),
+                ),
+              ),
+            ],
+          ),
+          style: subtitleTextStyle,
+        ),
+        const SizedBox(height: 16),
+        Observer(
+          builder: (context) {
+            if (store.error == null) return const SizedBox.shrink();
+            return Container(
+              margin: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: context.theme.colorScheme.error.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: context.theme.colorScheme.error.withOpacity(0.2),
+                ),
+              ),
+              child: Text(
+                '${store.error}',
+                style: const TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            );
+          },
+        ),
+        Observer(builder: (context) {
+          return TextFormField(
+            controller: store.emailController,
+            onChanged: (value) {
+              store.email = value;
+              store.error = null;
+            },
+            maxLength: 32,
+            maxLines: 1,
+            autofillHints: const [AutofillHints.email],
+            keyboardType: TextInputType.emailAddress,
+            readOnly: store.isLoading,
+            textInputAction: TextInputAction.go,
+            inputFormatters: [
+              FilteringTextInputFormatter.deny(' '),
+            ],
+            decoration: const InputDecoration(
+              hintText: 'Enter your email',
+              counterText: '',
+            ),
+          );
+        }),
+        const SizedBox(height: 16),
+        Observer(builder: (context) {
+          return TextFormField(
+            controller: store.passwordController,
+            onChanged: (value) {
+              store.password = value;
+              store.error = null;
+            },
+            maxLength: 32,
+            maxLines: 1,
+            obscureText: true,
+            readOnly: store.isLoading,
+            textInputAction: TextInputAction.go,
+            onFieldSubmitted: (_) => widget.onNext(),
+            decoration: const InputDecoration(
+              hintText: 'Enter your password',
+              counterText: '',
+            ),
+          );
+        }),
+        const SizedBox(height: 32),
+        Observer(
+          builder: (context) => ElevatedButton(
+            onPressed: store.email.isEmpty || store.password.isEmpty
+                ? null
+                : widget.onNext,
+            child: store.isLoading
+                ? FittedBox(
+                    child: SpinKitThreeBounce(
+                      color: context.theme.colorScheme.onPrimary,
+                      size: 18,
+                    ),
+                  )
+                : const Text('Next'),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: Text(
+            'OR',
+            style: subtitleTextStyle,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: GestureDetectorWithCursor(
+            onTap: () => store.setLoginWithAPIKey(true),
+            child: Text(
+              'Login with API key',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: context.theme.colorScheme.primary,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  void dispose() {
+    recognizer.dispose();
+    super.dispose();
+  }
+}
+
 // ignore: library_private_types_in_public_api
 class AuthStore = _AuthStore with _$AuthStore;
 
 abstract class _AuthStore with Store {
   late final TextEditingController apiKeyController = TextEditingController();
+  late final TextEditingController emailController = TextEditingController();
+  late final TextEditingController passwordController = TextEditingController();
 
   late final Box box = getSecretsBox();
 
@@ -187,12 +459,31 @@ abstract class _AuthStore with Store {
 
   List<Map<String, dynamic>> workspaces = [];
 
+  @observable
+  bool loginWithAPIKey = false;
+
+  @observable
+  String email = '';
+
+  @observable
+  String password = '';
+
   @action
   Future<bool> saveAndContinue() async {
     if (isLoading) return false;
+
+    if (!loginWithAPIKey) {
+      if (!email.isEmail) {
+        error = 'Invalid email';
+        return false;
+      }
+    }
+
     isLoading = true;
     try {
-      final authKey = base64Encode('$apiKey:api_token'.codeUnits);
+      final authKey = loginWithAPIKey
+          ? base64Encode('$apiKey:api_token'.codeUnits)
+          : base64Encode('$email:$password'.codeUnits);
 
       final profileResponse = await http.get(
         Uri.parse('https://api.track.toggl.com/api/v9/me'),
@@ -204,7 +495,12 @@ abstract class _AuthStore with Store {
 
       if (profileResponse.statusCode != 200) {
         log(profileResponse.body);
-        error = 'Invalid API key';
+        if (loginWithAPIKey) {
+          error = 'Invalid API key';
+        } else {
+          error = 'Incorrect email or password';
+        }
+        isLoading = false;
         return false;
       }
 
@@ -222,7 +518,11 @@ abstract class _AuthStore with Store {
       isLoading = false;
       if (response.statusCode != 200) {
         log(response.body);
-        error = 'Invalid API key';
+        if (loginWithAPIKey) {
+          error = 'Invalid API key';
+        } else {
+          error = 'Incorrect email or password';
+        }
         return false;
       }
       final data = List.from(jsonDecode(response.body));
@@ -235,7 +535,7 @@ abstract class _AuthStore with Store {
       log('${workspaces.length} workspaces found');
 
       await box.putAll({
-        HiveKeys.apiKey: apiKey,
+        HiveKeys.authKey: authKey,
         HiveKeys.fullName: profile['fullname'],
         HiveKeys.email: profile['email'],
         HiveKeys.timezone: profile['timezone'],
@@ -250,6 +550,21 @@ abstract class _AuthStore with Store {
       error = err.toString();
       return false;
     }
+  }
+
+  @action
+  void setLoginWithAPIKey(bool value) {
+    if (value) {
+      apiKeyController.clear();
+      apiKey = '';
+    } else {
+      emailController.clear();
+      passwordController.clear();
+      email = '';
+      password = '';
+    }
+    error = null;
+    loginWithAPIKey = value;
   }
 
   void dispose() {

@@ -174,7 +174,7 @@ class ProjectSelectionStore = _ProjectSelectionStore
 
 abstract class _ProjectSelectionStore with Store {
   _ProjectSelectionStore(this.projects) {
-    apiKey = box.get(HiveKeys.apiKey);
+    authKey = box.get(HiveKeys.authKey);
   }
 
   late final Box box = getSecretsBox();
@@ -186,7 +186,7 @@ abstract class _ProjectSelectionStore with Store {
   String? error;
 
   final List<Map<String, dynamic>> projects;
-  late final String apiKey;
+  late final String authKey;
 
   @observable
   int? selectedProjectId = -1;
