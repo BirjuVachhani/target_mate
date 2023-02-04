@@ -11,15 +11,17 @@ on:
       macos:
         description: 'Run macos build'
         required: true
-        default: 'true'
+        type: boolean
+        default: true
       android:
         description: 'Run Android build'
         required: true
-        default: 'true'
+        type: boolean
+        default: true
 
 jobs:
   android:
-    if: ${{ github.event.inputs.android == 'true' }}
+    if: ${{ github.event.inputs.android }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -70,7 +72,7 @@ jobs:
           rm android/keystore/release.jks
 
   macos:
-    if: ${{ github.event.inputs.macos == 'true' }}
+    if: ${{ github.event.inputs.macos }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
