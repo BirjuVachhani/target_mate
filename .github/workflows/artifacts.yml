@@ -10,12 +10,12 @@ on:
         required: true
       macos:
         description: 'Run macos build'
-        required: false
-        default: true
+        required: true
+        default: 'true'
       android:
         description: 'Run Android build'
-        required: false
-        default: true
+        required: true
+        default: 'true'
 
 jobs:
   android:
