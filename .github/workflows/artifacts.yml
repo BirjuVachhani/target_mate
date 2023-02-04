@@ -8,9 +8,18 @@ on:
       tag:
         description: 'Release Tag'
         required: true
+      macos:
+        description: 'Run macos build'
+        required: false
+        default: true
+      android:
+        description: 'Run Android build'
+        required: false
+        default: true
 
 jobs:
   android:
+    if: ${{ github.event.inputs.android == true }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -61,6 +70,7 @@ jobs:
           rm android/keystore/release.jks
 
   macos:
+    if: ${{ github.event.inputs.macos == true }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
