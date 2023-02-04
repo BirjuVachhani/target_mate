@@ -7,9 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:toggl_target/pages/home_store.dart';
-import 'package:toggl_target/pages/settings.dart';
-import 'package:toggl_target/pages/target_store.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/utils/extensions.dart';
 import 'package:window_manager/window_manager.dart';
@@ -72,15 +69,8 @@ Future<void> initializeData() async {
 
   // Initialize GetIt registry.
   GetIt.instance.registerSingleton<FlutterSecureStorage>(secureStorage);
-  GetIt.instance.registerLazySingleton<TargetStore>(() => TargetStore(),
-      dispose: (store) => store.dispose());
-
   GetIt.instance.registerSingleton<SystemTrayManager>(SystemTrayManager(),
       dispose: (manager) => manager.dispose());
-  GetIt.instance.registerLazySingleton(() => HomeStore(),
-      dispose: (store) => store.dispose());
-  GetIt.instance.registerLazySingleton(() => SettingsStore(),
-      dispose: (store) => store.dispose());
 }
 
 /// Sets up the window on desktop platforms.
@@ -88,7 +78,7 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
   /// Windows are only supported on desktop platforms.
   if (kIsWeb || !defaultTargetPlatform.isDesktop) return;
 
-  if(isFirstRun) {
+  if (isFirstRun) {
     log('Setting up window manager for the first time.');
   }
 
@@ -132,7 +122,7 @@ class _MyAppState extends State<MyApp> {
         navigatorKey: navigatorKey,
         theme: theme,
         darkTheme: darkTheme,
-        home: isOnboarded ? const HomePage() : const AuthPageWrapper(),
+        home: isOnboarded ? const HomePageWrapper() : const AuthPageWrapper(),
       ),
     );
   }

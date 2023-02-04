@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/resources/theme.dart';
@@ -40,7 +43,21 @@ abstract class _SettingsStore with Store {
   @observable
   Duration refreshFrequency = 5.minutes;
 
+  StreamSubscription? subscription;
+
   void init() {
+    subscription = getAppSettingsBox()
+        .watch(key: HiveKeys.refreshFrequency)
+        .listen((event) {
+      refresh();
+    });
+
+    themeColor = Color(box.get(HiveKeys.primaryColor));
+    refreshFrequency =
+        Duration(minutes: box.get(HiveKeys.refreshFrequency, defaultValue: 5));
+  }
+
+  void refresh() {
     themeColor = Color(box.get(HiveKeys.primaryColor));
     refreshFrequency =
         Duration(minutes: box.get(HiveKeys.refreshFrequency, defaultValue: 5));
@@ -58,7 +75,9 @@ abstract class _SettingsStore with Store {
     box.put(HiveKeys.refreshFrequency, duration.inMinutes);
   }
 
-  void dispose() {}
+  void dispose() {
+    subscription?.cancel();
+  }
 }
 
 class SettingsPage extends StatefulWidget {
@@ -69,7 +88,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late final SettingsStore store = GetIt.instance.get<SettingsStore>();
+  late final SettingsStore store = context.read<SettingsStore>();
   late final SystemTrayManager systemTrayManager =
       GetIt.instance.get<SystemTrayManager>();
 

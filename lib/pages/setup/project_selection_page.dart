@@ -79,9 +79,11 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
                       isExpanded: true,
                       onSelected: (value) => store.selectedProjectId = value,
                       itemBuilder: (context, item) {
-                        final name = store.projects
-                            .firstWhere((e) => e['id'] == item)['name']
-                            .toString();
+                        final name = item == -1
+                            ? 'All'
+                            : store.projects
+                                .firstWhere((e) => e['id'] == item)['name']
+                                .toString();
                         return CustomDropdownMenuItem<int>(
                           value: item,
                           child: Text(
@@ -97,7 +99,8 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
                           ),
                         );
                       },
-                      items: store.projects.map<int>((e) => e['id']).toList(),
+                      items: store.projects.map<int>((e) => e['id']).toList()
+                        ..insert(0, -1),
                     );
                   },
                 ),
@@ -109,7 +112,7 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed:
-                              store.selectedProjectId == -1 ? null : onNext,
+                              store.selectedProjectId == null ? null : onNext,
                           child: store.isLoading
                               ? FittedBox(
                                   child: SpinKitThreeBounce(
@@ -154,7 +157,7 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
   void onSuccess() {
     Navigator.push(
       context,
-      FadeThroughPageRoute(child: const TargetSetupPage()),
+      FadeThroughPageRoute(child: const TargetSetupPageWrapper()),
     );
   }
 
@@ -171,7 +174,6 @@ class ProjectSelectionStore = _ProjectSelectionStore
 
 abstract class _ProjectSelectionStore with Store {
   _ProjectSelectionStore(this.projects) {
-    selectedProjectId = projects.first['id'];
     apiKey = box.get(HiveKeys.apiKey);
   }
 
@@ -187,7 +189,7 @@ abstract class _ProjectSelectionStore with Store {
   late final String apiKey;
 
   @observable
-  int? selectedProjectId;
+  int? selectedProjectId = -1;
 
   @action
   Future<bool> saveAndContinue() async {
@@ -195,9 +197,15 @@ abstract class _ProjectSelectionStore with Store {
     isLoading = true;
     error = null;
     try {
-      final String name = projects
-          .firstWhere((element) => element['id'] == selectedProjectId)['name'];
-      await box.put(HiveKeys.projectId, selectedProjectId);
+      final String name = selectedProjectId == -1
+          ? 'All'
+          : projects.firstWhere(
+              (element) => element['id'] == selectedProjectId)['name'];
+      if (selectedProjectId == -1) {
+        await box.delete(HiveKeys.projectId);
+      } else {
+        await box.put(HiveKeys.projectId, selectedProjectId);
+      }
       await box.put(HiveKeys.projectName, name);
       isLoading = false;
       return true;

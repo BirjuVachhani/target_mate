@@ -130,6 +130,9 @@ abstract class _TargetStore with Store {
   }
 
   @action
+  void refresh() => init();
+
+  @action
   void updateIfMonthChanged() {
     if (month == today.month) return;
     // Update local data.

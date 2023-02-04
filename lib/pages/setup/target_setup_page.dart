@@ -6,10 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
-import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:paged_vertical_calendar/paged_vertical_calendar.dart';
 import 'package:paged_vertical_calendar/utils/date_utils.dart';
+import 'package:provider/provider.dart';
 import 'package:toggl_target/ui/custom_switch.dart';
 import 'package:toggl_target/ui/gradient_background.dart';
 import 'package:toggl_target/ui/widgets.dart';
@@ -23,6 +23,18 @@ import '../../ui/gesture_detector_with_cursor.dart';
 import '../home.dart';
 import '../target_store.dart';
 
+class TargetSetupPageWrapper extends StatelessWidget {
+  const TargetSetupPageWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Provider(
+      create: (context) => TargetStore(),
+      child: const TargetSetupPage(),
+    );
+  }
+}
+
 class TargetSetupPage extends StatefulWidget {
   const TargetSetupPage({super.key});
 
@@ -31,7 +43,7 @@ class TargetSetupPage extends StatefulWidget {
 }
 
 class _TargetSetupPageState extends State<TargetSetupPage> {
-  late final TargetStore store = GetIt.instance.get<TargetStore>();
+  late final TargetStore store = context.read<TargetStore>();
 
   late final TapGestureRecognizer recognizer = TapGestureRecognizer()
     ..onTap = () => launchUrlString('https://track.toggl.com/profile');
@@ -291,8 +303,8 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
     } else {
       await getSecretsBox().put(HiveKeys.onboarded, true);
       navigator.pushAndRemoveUntil(
-        FadeScalePageRoute(child: const HomePage()),
-        (route) => true,
+        FadeScalePageRoute(child: const HomePageWrapper()),
+        (route) => false,
       );
     }
   }

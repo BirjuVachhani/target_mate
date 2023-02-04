@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,20 +23,24 @@ import 'workspace_selection_page.dart';
 part 'auth_page.g.dart';
 
 class AuthPageWrapper extends StatelessWidget {
-  const AuthPageWrapper({super.key});
+  final bool restoreTheme;
+
+  const AuthPageWrapper({super.key, this.restoreTheme = false});
 
   @override
   Widget build(BuildContext context) {
     return Provider(
       create: (context) => AuthStore(),
       dispose: (context, store) => store.dispose(),
-      child: const AuthPage(),
+      child: AuthPage(restoreTheme: restoreTheme),
     );
   }
 }
 
 class AuthPage extends StatefulWidget {
-  const AuthPage({super.key});
+  final bool restoreTheme;
+
+  const AuthPage({super.key, this.restoreTheme = false});
 
   @override
   State<AuthPage> createState() => _AuthPageState();
@@ -47,8 +52,14 @@ class _AuthPageState extends State<AuthPage> {
   late final TapGestureRecognizer recognizer = TapGestureRecognizer()
     ..onTap = () => launchUrlString('https://track.toggl.com/profile');
 
+  late bool restoreTheme = widget.restoreTheme;
+
   @override
   Widget build(BuildContext context) {
+    if (restoreTheme) {
+      restoreTheme = false;
+      Future.delayed(Duration.zero, () => AdaptiveTheme.of(context).reset());
+    }
     return Scaffold(
       body: Center(
         child: Padding(

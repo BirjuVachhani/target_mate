@@ -216,6 +216,28 @@ mixin _$TargetStore on _TargetStore, Store {
   }
 
   @override
+  void refresh() {
+    final _$actionInfo = _$_TargetStoreActionController.startAction(
+        name: '_TargetStore.refresh');
+    try {
+      return super.refresh();
+    } finally {
+      _$_TargetStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void updateIfMonthChanged() {
+    final _$actionInfo = _$_TargetStoreActionController.startAction(
+        name: '_TargetStore.updateIfMonthChanged');
+    try {
+      return super.updateIfMonthChanged();
+    } finally {
+      _$_TargetStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void onShowCalendar(bool show) {
     final _$actionInfo = _$_TargetStoreActionController.startAction(
         name: '_TargetStore.onShowCalendar');

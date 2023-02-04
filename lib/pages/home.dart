@@ -7,8 +7,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/model/day_entry.dart';
 import 'package:toggl_target/pages/settings.dart';
@@ -22,6 +22,34 @@ import '../ui/gradient_background.dart';
 import '../utils/utils.dart';
 import 'home_store.dart';
 
+class HomePageWrapper extends StatelessWidget {
+  const HomePageWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        Provider(
+          create: (context) => TargetStore(),
+          dispose: (context, store) => store.dispose(),
+        ),
+        Provider(
+          create: (context) => SettingsStore(),
+          dispose: (context, store) => store.dispose(),
+        ),
+        ProxyProvider<TargetStore, HomeStore>(
+          create: (context) =>
+              HomeStore(Provider.of<TargetStore>(context, listen: false)),
+          update: (context, targetStore, previous) {
+            return previous ?? HomeStore(targetStore);
+          },
+        ),
+      ],
+      child: const HomePage(),
+    );
+  }
+}
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -30,8 +58,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final HomeStore store = GetIt.instance.get<HomeStore>();
-  late final TargetStore targetStore = GetIt.instance.get<TargetStore>();
+  late final HomeStore store = context.read<HomeStore>();
+  late final TargetStore targetStore = context.read<TargetStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -136,10 +164,14 @@ class _HomePageState extends State<HomePage> {
   Future<void> onEdit() async {
     final bool? modified = await Navigator.of(context).push<bool?>(
       MaterialPageRoute(
-        builder: (context) => const TargetSetupPage(),
+        builder: (context) => Provider.value(
+          value: targetStore,
+          child: const TargetSetupPage(),
+        ),
       ),
     );
     if (modified == true) {
+      targetStore.refresh();
       store.refreshData();
     }
   }
@@ -154,8 +186,8 @@ class BottomBar extends StatefulWidget {
 
 class _BottomBarState extends State<BottomBar>
     with SingleTickerProviderStateMixin {
-  late final store = GetIt.instance.get<HomeStore>();
-  late final settingsStore = GetIt.instance.get<SettingsStore>();
+  late final store = context.read<HomeStore>();
+  late final settingsStore = context.read<SettingsStore>();
 
   late DateTime _initialTime;
   late DateTime _now;
@@ -206,7 +238,6 @@ class _BottomBarState extends State<BottomBar>
 
   @override
   Widget build(BuildContext context) {
-    final store = GetIt.instance.get<HomeStore>();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -540,8 +571,8 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeStore store = GetIt.instance.get<HomeStore>();
-    final TargetStore targetStore = GetIt.instance.get<TargetStore>();
+    final HomeStore store = context.read<HomeStore>();
+    final TargetStore targetStore = context.read<TargetStore>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -934,9 +965,13 @@ class HomeHeader extends StatelessWidget {
   }
 
   void openSettings(BuildContext context) {
+    final settingsStore = context.read<SettingsStore>();
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => const SettingsPage(),
+        builder: (_) => Provider.value(
+          value: settingsStore,
+          child: const SettingsPage(),
+        ),
       ),
     );
   }
@@ -947,8 +982,8 @@ class TodayProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final HomeStore store = GetIt.instance.get<HomeStore>();
-    final TargetStore targetStore = GetIt.instance.get<TargetStore>();
+    final HomeStore store = context.read<HomeStore>();
+    final TargetStore targetStore = context.read<TargetStore>();
     return Observer(
       builder: (context) {
         if (store.isMonthlyTargetAchieved) {

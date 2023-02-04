@@ -21,14 +21,14 @@ part 'home_store.g.dart';
 class HomeStore = _HomeStore with _$HomeStore;
 
 abstract class _HomeStore with Store {
-  late final TargetStore targetStore = GetIt.instance.get<TargetStore>();
+  TargetStore targetStore;
   late final SystemTrayManager systemTrayManager =
       GetIt.instance.get<SystemTrayManager>();
 
   late final Box secretsBox = getSecretsBox();
   late final Box settingsBox = getAppSettingsBox();
 
-  _HomeStore() {
+  _HomeStore(this.targetStore) {
     init();
   }
 
@@ -147,7 +147,7 @@ abstract class _HomeStore with Store {
     timezone = secretsBox.get(HiveKeys.timezone);
     avatarUrl = secretsBox.get(HiveKeys.avatarUrl) ?? '';
 
-    await systemTrayManager.init();
+    await systemTrayManager.init(refreshCallback: refreshData);
     await refreshData();
   }
 

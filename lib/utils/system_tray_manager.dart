@@ -1,10 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:get_it/get_it.dart';
 import 'package:system_tray/system_tray.dart';
-import 'package:toggl_target/pages/home_store.dart';
-import 'package:toggl_target/pages/settings.dart';
+import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/utils/extensions.dart';
 
 import 'utils.dart';
@@ -22,9 +21,6 @@ class SystemTrayManager {
 
   bool get isInitialized => _systemTray != null && _appWindow != null;
 
-  late final SettingsStore settingsStore = GetIt.instance.get<SettingsStore>();
-  late final HomeStore homeStore = GetIt.instance.get<HomeStore>();
-
   bool get isNotSupported => kIsWeb || !defaultTargetPlatform.isDesktop;
 
   late final Map<Duration, MenuItemCheckbox> intervalItems = {
@@ -35,91 +31,105 @@ class SystemTrayManager {
             : interval.inMinutes == 60
                 ? 'Every hour'
                 : 'Every ${interval.inMinutes} minutes',
-        checked: settingsStore.refreshFrequency == interval,
+        checked: refreshFrequency == interval,
         onClicked: (item) => _onIntervalItemSelected(interval),
       ),
   };
 
-  Future<void> init() async {
-    if (isNotSupported) return;
+  late Duration refreshFrequency;
 
-    _systemTray = SystemTray();
-    _appWindow = AppWindow();
-    _menu = Menu();
+  Future<void> init({required VoidCallback refreshCallback}) async {
+    try {
+      if (isNotSupported) return;
 
-    String path = defaultTargetPlatform.isWindows
-        ? 'assets/icon_system_tray.ico'
-        : 'assets/icon_system_tray.png';
+      refreshFrequency = Duration(
+          minutes: getAppSettingsBox()
+              .get(HiveKeys.refreshFrequency, defaultValue: 5));
 
-    // We first init the systray menu
-    await systemTray.initSystemTray(
-      title: 'Toggl Target',
-      toolTip: 'Toggl Target',
-      iconPath: path,
-    );
+      _systemTray = SystemTray();
+      _appWindow = AppWindow();
+      _menu = Menu();
 
-    // create context menu
-    await menu.buildFrom([
-      if (homeStore.fullName.isNotEmpty)
+      final box = getSecretsBox();
+      final fullName = box.get(HiveKeys.fullName);
+      final email = box.get(HiveKeys.email);
+
+      String path = defaultTargetPlatform.isWindows
+          ? 'assets/icon_system_tray.ico'
+          : 'assets/icon_system_tray.png';
+
+      // We first init the systray menu
+      await systemTray.initSystemTray(
+        title: 'Toggl Target',
+        toolTip: 'Toggl Target',
+        iconPath: path,
+      );
+
+      // create context menu
+      await menu.buildFrom([
+        if (fullName.isNotEmpty)
+          MenuItemLabel(
+            label: fullName,
+            name: 'fullName',
+            enabled: false,
+          ),
+        if (email.isNotEmpty)
+          MenuItemLabel(
+            label: email,
+            name: 'email',
+            enabled: false,
+          ),
+        MenuSeparator(),
         MenuItemLabel(
-          label: homeStore.fullName,
-          name: 'fullName',
-          enabled: false,
+          label: 'Sync',
+          name: 'sync',
+          onClicked: (menuItem) => refreshCallback(),
         ),
-      if (homeStore.email.isNotEmpty)
+        SubMenu(label: 'Sync Interval', children: intervalItems.values.toList())
+          ..name = 'syncInterval',
+        MenuSeparator(),
         MenuItemLabel(
-          label: homeStore.email,
-          name: 'email',
-          enabled: false,
+          label: 'Show',
+          name: 'show',
+          onClicked: (menuItem) => appWindow.show(),
         ),
-      MenuSeparator(),
-      MenuItemLabel(
-        label: 'Sync',
-        name: 'sync',
-        onClicked: (menuItem) => homeStore.refreshData(),
-      ),
-      SubMenu(label: 'Sync Interval', children: intervalItems.values.toList())
-        ..name = 'syncInterval',
-      MenuSeparator(),
-      MenuItemLabel(
-        label: 'Show',
-        name: 'show',
-        onClicked: (menuItem) => appWindow.show(),
-      ),
-      MenuItemLabel(
-        label: 'Hide',
-        name: 'hide',
-        onClicked: (menuItem) => appWindow.hide(),
-      ),
-      MenuItemLabel(
-        label: 'Quit',
-        name: 'quit',
-        onClicked: (menuItem) => appWindow.close(),
-      ),
-    ]);
+        MenuItemLabel(
+          label: 'Hide',
+          name: 'hide',
+          onClicked: (menuItem) => appWindow.hide(),
+        ),
+        MenuItemLabel(
+          label: 'Quit',
+          name: 'quit',
+          onClicked: (menuItem) => appWindow.close(),
+        ),
+      ]);
 
-    // set context menu
-    await systemTray.setContextMenu(menu);
+      // set context menu
+      await systemTray.setContextMenu(menu);
 
-    // handle system tray event
-    systemTray.registerSystemTrayEventHandler((eventName) async {
-      log('eventName: $eventName');
-      if (eventName == kSystemTrayEventClick) {
-        defaultTargetPlatform.isWindows
-            ? await appWindow.show()
-            : await systemTray.popUpContextMenu();
-      } else if (eventName == kSystemTrayEventRightClick) {
-        defaultTargetPlatform.isWindows
-            ? await systemTray.popUpContextMenu()
-            : await appWindow.show();
-      }
-      log('Event finished: $eventName');
-    });
+      // handle system tray event
+      systemTray.registerSystemTrayEventHandler((eventName) async {
+        log('eventName: $eventName');
+        if (eventName == kSystemTrayEventClick) {
+          defaultTargetPlatform.isWindows
+              ? await appWindow.show()
+              : await systemTray.popUpContextMenu();
+        } else if (eventName == kSystemTrayEventRightClick) {
+          defaultTargetPlatform.isWindows
+              ? await systemTray.popUpContextMenu()
+              : await appWindow.show();
+        }
+        log('Event finished: $eventName');
+      });
+    } catch (error, stackTrace) {
+      log(error.toString(), stackTrace: stackTrace);
+    }
   }
 
   void _onIntervalItemSelected(Duration duration) {
     if (isNotSupported) return;
-    settingsStore.setRefreshFrequency(duration);
+    getAppSettingsBox().put(HiveKeys.refreshFrequency, duration.inMinutes);
     setSyncInterval(duration);
   }
 

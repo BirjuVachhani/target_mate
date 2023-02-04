@@ -1,5 +1,5 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
@@ -50,21 +50,29 @@ GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 NavigatorState get navigator => navigatorKey.currentState!;
 
 Future<void> logout({bool navigate = true}) async {
+  final adaptiveTheme = AdaptiveTheme.of(navigator.context);
+
   // Delete saved data.
   await Hive.deleteFromDisk();
 
   // Delete data from secure storage. (Encryption key)
   await GetIt.instance.get<FlutterSecureStorage>().deleteAll();
 
+  adaptiveTheme.reset();
+
+  if (navigate) {
+    // Navigate to auth page.
+    navigator.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const AuthPageWrapper()),
+      (route) => false,
+    );
+  }
+
   // Reset GetIt registry. (stores, etc.)
   await GetIt.instance.reset(dispose: true);
 
   // Reinitialize data. Encryption key, Hive, GetIt, etc.
   await initializeData();
-
-  // Navigate to auth page.
-  navigator.pushAndRemoveUntil(
-      FadeScalePageRoute(child: const AuthPageWrapper()), (route) => false);
 }
 
 Map<DateTime, DayEntry> calculateDailyTarget({
