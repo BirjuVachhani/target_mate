@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +28,9 @@ abstract class _HomeStore with Store {
 
   late final Box secretsBox = getSecretsBox();
   late final Box settingsBox = getAppSettingsBox();
+
+  late final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   _HomeStore(this.targetStore) {
     init();
@@ -110,6 +114,9 @@ abstract class _HomeStore with Store {
     return (todayDuration.inMinutes / dailyAverageTargetTillToday.inMinutes)
         .roundToPrecision(4);
   }
+
+  @computed
+  bool get isTodayTargetAchieved => todayPercentage >= 1;
 
   @computed
   Duration get remainingForToday {
@@ -212,11 +219,33 @@ abstract class _HomeStore with Store {
         isLoading = false;
         return;
       }
+      final previousMonthly = isMonthlyTargetAchieved;
+      final previousToday = isTodayTargetAchieved;
       processTimeEntries(data);
       timeEntries = data;
       isLoading = false;
       lastUpdated = DateTime.now();
       updateSystemTrayText();
+
+      // test notification on refresh
+      // showNotification(
+      //   title: 'Toggl Track',
+      //   body: 'Synced successfully!',
+      // );
+
+      if (!previousMonthly && isMonthlyTargetAchieved) {
+        log('Monthly target achieved!');
+        showNotification(
+          title: 'Toggl Track',
+          body: 'Yay! You have achieved your monthly target!',
+        );
+      } else if (!previousToday && isTodayTargetAchieved) {
+        log("Today's target achieved!");
+        showNotification(
+          title: 'Toggl Track',
+          body: "Yay! You have achieved today's target!",
+        );
+      }
     } catch (error, stackTrace) {
       log('Error', error: error, stackTrace: stackTrace);
       this.error = error.toString();
@@ -294,5 +323,44 @@ abstract class _HomeStore with Store {
     log('remainingForToday: $remainingForToday');
     log('isMonthlyTargetAchieved: $isMonthlyTargetAchieved');
     log('-------------------------------------------------------------------');
+  }
+
+  void showNotification({
+    String title = '',
+    String? body,
+    String? payload,
+  }) async {
+    try {
+      const AndroidNotificationDetails androidNotificationDetails =
+          AndroidNotificationDetails(
+        'toggl_target_channel',
+        'General',
+        channelDescription: 'A general notification channel.',
+        importance: Importance.max,
+        priority: Priority.high,
+        // ticker: 'ticker',
+      );
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails,
+        macOS: DarwinNotificationDetails(
+          badgeNumber: 1,
+          subtitle: 'subtitle',
+          interruptionLevel: InterruptionLevel.active,
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      );
+      log('Showing notification: $title - $body');
+      await flutterLocalNotificationsPlugin.show(
+        0,
+        title,
+        body,
+        notificationDetails,
+        payload: payload,
+      );
+    } catch (error, stackTrace) {
+      log('Notification Error', error: error, stackTrace: stackTrace);
+    }
   }
 }

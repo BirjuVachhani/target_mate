@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -60,6 +62,69 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late final HomeStore store = context.read<HomeStore>();
   late final TargetStore targetStore = context.read<TargetStore>();
+
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      requestNotificationPermission();
+    });
+  }
+
+  void requestNotificationPermission() async {
+    try {
+      const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('ic_launcher_foreground');
+      final DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings(
+        requestSoundPermission: false,
+        requestBadgePermission: false,
+        requestAlertPermission: false,
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+      );
+
+      const LinuxInitializationSettings initializationSettingsLinux =
+      LinuxInitializationSettings(
+          defaultActionName: 'Open notification');
+
+      final InitializationSettings initializationSettings =
+      InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsDarwin,
+          macOS: initializationSettingsDarwin,
+          linux: initializationSettingsLinux);
+      await store.flutterLocalNotificationsPlugin.initialize(
+          initializationSettings,
+          onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
+
+      if (defaultTargetPlatform.isIOS) {
+        await store.flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+            ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+      } else if (defaultTargetPlatform.isMacOS) {
+        await store.flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin>()
+            ?.requestPermissions(
+          alert: true,
+          sound: true,
+        );
+      } else if (defaultTargetPlatform.isAndroid) {
+        await store.flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
+      }
+    } catch (error, stackTrace) {
+      log('Error initializing notifications');
+      log(error.toString());
+      log(stackTrace.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +239,12 @@ class _HomePageState extends State<HomePage> {
       targetStore.refresh();
       store.refreshData();
     }
+  }
+
+  void onDidReceiveLocalNotification(
+      int id, String? title, String? body, String? payload) {}
+
+  void onDidReceiveNotificationResponse(NotificationResponse details) {
   }
 }
 

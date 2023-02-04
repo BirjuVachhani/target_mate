@@ -33,6 +33,7 @@ dependencies:
   window_manager: ^0.3.0
   system_tray: ^2.0.2
   package_info_plus: ^3.0.2
+  flutter_local_notifications: ^13.0.0
 
 dev_dependencies:
   flutter_test:
