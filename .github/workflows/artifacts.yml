@@ -1,12 +1,66 @@
-name: MacOS Build
+name: Release Artifacts
 
 on:
   release:
     types: [ published ]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release Tag'
+        required: true
 
 jobs:
-  build:
+  android:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "11.x"
+          cache: 'gradle'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Flutter version
+        run: flutter --version
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Create keystore file
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'release.jks'
+          fileDir: './android/keystore/'
+          encodedString: ${{ secrets.KEYSTORE_FILE }}
+      - name: Create keystore.properties file
+        run: echo "${{ secrets.KEYSTORE_PROPERTIES }}" > android/keystore.properties
+      - name: Build APK
+        run: flutter build apk --release
+      - name: Build AAB
+        run: flutter build appbundle --release
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: TogglTarget.apk
+          path: build/app/outputs/flutter-apk/*
+          if-no-files-found: error
+          retention-days: 5
+      - name: Upload AAB
+        uses: actions/upload-artifact@v3
+        with:
+          name: TogglTarget.aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+          retention-days: 5
+      - name: Clean up keystore and keystore.properties
+        if: ${{ always() }}
+        run: |
+          rm android/keystore.properties
+          rm android/keystore/release.jks
+
+  macos:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -69,3 +123,22 @@ jobs:
         run: |
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
           rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
+
+  upload:
+    needs: [ android, macos ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: dist
+      - name: Display structure of downloaded files
+        run: ls -R dist
+      - run: echo "Uploading to tag:"
+      - run: echo ${{ github.event.inputs.tag ?? github.ref }}
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/artifact/*
+          tag: ${{ github.event.inputs.tag ?? github.ref }}
+          file_glob: true
