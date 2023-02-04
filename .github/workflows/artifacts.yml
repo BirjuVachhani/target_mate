@@ -136,6 +136,7 @@ jobs:
 
   upload:
     needs: [ android, macos ]
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
