@@ -134,11 +134,23 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R dist
       - run: echo "Uploading to tag:"
-      - run: echo ${{ github.event.inputs.tag ?? github.ref }}
-      - name: Upload binaries to release
+      - run: echo "workflow_dispatch tag"
+      - run: echo ${{ github.event.inputs.tag }}
+      - run: echo "github.ref"
+      - run: echo ${{ github.ref }}
+      - name: Upload binaries to release fro workflow dispath
+        if: ${{ github.event.inputs.tag != null }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/artifact/*
-          tag: ${{ github.event.inputs.tag != '' ? github.event.inputs.tag : github.ref }}
+          tag: ${{ github.event.inputs.tag }}
+          file_glob: true
+      - name: Upload binaries to release fro workflow dispath
+        if: ${{ github.event.inputs.tag == null }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/artifact/*
+          tag: ${{ github.ref }}
           file_glob: true
