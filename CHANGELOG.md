@@ -1,3 +1,7 @@
+# 0.1.1 - 12th Feb, 2023
+
+- Fixed Android app not connecting to the server issue.
+
 # 0.1.0 - 4th Feb, 2023
 
 - Initial Release.
