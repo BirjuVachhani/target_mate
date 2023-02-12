@@ -12,7 +12,7 @@ on:
         description: 'Run macos build'
         required: true
         type: boolean
-        default: true
+        default: false
       android:
         description: 'Run Android build'
         required: true
@@ -137,7 +137,7 @@ jobs:
           rm ~/Library/MobileDevice/Provisioning\ Profiles/build_pp.mobileprovision
 
   upload:
-    needs: [ android, macos ]
+    needs: [ android ]
     if: always()
     runs-on: ubuntu-latest
     steps:
