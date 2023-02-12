@@ -1,8 +1,8 @@
 name: Release Artifacts
 
 on:
-  release:
-    types: [ published ]
+#  release:
+#    types: [ published ]
   workflow_dispatch:
     inputs:
       tag:
@@ -151,7 +151,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/artifact/*
+          file: dist/*
           tag: ${{ github.event.inputs.tag }}
           file_glob: true
       - name: Upload binaries (for release)

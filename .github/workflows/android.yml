@@ -4,9 +4,13 @@ on:
   release:
     types: [ published ]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release Tag'
+        required: true
 
 jobs:
-  build:
+  android:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -39,14 +43,14 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
-          name: APK
+          name: TogglTarget.apk
           path: build/app/outputs/flutter-apk/*
           if-no-files-found: error
           retention-days: 5
       - name: Upload AAB
         uses: actions/upload-artifact@v3
         with:
-          name: App Bundle
+          name: TogglTarget.aab
           path: build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 5
@@ -55,3 +59,29 @@ jobs:
         run: |
           rm android/keystore.properties
           rm android/keystore/release.jks
+
+  upload:
+    needs: [ android ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: dist
+      - name: Display structure of downloaded files
+        run: ls -R dist
+      - name: Upload binaries (for Workflow dispatch)
+        if: ${{ github.event.inputs.tag != null }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ github.event.inputs.tag }}
+          file_glob: true
+      - name: Upload binaries (for release)
+        if: ${{ github.event.inputs.tag == null }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ github.ref }}
+          file_glob: true
