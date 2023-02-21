@@ -40,18 +40,23 @@ jobs:
         run: flutter build apk --release
       - name: Build AAB
         run: flutter build appbundle --release
+      - name: Rename APK
+        run: |
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/TogglTarget.apk
+          mv build/app/outputs/flutter-apk/app-release.apk.sha1 build/app/outputs/flutter-apk/TogglTarget.apk.sha1
+      - name: Rename AppBundle
+        run: |
+          mv build/app/outputs/bundle/release/app-release.aab build/app/outputs/bundle/release/TogglTarget.aab
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
-          name: TogglTarget.apk
           path: build/app/outputs/flutter-apk/*
           if-no-files-found: error
           retention-days: 5
       - name: Upload AAB
         uses: actions/upload-artifact@v3
         with:
-          name: TogglTarget.aab
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: build/app/outputs/bundle/release/TogglTarget.aab
           if-no-files-found: error
           retention-days: 5
       - name: Clean up keystore and keystore.properties
@@ -85,7 +90,6 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: TogglTarget.dmg
           path: TogglTarget.dmg
           if-no-files-found: error
           retention-days: 5
