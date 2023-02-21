@@ -25,12 +25,12 @@ void main() async {
   await initializeData();
 
   final bool isFirstRun =
-      !Hive.box(HiveKeys.secrets).containsKey(HiveKeys.firstRun);
+      !Hive.box(HiveBoxes.secrets).containsKey(HiveKeys.firstRun);
 
   await setupWindowManager(isFirstRun: isFirstRun);
 
-  if (!Hive.box(HiveKeys.secrets).containsKey(HiveKeys.firstRun)) {
-    await Hive.box(HiveKeys.secrets).put(HiveKeys.firstRun, false);
+  if (!Hive.box(HiveBoxes.secrets).containsKey(HiveKeys.firstRun)) {
+    await Hive.box(HiveBoxes.secrets).put(HiveKeys.firstRun, false);
   }
 
   runApp(const MyApp());
@@ -57,17 +57,17 @@ Future<void> initializeData() async {
   log('Encryption key: $key');
 
   // Secrets box
-  await Hive.openBox(HiveKeys.secrets,
+  await Hive.openBox(HiveBoxes.secrets,
       encryptionCipher: HiveAesCipher(encryptionKey));
 
   // window settings box
-  await Hive.openBox(HiveKeys.window);
+  await Hive.openBox(HiveBoxes.window);
 
   // target box
-  await Hive.openBox(HiveKeys.target);
+  await Hive.openBox(HiveBoxes.target);
 
   // app settings box.
-  final appSettings = await Hive.openBox(HiveKeys.settings);
+  final appSettings = await Hive.openBox(HiveBoxes.settings);
 
   if (!appSettings.containsKey(HiveKeys.primaryColor)) {
     appSettings.put(HiveKeys.primaryColor, AppColors.primaryColor.value);
@@ -88,25 +88,48 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
     log('Setting up window manager for the first time.');
   }
 
-  final double width =
-      Hive.box(HiveKeys.window).get(HiveKeys.width, defaultValue: 420.0);
-  final double height =
-      Hive.box(HiveKeys.window).get(HiveKeys.height, defaultValue: 800.0);
+  final Size initialSize = getWindowSize();
+  final Offset? position = getWindowPosition();
 
   await windowManager.ensureInitialized();
 
-  final initialSize = Size(width, height);
   windowManager.setMinimumSize(initialSize);
   windowManager.setSize(initialSize);
+  if (position != null) windowManager.setPosition(position);
   if (!defaultTargetPlatform.isMacOS) windowManager.setAsFrameless();
 
-  windowManager.addListener(WindowResizeListener());
+  final windowOptions = WindowOptions(
+    title: 'Toggl Target',
+    size: initialSize,
+    backgroundColor: Colors.transparent,
+    fullScreen: false,
+    skipTaskbar: false,
+    minimumSize: const Size(360, 520),
+  );
+  //
+  windowManager.waitUntilReadyToShow(windowOptions, () {
+    windowManager.show();
+    windowManager.focus();
 
-  doWhenWindowReady(() {
-    appWindow.minSize = const Size(360, 520);
-    appWindow.size = Size(width, height);
-    appWindow.show();
+    windowManager.addListener(WindowResizeListener());
   });
+
+  doWhenWindowReady(() => appWindow.show());
+}
+
+Size getWindowSize() {
+  final double width =
+      Hive.box(HiveBoxes.window).get(HiveKeys.width, defaultValue: 420.0);
+  final double height =
+      Hive.box(HiveBoxes.window).get(HiveKeys.height, defaultValue: 800.0);
+
+  return Size(width, height);
+}
+
+Offset? getWindowPosition() {
+  final double? top = Hive.box(HiveBoxes.window).get(HiveKeys.top);
+  final double? left = Hive.box(HiveBoxes.window).get(HiveKeys.left);
+  return top != null && left != null ? Offset(left, top) : null;
 }
 
 class MyApp extends StatefulWidget {
@@ -150,7 +173,14 @@ class WindowResizeListener extends WindowListener {
   @override
   void onWindowResized() async {
     final Size size = await windowManager.getSize();
-    Hive.box(HiveKeys.window).put(HiveKeys.width, size.width);
-    Hive.box(HiveKeys.window).put(HiveKeys.height, size.height);
+    Hive.box(HiveBoxes.window).put(HiveKeys.width, size.width);
+    Hive.box(HiveBoxes.window).put(HiveKeys.height, size.height);
+  }
+
+  @override
+  void onWindowMoved() async {
+    final pos = await windowManager.getPosition();
+    Hive.box(HiveBoxes.window).put(HiveKeys.left, pos.dx);
+    Hive.box(HiveBoxes.window).put(HiveKeys.top, pos.dy);
   }
 }

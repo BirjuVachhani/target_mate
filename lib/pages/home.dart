@@ -74,9 +74,9 @@ class _HomePageState extends State<HomePage> {
   void requestNotificationPermission() async {
     try {
       const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('ic_launcher_foreground');
+          AndroidInitializationSettings('ic_launcher_foreground');
       final DarwinInitializationSettings initializationSettingsDarwin =
-      DarwinInitializationSettings(
+          DarwinInitializationSettings(
         requestSoundPermission: false,
         requestBadgePermission: false,
         requestAlertPermission: false,
@@ -84,15 +84,14 @@ class _HomePageState extends State<HomePage> {
       );
 
       const LinuxInitializationSettings initializationSettingsLinux =
-      LinuxInitializationSettings(
-          defaultActionName: 'Open notification');
+          LinuxInitializationSettings(defaultActionName: 'Open notification');
 
       final InitializationSettings initializationSettings =
-      InitializationSettings(
-          android: initializationSettingsAndroid,
-          iOS: initializationSettingsDarwin,
-          macOS: initializationSettingsDarwin,
-          linux: initializationSettingsLinux);
+          InitializationSettings(
+              android: initializationSettingsAndroid,
+              iOS: initializationSettingsDarwin,
+              macOS: initializationSettingsDarwin,
+              linux: initializationSettingsLinux);
       await store.flutterLocalNotificationsPlugin.initialize(
           initializationSettings,
           onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
@@ -100,24 +99,25 @@ class _HomePageState extends State<HomePage> {
       if (defaultTargetPlatform.isIOS) {
         await store.flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
+                IOSFlutterLocalNotificationsPlugin>()
             ?.requestPermissions(
-          alert: true,
-          badge: true,
-          sound: true,
-        );
+              alert: true,
+              badge: true,
+              sound: true,
+            );
       } else if (defaultTargetPlatform.isMacOS) {
         await store.flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
-            MacOSFlutterLocalNotificationsPlugin>()
+                MacOSFlutterLocalNotificationsPlugin>()
             ?.requestPermissions(
-          alert: true,
-          sound: true,
-        );
+              alert: true,
+              sound: true,
+            );
       } else if (defaultTargetPlatform.isAndroid) {
         await store.flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()?.requestPermission();
+                AndroidFlutterLocalNotificationsPlugin>()
+            ?.requestPermission();
       }
     } catch (error, stackTrace) {
       log('Error initializing notifications');
@@ -244,8 +244,7 @@ class _HomePageState extends State<HomePage> {
   void onDidReceiveLocalNotification(
       int id, String? title, String? body, String? payload) {}
 
-  void onDidReceiveNotificationResponse(NotificationResponse details) {
-  }
+  void onDidReceiveNotificationResponse(NotificationResponse details) {}
 }
 
 class BottomBar extends StatefulWidget {

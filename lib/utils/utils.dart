@@ -12,11 +12,11 @@ import '../model/day_entry.dart';
 import '../pages/setup/auth_page.dart';
 import '../resources/keys.dart';
 
-Box getSecretsBox() => Hive.box(HiveKeys.secrets);
+Box getSecretsBox() => Hive.box(HiveBoxes.secrets);
 
-Box getAppSettingsBox() => Hive.box(HiveKeys.settings);
+Box getAppSettingsBox() => Hive.box(HiveBoxes.settings);
 
-Box getTargetBox() => Hive.box(HiveKeys.target);
+Box getTargetBox() => Hive.box(HiveBoxes.target);
 
 List<int> getMonthDaysFromWeekDays(DateTime month, List<int> weekDays) {
   final days = <int>[];
@@ -51,15 +51,15 @@ NavigatorState get navigator => navigatorKey.currentState!;
 
 Future<void> logout({bool navigate = true}) async {
   final adaptiveTheme = AdaptiveTheme.of(navigator.context);
+  await adaptiveTheme.reset();
 
   // Delete saved data.
-  await Hive.deleteBoxFromDisk(HiveKeys.secrets);
-  await Hive.deleteBoxFromDisk(HiveKeys.settings);
+  await Hive.deleteBoxFromDisk(HiveBoxes.secrets);
+  await Hive.deleteBoxFromDisk(HiveBoxes.settings);
+  await Hive.deleteBoxFromDisk(HiveBoxes.target);
 
   // Delete data from secure storage. (Encryption key)
   await GetIt.instance.get<EncryptedSharedPreferences>().clear();
-
-  adaptiveTheme.reset();
 
   if (navigate) {
     // Navigate to auth page.

@@ -188,7 +188,6 @@ abstract class _WorkspaceSelectionStore with Store {
     isLoading = true;
     error = null;
     try {
-
       // Load projects.
       final response = await http.get(
         Uri.parse(

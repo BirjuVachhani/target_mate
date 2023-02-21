@@ -1,11 +1,11 @@
 import Cocoa
 import FlutterMacOS
-import bitsdojo_window_macos
+ import bitsdojo_window_macos
 
 class MainFlutterWindow: BitsdojoWindow {
-  override func bitsdojo_window_configure() -> UInt {
-    return BDW_HIDE_ON_STARTUP
-  }
+   override func bitsdojo_window_configure() -> UInt {
+     return BDW_HIDE_ON_STARTUP
+   }
     
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController.init()
@@ -16,26 +16,24 @@ class MainFlutterWindow: BitsdojoWindow {
     RegisterGeneratedPlugins(registry: flutterViewController)
 
       if #available(macOS 10.13, *) {
-          // set defult tool bar for better spacing.
-          self.toolbar = NSToolbar()
-          self.toolbar?.displayMode = NSToolbar.DisplayMode.iconOnly
-//          self.toolbar?.isVisible = false
+        // set default tool bar for better spacing.
+        self.toolbar = NSToolbar()
+        self.toolbar?.displayMode = NSToolbar.DisplayMode.iconOnly
+        // self.toolbar?.isVisible = false
 
-          var localStyle = self.styleMask;
-          localStyle.insert(.fullSizeContentView)
-          self.styleMask = localStyle;
-          self.titlebarAppearsTransparent = true
-          self.titleVisibility = .hidden
-          self.isOpaque = false
-          self.isMovable = true
-          self.setIsZoomed(true)
+        var localStyle = self.styleMask;
+        localStyle.insert(.fullSizeContentView)
+        self.styleMask = localStyle;
+        self.titlebarAppearsTransparent = true
+        self.titleVisibility = .hidden
+        self.isOpaque = false
+        self.isMovable = true
+        self.setIsZoomed(true)
 
-          // Disable full screen button.
-          let button = self.standardWindowButton(NSWindow.ButtonType.zoomButton)
-          button?.isEnabled = false
-
+        // Disable full screen button.
+        let button = self.standardWindowButton(NSWindow.ButtonType.zoomButton)
+        button?.isEnabled = false
       }
-
     super.awakeFromNib()
   }
 
