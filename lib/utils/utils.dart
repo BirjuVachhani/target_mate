@@ -1,6 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -57,7 +57,7 @@ Future<void> logout({bool navigate = true}) async {
   await Hive.deleteBoxFromDisk(HiveKeys.settings);
 
   // Delete data from secure storage. (Encryption key)
-  await GetIt.instance.get<FlutterSecureStorage>().deleteAll();
+  await GetIt.instance.get<EncryptedSharedPreferences>().clear();
 
   adaptiveTheme.reset();
 

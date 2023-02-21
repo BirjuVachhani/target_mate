@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:toggl_target/resources/keys.dart';
@@ -38,19 +39,17 @@ void main() async {
 Future<void> initializeData() async {
   await Hive.initFlutter();
 
-  const secureStorage = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true));
+  final EncryptedSharedPreferences encryptedPrefs =
+      EncryptedSharedPreferences();
 
-  String? key = await secureStorage.read(key: HiveKeys.key);
+  String key = await encryptedPrefs.getString(HiveKeys.key);
   final List<int> encryptionKey;
-  if (key == null) {
+  if (key.isEmpty) {
     log('Generating a new encryption key');
     encryptionKey = Hive.generateSecureKey();
     log('Saving the encryption key');
-    await secureStorage.write(
-      key: HiveKeys.key,
-      value: base64UrlEncode(encryptionKey),
-    );
+    await encryptedPrefs.setString(
+        HiveKeys.key, base64UrlEncode(encryptionKey));
   } else {
     log('Found an existing encryption key');
     encryptionKey = base64Url.decode(key);
@@ -75,7 +74,7 @@ Future<void> initializeData() async {
   }
 
   // Initialize GetIt registry.
-  GetIt.instance.registerSingleton<FlutterSecureStorage>(secureStorage);
+  GetIt.instance.registerSingleton<EncryptedSharedPreferences>(encryptedPrefs);
   GetIt.instance.registerSingleton<SystemTrayManager>(SystemTrayManager(),
       dispose: (manager) => manager.dispose());
 }
@@ -95,21 +94,18 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
       Hive.box(HiveKeys.window).get(HiveKeys.height, defaultValue: 800.0);
 
   await windowManager.ensureInitialized();
-  WindowOptions windowOptions = WindowOptions(
-    // Preserve window size if it is not the first run.
-    size: Size(width, height),
-    backgroundColor: Colors.transparent,
-    titleBarStyle: TitleBarStyle.hidden,
-    title: 'Toggl Target',
-    minimumSize: const Size(360, 520),
-  );
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-    windowManager.setSkipTaskbar(false);
 
-    // This will save window size on resize.
-    windowManager.addListener(WindowResizeListener());
+  final initialSize = Size(width, height);
+  windowManager.setMinimumSize(initialSize);
+  windowManager.setSize(initialSize);
+  if (!defaultTargetPlatform.isMacOS) windowManager.setAsFrameless();
+
+  windowManager.addListener(WindowResizeListener());
+
+  doWhenWindowReady(() {
+    appWindow.minSize = const Size(360, 520);
+    appWindow.size = Size(width, height);
+    appWindow.show();
   });
 }
 

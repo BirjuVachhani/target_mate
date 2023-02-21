@@ -3,7 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  flutter_secure_storage_linux
+  bitsdojo_window_linux
   screen_retriever
   system_tray
   url_launcher_linux
