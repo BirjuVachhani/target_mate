@@ -9,7 +9,7 @@ A companion app for [Toggl track][toggl] to track & manage your working hours to
 
 <br/>
 
-<a href="https://github.com/BirjuVachhani/toggl_target/releases/download/0.2.0/TogglTarget.apk"><img src=".github/assets/android.png" height="70px" /></a> &nbsp; <a href="https://github.com/BirjuVachhani/toggl_target/releases/download/0.2.0/TogglTrack.dmg"><img src=".github/assets/macos.png" height="70px" /></a> 
+<a href="https://github.com/BirjuVachhani/toggl_target/releases/download/0.2.0/TogglTarget.apk"><img src=".github/assets/android.png" height="70px" /></a> &nbsp; <a href="https://github.com/BirjuVachhani/toggl_target/releases/download/0.2.0/TogglTarget.dmg"><img src=".github/assets/macos.png" height="70px" /></a> 
 
 # Features
 
