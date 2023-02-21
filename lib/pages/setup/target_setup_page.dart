@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:awesome_calendar/awesome_calendar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -302,7 +303,9 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
     } else {
       await getSecretsBox().put(HiveKeys.onboarded, true);
       navigator.pushAndRemoveUntil(
-        FadeScalePageRoute(child: const HomePageWrapper()),
+        CupertinoPageRoute(
+          builder: (_) => const HomePageWrapper(),
+        ),
         (route) => false,
       );
     }

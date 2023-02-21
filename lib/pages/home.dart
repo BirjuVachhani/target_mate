@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -228,7 +229,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> onEdit() async {
     final bool? modified = await Navigator.of(context).push<bool?>(
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => Provider.value(
           value: targetStore,
           child: const TargetSetupPage(),
@@ -1037,7 +1038,7 @@ class HomeHeader extends StatelessWidget {
   void openSettings(BuildContext context) {
     final settingsStore = context.read<SettingsStore>();
     Navigator.of(context).push(
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (_) => Provider.value(
           value: settingsStore,
           child: const SettingsPage(),

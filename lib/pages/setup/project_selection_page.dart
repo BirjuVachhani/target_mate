@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -157,7 +158,9 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
   void onSuccess() {
     Navigator.push(
       context,
-      FadeThroughPageRoute(child: const TargetSetupPageWrapper()),
+      CupertinoPageRoute(
+        builder: (_) => const TargetSetupPageWrapper(),
+      ),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
@@ -67,7 +68,7 @@ Future<void> logout({bool navigate = true}) async {
   if (navigate) {
     // Navigate to auth page.
     navigator.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const AuthPageWrapper()),
+      CupertinoPageRoute(builder: (_) => const AuthPageWrapper()),
       (route) => false,
     );
   }

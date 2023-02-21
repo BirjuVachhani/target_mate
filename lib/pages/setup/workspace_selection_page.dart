@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -142,11 +143,13 @@ class _WorkspaceSelectionPageState extends State<WorkspaceSelectionPage> {
   }
 
   void onSuccess() {
-    Navigator.of(context).push(FadeThroughPageRoute(
-      child: ProjectSelectionPageWrapper(
-        projects: store.projects,
+    Navigator.of(context).push(
+      CupertinoPageRoute(
+        builder: (_) => ProjectSelectionPageWrapper(
+          projects: store.projects,
+        ),
       ),
-    ));
+    );
   }
 
   @override

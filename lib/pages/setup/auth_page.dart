@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -144,8 +145,8 @@ class _AuthPageState extends State<AuthPage> {
 
   void onSuccess() {
     Navigator.of(context).push(
-      FadeThroughPageRoute(
-        child: WorkspaceSelectionPageWrapper(
+      CupertinoPageRoute(
+        builder: (_) => WorkspaceSelectionPageWrapper(
           workspaces: store.workspaces,
         ),
       ),
