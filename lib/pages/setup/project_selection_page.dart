@@ -111,7 +111,7 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
                   builder: (context) => Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
+                        child: FilledButton(
                           onPressed:
                               store.selectedProjectId == null ? null : onNext,
                           child: store.isLoading

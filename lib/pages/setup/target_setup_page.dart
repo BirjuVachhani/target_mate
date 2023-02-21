@@ -20,6 +20,7 @@ import '../../resources/keys.dart';
 import '../../ui/back_button.dart';
 import '../../ui/custom_safe_area.dart';
 import '../../ui/gesture_detector_with_cursor.dart';
+import '../../utils/custom_calendar.dart';
 import '../home.dart';
 import '../target_store.dart';
 
@@ -254,7 +255,7 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
                       ),
                       const SizedBox(height: 32),
                       Observer(
-                        builder: (context) => ElevatedButton(
+                        builder: (context) => FilledButton(
                           onPressed: !store.hasAllData ? null : onSave,
                           child: Text(
                             store.secretsBox.containsKey(HiveKeys.onboarded)
@@ -497,9 +498,10 @@ class CalenderSelection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              AwesomeCalendar(
+              CustomAwesomeCalendar(
                 key: ValueKey('$month, $selectedDays'),
                 selectionMode: SelectionMode.multi,
+                usePageView: false,
                 startDate: DateTime(month.year, month.month, 1),
                 endDate: DateTime(month.year, month.month + 1, 0),
                 dayTileBuilder: CustomDayTileBuilder(),
@@ -539,6 +541,7 @@ class CalenderSelection extends StatelessWidget {
                   'Select Weekdays',
                   style: TextStyle(
                     color: context.theme.colorScheme.primary,
+                    fontSize: 13,
                     // fontStyle: FontStyle.italic,
                     // decoration: TextDecoration.underline,
                   ),
@@ -563,6 +566,7 @@ class CalenderSelection extends StatelessWidget {
                   'Select All',
                   style: TextStyle(
                     color: context.theme.colorScheme.primary,
+                    fontSize: 13,
                     // fontStyle: FontStyle.italic,
                     // decoration: TextDecoration.underline,
                   ),
@@ -581,6 +585,7 @@ class CalenderSelection extends StatelessWidget {
                   'Clear Selection',
                   style: TextStyle(
                     color: context.theme.colorScheme.primary,
+                    fontSize: 13,
                     // fontStyle: FontStyle.italic,
                     // decoration: TextDecoration.underline,
                   ),
@@ -635,7 +640,8 @@ class CustomDayTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isToday = CalendarHelper.isToday(date);
 
-    final bool daySelected = AwesomeCalendar.of(context)!.isDateSelected(date);
+    final bool daySelected =
+        CustomAwesomeCalendar.of(context)!.isDateSelected(date);
 
     BoxDecoration? boxDecoration;
     if (daySelected) {
@@ -658,7 +664,7 @@ class CustomDayTile extends StatelessWidget {
         onTap: () => handleTap(context),
         behavior: HitTestBehavior.translucent,
         child: Container(
-          margin: const EdgeInsets.all(3),
+          margin: const EdgeInsets.all(4),
           height: 34,
           decoration: boxDecoration,
           child: Center(
@@ -672,7 +678,7 @@ class CustomDayTile extends StatelessWidget {
                             date.weekday == DateTime.sunday
                         ? Theme.of(context).disabledColor
                         : Theme.of(context).textTheme.bodyLarge!.color,
-                fontSize: 14,
+                fontSize: 13,
               ),
             ),
           ),
@@ -708,7 +714,7 @@ class CustomWeekdayLabels extends StatelessWidget {
     final style =
         TextStyle(fontSize: 12, color: Theme.of(context).disabledColor);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         children: <Widget>[
           Expanded(

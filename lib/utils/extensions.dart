@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:material_color_utilities/palettes/core_palette.dart';
 import 'package:screwdriver/screwdriver.dart';
 
 import '../model/time_entry.dart';
@@ -36,6 +37,14 @@ extension ColorExt on Color {
     var f = 1 - percent / 100;
     return Color.fromARGB(
         alpha, (red * f).round(), (green * f).round(), (blue * f).round());
+  }
+
+  Color toPrimaryMaterial3({Brightness brightness = Brightness.dark}) {
+    final palette = CorePalette.of(value);
+    if (brightness == Brightness.dark) {
+      return Color(palette.primary.get(80));
+    }
+    return Color(palette.primary.get(40));
   }
 }
 

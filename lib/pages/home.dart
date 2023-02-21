@@ -11,13 +11,16 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/model/day_entry.dart';
 import 'package:toggl_target/pages/settings.dart';
 import 'package:toggl_target/pages/setup/target_setup_page.dart';
 import 'package:toggl_target/pages/target_store.dart';
 import 'package:toggl_target/utils/extensions.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../resources/colors.dart';
 import '../ui/custom_safe_area.dart';
@@ -69,6 +72,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       requestNotificationPermission();
+      checkForUpdates();
     });
   }
 
@@ -246,6 +250,41 @@ class _HomePageState extends State<HomePage> {
       int id, String? title, String? body, String? payload) {}
 
   void onDidReceiveNotificationResponse(NotificationResponse details) {}
+
+  Future<void> checkForUpdates() async {
+    final Version? latestVersion = await store.getLatestRelease();
+
+    if (latestVersion == null) return;
+
+    final packageInfo = await PackageInfo.fromPlatform();
+    final currentVersion = Version.parse(packageInfo.version);
+
+    // enable this for testing update UI.
+    // final currentVersion = Version(0, 0, 1);
+
+    if (latestVersion > currentVersion) {
+      showUpdateAvailableUI(latestVersion);
+    }
+  }
+
+  void showUpdateAvailableUI(Version latestVersion) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('A new version is available!'),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.fromLTRB(16, 16, 16, 34),
+        showCloseIcon: true,
+        duration: const Duration(days: 1),
+        action: SnackBarAction(
+          label: 'Download',
+          onPressed: () {
+            launchUrlString(
+                'https://github.com/birjuvachhani/toggl_target/releases/$latestVersion');
+          },
+        ),
+      ),
+    );
+  }
 }
 
 class BottomBar extends StatefulWidget {
@@ -472,8 +511,8 @@ class PerDayTimeEntryView extends StatelessWidget {
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: entry.isTargetAchieved
-                        ? Colors.greenAccent.shade700
-                        : Colors.red,
+                        ? Colors.green
+                        : Colors.redAccent,
                   ),
                 ),
               ],
@@ -761,7 +800,7 @@ class HomeHeader extends StatelessWidget {
                   else
                     Observer(
                       builder: (context) {
-                        return TextButton.icon(
+                        return FilledButton.icon(
                           onPressed: store.isLoading ? null : store.refreshData,
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
@@ -790,8 +829,9 @@ class HomeHeader extends StatelessWidget {
                     width: 38,
                     child: Tooltip(
                       message: 'Settings',
-                      child: TextButton(
+                      child: FilledButton(
                         style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.white.withOpacity(0.1),
                         ),
@@ -873,7 +913,7 @@ class HomeHeader extends StatelessWidget {
                   },
                 ),
               ),
-              TextButton.icon(
+              FilledButton.icon(
                 onPressed: onEdit,
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -1114,9 +1154,11 @@ class TodayProgressIndicator extends StatelessWidget {
                                             Colors.white.withOpacity(0.15),
                                         valueColor: AlwaysStoppedAnimation(
                                           ColorTween(
-                                            begin: Colors.red,
-                                            end: Colors.green,
-                                          ).transform(store.todayPercentage),
+                                            begin: Colors.redAccent,
+                                            end: Colors.green.shade700,
+                                          ).transform(
+                                            store.todayPercentage.clamp(0, 1),
+                                          ),
                                         ),
                                       ),
                                     ),

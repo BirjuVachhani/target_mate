@@ -246,7 +246,7 @@ class _ApiKeyUIState extends State<ApiKeyUI> {
         }),
         const SizedBox(height: 32),
         Observer(
-          builder: (context) => ElevatedButton(
+          builder: (context) => FilledButton(
             onPressed: store.apiKey.isEmpty ? null : widget.onNext,
             child: store.isLoading
                 ? FittedBox(
@@ -394,7 +394,7 @@ class _BasicAuthUIState extends State<BasicAuthUI> {
         }),
         const SizedBox(height: 32),
         Observer(
-          builder: (context) => ElevatedButton(
+          builder: (context) => FilledButton(
             onPressed: store.email.isEmpty || store.password.isEmpty
                 ? null
                 : widget.onNext,

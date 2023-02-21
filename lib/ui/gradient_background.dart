@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
+import 'package:toggl_target/utils/extensions.dart';
 
 class GradientBackground extends StatelessWidget {
   final Widget child;
@@ -21,7 +22,8 @@ class GradientBackground extends StatelessWidget {
               color: Colors.white,
               gradient: LinearGradient(
                 colors: [
-                  context.theme.colorScheme.primary,
+                  context.theme.colorScheme.primary
+                      .darken(context.theme.useMaterial3 ? 20 : 1),
                   Colors.transparent,
                 ],
                 begin: Alignment.topCenter,

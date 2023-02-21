@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
+import 'package:pub_semver/pub_semver.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/model/day_entry.dart';
 import 'package:toggl_target/model/time_entry.dart';
@@ -384,6 +385,26 @@ abstract class _HomeStore with Store {
       );
     } catch (error, stackTrace) {
       log('Notification Error', error: error, stackTrace: stackTrace);
+    }
+  }
+
+  Future<Version?> getLatestRelease() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'https://api.github.com/repos/BirjuVachhani/toggl_target/releases/latest'),
+      );
+
+      if (response.statusCode != 200) {
+        throw response.body;
+      }
+
+      final data = jsonDecode(response.body);
+      return Version.parse(data['tag_name'].toString());
+    } catch (error, stackTrace) {
+      log(error.toString());
+      log(stackTrace.toString());
+      return null;
     }
   }
 }

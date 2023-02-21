@@ -1,12 +1,13 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:paged_vertical_calendar/utils/date_utils.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:toggl_target/resources/colors.dart';
+import 'package:toggl_target/resources/theme.dart';
 
 import '../main.dart';
 import '../model/day_entry.dart';
@@ -54,7 +55,10 @@ NavigatorState get navigator => navigatorKey.currentState!;
 
 Future<void> logout({bool navigate = true}) async {
   final adaptiveTheme = AdaptiveTheme.of(navigator.context);
-  await adaptiveTheme.reset();
+  adaptiveTheme.reset();
+  adaptiveTheme.setTheme(
+      light: getTheme(AppColors.primaryColor),
+      dark: getTheme(AppColors.primaryColor));
 
   // Delete saved data.
   await Hive.deleteBoxFromDisk(HiveBoxes.secrets);

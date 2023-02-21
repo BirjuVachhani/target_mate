@@ -15,6 +15,7 @@ import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/resources/theme.dart';
 import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/ui/widgets.dart';
+import 'package:toggl_target/utils/extensions.dart';
 
 import '../resources/colors.dart';
 import '../ui/back_button.dart';
@@ -93,6 +94,16 @@ class _SettingsPageState extends State<SettingsPage> {
 
   late final Future<PackageInfo> packageInfo = PackageInfo.fromPlatform();
 
+  List<Color>? customThemeColors;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    customThemeColors ??= context.theme.useMaterial3
+        ? themeColors.map((e) => e.toPrimaryMaterial3()).toList()
+        : themeColors;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,6 +129,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           builder: (context) {
                             return ColorsView(
                               current: store.themeColor,
+                              colors: customThemeColors,
                               onSelected: (color) {
                                 store.setThemeColor(color);
                                 AdaptiveTheme.of(context).setTheme(
@@ -178,7 +190,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         const SizedBox(height: 40),
                         Center(
-                          child: TextButton.icon(
+                          child: FilledButton.icon(
                             onPressed: logout,
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.red,
@@ -242,7 +254,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
-const List<Color> themeColors = [
+final List<Color> themeColors = [
   AppColors.primaryColor,
   Colors.blue,
   Colors.red,
@@ -262,11 +274,13 @@ const List<Color> themeColors = [
 class ColorsView extends StatelessWidget {
   final Color current;
   final ValueChanged<Color> onSelected;
+  final List<Color>? colors;
 
   const ColorsView({
     super.key,
     required this.current,
     required this.onSelected,
+    this.colors,
   });
 
   @override
@@ -275,7 +289,7 @@ class ColorsView extends StatelessWidget {
       runSpacing: 12,
       spacing: 12,
       children: [
-        for (final color in themeColors)
+        for (final color in colors ?? themeColors)
           ColorButton(
             color: color,
             selected: color.value == current.value,

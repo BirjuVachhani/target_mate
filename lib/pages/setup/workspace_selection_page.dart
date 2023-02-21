@@ -98,7 +98,7 @@ class _WorkspaceSelectionPageState extends State<WorkspaceSelectionPage> {
                   builder: (context) => Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton(
+                        child: FilledButton(
                           onPressed:
                               store.selectedWorkspaceId == -1 ? null : onNext,
                           child: store.isLoading
