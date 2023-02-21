@@ -1,9 +1,11 @@
 name: MacOS Build
 
 on:
-  release:
-    types: [ published ]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release Tag'
+        required: true
 
 jobs:
   build:
@@ -35,3 +37,29 @@ jobs:
           path: TogglTarget.dmg
           if-no-files-found: error
           retention-days: 5
+
+  upload:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: dist
+      - name: Display structure of downloaded files
+        run: ls -R dist
+      - name: Upload binaries (for Workflow dispatch)
+        if: ${{ github.event.inputs.tag != null }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ github.event.inputs.tag }}
+          file_glob: true
+      - name: Upload binaries (for release)
+        if: ${{ github.event.inputs.tag == null }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ github.ref }}
+          file_glob: true

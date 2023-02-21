@@ -1,8 +1,6 @@
 name: Android Build
 
 on:
-  release:
-    types: [ published ]
   workflow_dispatch:
     inputs:
       tag:
