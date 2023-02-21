@@ -60,7 +60,6 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: app.dmg
           path: TogglTarget.dmg
           if-no-files-found: error
           retention-days: 5
