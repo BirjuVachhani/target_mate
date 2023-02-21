@@ -1,3 +1,15 @@
+# 0.2.0 - 21st Feb, 2023
+
+- Replace secure storage with encrypted shared preferences.
+- Fix window full screen issue when launched.
+- Fix target data not resetting after logout.
+- Fix theme not resetting properly after logout.
+- Fix local notification triggering repeatedly.
+- Fix calendar overflow error.
+- UI tweaks.
+- Show a snackbar when a new update is available.
+- Upgrade dependencies.
+
 # 0.1.1 - 12th Feb, 2023
 
 - Fixed Android app not connecting to the server issue.
