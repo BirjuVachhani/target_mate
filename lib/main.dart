@@ -66,6 +66,9 @@ Future<void> initializeData() async {
   // target box
   await Hive.openBox(HiveBoxes.target);
 
+  // notifications box
+  await Hive.openBox(HiveBoxes.notifications);
+
   // app settings box.
   final appSettings = await Hive.openBox(HiveBoxes.settings);
 

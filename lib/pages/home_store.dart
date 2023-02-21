@@ -28,6 +28,7 @@ abstract class _HomeStore with Store {
 
   late final Box secretsBox = getSecretsBox();
   late final Box settingsBox = getAppSettingsBox();
+  late final Box notificationsBox = getNotificationsBox();
 
   late final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -227,31 +228,53 @@ abstract class _HomeStore with Store {
       lastUpdated = DateTime.now();
       updateSystemTrayText();
 
-      // test notification on refresh
-      // showNotification(
-      //   title: 'Toggl Track',
-      //   body: 'Synced successfully!',
-      // );
-
-      if (!previousMonthly && isMonthlyTargetAchieved) {
-        log('Monthly target achieved!');
-        showNotification(
-          title: 'Toggl Track',
-          body: 'Yay! You have achieved your monthly target!',
-        );
-      } else if (!previousToday && isTodayTargetAchieved) {
-        log("Today's target achieved!");
-        showNotification(
-          title: 'Toggl Track',
-          body: "Yay! You have achieved today's target!",
-        );
-      }
+      showTargetNotificationsIfRequired(
+          previousToday: previousToday, previousMonthly: previousMonthly);
     } catch (error, stackTrace) {
       log('Error', error: error, stackTrace: stackTrace);
       this.error = error.toString();
       isLoading = false;
     } finally {
       systemTrayManager.setRefreshOption(enabled: true);
+    }
+  }
+
+  void showTargetNotificationsIfRequired({
+    required bool previousMonthly,
+    required bool previousToday,
+  }) {
+    // test notification on refresh
+    // showNotification(
+    //   title: 'Toggl Track',
+    //   body: 'Synced successfully!',
+    // );
+
+    if (!previousMonthly && isMonthlyTargetAchieved) {
+      final isAlreadyShown =
+          notificationsBox.get('m_$today', defaultValue: false);
+      log('Monthly target achieved!');
+
+      if (isAlreadyShown) return;
+
+      showNotification(
+        title: 'Toggl Track',
+        body: 'Yay! You have achieved your monthly target!',
+      );
+
+      notificationsBox.put('m_$today', true);
+    } else if (!previousToday && isTodayTargetAchieved) {
+      final isAlreadyShown =
+          notificationsBox.get('$today', defaultValue: false);
+      log("Today's target achieved!");
+
+      if (isAlreadyShown) return;
+
+      showNotification(
+        title: 'Toggl Track',
+        body: "Yay! You have achieved today's target!",
+      );
+
+      notificationsBox.put('$today', true);
     }
   }
 

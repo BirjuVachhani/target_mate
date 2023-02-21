@@ -18,6 +18,8 @@ Box getAppSettingsBox() => Hive.box(HiveBoxes.settings);
 
 Box getTargetBox() => Hive.box(HiveBoxes.target);
 
+Box getNotificationsBox() => Hive.box(HiveBoxes.notifications);
+
 List<int> getMonthDaysFromWeekDays(DateTime month, List<int> weekDays) {
   final days = <int>[];
   for (var i = 1; i <= month.daysInMonth; i++) {
@@ -57,6 +59,7 @@ Future<void> logout({bool navigate = true}) async {
   await Hive.deleteBoxFromDisk(HiveBoxes.secrets);
   await Hive.deleteBoxFromDisk(HiveBoxes.settings);
   await Hive.deleteBoxFromDisk(HiveBoxes.target);
+  await Hive.deleteBoxFromDisk(HiveBoxes.notifications);
 
   // Delete data from secure storage. (Encryption key)
   await GetIt.instance.get<EncryptedSharedPreferences>().clear();

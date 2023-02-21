@@ -35,4 +35,5 @@ class HiveBoxes {
   static const String window = 'window';
   static const String secrets = 'secrets';
   static const String target = 'target';
+  static const String notifications = 'notifications';
 }
