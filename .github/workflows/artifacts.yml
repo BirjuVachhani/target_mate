@@ -109,7 +109,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/*
+          file: dist/artifact/*
           tag: ${{ github.event.inputs.tag }}
           file_glob: true
       - name: Upload binaries (for release)
@@ -117,6 +117,6 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/*
+          file: dist/artifact/*
           tag: ${{ github.ref }}
           file_glob: true
