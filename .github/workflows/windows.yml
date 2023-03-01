@@ -30,8 +30,6 @@ jobs:
         run: flutter pub get
       - name: Build
         run: flutter build windows
-      - name: list files
-        run: ls -la build/windows/Runner/release
       - name: Compress artifacts
         run: tar.exe -a -c -f windows-${{ github.event.inputs.tag }}.zip build/windows/Runner/release
       - name: Upload Artifacts
