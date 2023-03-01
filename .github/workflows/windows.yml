@@ -1,0 +1,43 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Windows Build
+
+on:
+#   push:
+#     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release Tag'
+        required: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2.8.0
+        with:
+          channel: stable
+          cache: true
+      - name: Flutter version
+        run: flutter --version
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build
+        run: flutter build windows
+      - name: list files
+        run: ls -la build/windows/Runner/release
+      - name: Compress artifacts
+        run: tar.exe -a -c -f windows-${{ github.event.inputs.tag }}.zip build/windows/Runner/release
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows
+          path: windows-${{ github.event.inputs.tag }}.zip
+          if-no-files-found: error
+          retention-days: 5
