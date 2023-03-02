@@ -7,7 +7,7 @@ on:
         description: 'Release Tag'
         required: true
       upload:
-        description: 'Should upload to release?'
+        description: 'Upload to release?'
         required: true
         default: true
 
@@ -29,11 +29,12 @@ jobs:
       - name: Build App
         run: flutter build macos --build-name=${{ github.event.inputs.tag }}
       - name: Verify Build
-        run: test -d build/macos/Build/Products/Release/toggl_target.app
+        run: test -d build/macos/Build/Products/Release/TogglTarget.app
       - name: Install create-dmg
         run: brew install create-dmg
       - name: Create dmg
-        run: cd installers/dmg && sh create.sh
+        run: |
+          ./installers/dmg/create.sh
       - name: list files
         run: ls -la build/macos/Build/Products/Release/
       - name: Upload Artifacts

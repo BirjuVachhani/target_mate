@@ -18,9 +18,11 @@ import 'resources/colors.dart';
 import 'resources/theme.dart';
 import 'utils/system_tray_manager.dart';
 import 'utils/utils.dart';
+import 'utils/window_resize_listener.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
 
   await initializeData();
 
@@ -29,6 +31,7 @@ void main() async {
 
   await setupWindowManager(isFirstRun: isFirstRun);
 
+  // Save first run status.
   if (!Hive.box(HiveBoxes.secrets).containsKey(HiveKeys.firstRun)) {
     await Hive.box(HiveBoxes.secrets).put(HiveKeys.firstRun, false);
   }
@@ -91,48 +94,28 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
     log('Setting up window manager for the first time.');
   }
 
-  final Size initialSize = getWindowSize();
-  final Offset? position = getWindowPosition();
-
-  await windowManager.ensureInitialized();
+  final Size initialSize = getSavedWindowSize();
+  final Offset? position = getSavedWindowPosition();
 
   windowManager.setMinimumSize(initialSize);
   windowManager.setSize(initialSize);
-  if (position != null) windowManager.setPosition(position);
+
+  // For Windows and Linux.
   if (!defaultTargetPlatform.isMacOS) windowManager.setAsFrameless();
 
-  final windowOptions = WindowOptions(
-    title: 'Toggl Target',
-    size: initialSize,
-    backgroundColor: Colors.transparent,
-    fullScreen: false,
-    skipTaskbar: false,
-    minimumSize: const Size(360, 520),
-  );
-  //
-  windowManager.waitUntilReadyToShow(windowOptions, () {
-    windowManager.show();
+  doWhenWindowReady(() {
+    appWindow.minSize = const Size(360, 520);
+    appWindow.size = initialSize;
+    if (position != null) {
+      appWindow.position = position;
+    } else {
+      // Center the window for the first time.
+      appWindow.alignment = Alignment.center;
+    }
+    appWindow.show();
     windowManager.focus();
-
     windowManager.addListener(WindowResizeListener());
   });
-
-  doWhenWindowReady(() => appWindow.show());
-}
-
-Size getWindowSize() {
-  final double width =
-      Hive.box(HiveBoxes.window).get(HiveKeys.width, defaultValue: 420.0);
-  final double height =
-      Hive.box(HiveBoxes.window).get(HiveKeys.height, defaultValue: 800.0);
-
-  return Size(width, height);
-}
-
-Offset? getWindowPosition() {
-  final double? top = Hive.box(HiveBoxes.window).get(HiveKeys.top);
-  final double? left = Hive.box(HiveBoxes.window).get(HiveKeys.left);
-  return top != null && left != null ? Offset(left, top) : null;
 }
 
 class MyApp extends StatefulWidget {
@@ -169,21 +152,5 @@ class _MyAppState extends State<MyApp> {
     Hive.close();
     GetIt.instance.reset(dispose: true);
     super.dispose();
-  }
-}
-
-class WindowResizeListener extends WindowListener {
-  @override
-  void onWindowResized() async {
-    final Size size = await windowManager.getSize();
-    Hive.box(HiveBoxes.window).put(HiveKeys.width, size.width);
-    Hive.box(HiveBoxes.window).put(HiveKeys.height, size.height);
-  }
-
-  @override
-  void onWindowMoved() async {
-    final pos = await windowManager.getPosition();
-    Hive.box(HiveBoxes.window).put(HiveKeys.left, pos.dx);
-    Hive.box(HiveBoxes.window).put(HiveKeys.top, pos.dy);
   }
 }

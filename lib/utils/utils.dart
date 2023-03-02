@@ -141,3 +141,18 @@ String formatDailyTargetDuration(Duration duration) {
 
   return '${hours > 0 ? '$hours h ' : ''}${minutes > 0 ? minutes.toString().padLeft(hours > 0 ? 2 : 1, '0') : '1'} min';
 }
+
+Size getSavedWindowSize() {
+  final double width =
+      Hive.box(HiveBoxes.window).get(HiveKeys.width, defaultValue: 420.0);
+  final double height =
+      Hive.box(HiveBoxes.window).get(HiveKeys.height, defaultValue: 800.0);
+
+  return Size(width, height);
+}
+
+Offset? getSavedWindowPosition() {
+  final double? top = Hive.box(HiveBoxes.window).get(HiveKeys.top);
+  final double? left = Hive.box(HiveBoxes.window).get(HiveKeys.left);
+  return top != null && left != null ? Offset(left, top) : null;
+}
