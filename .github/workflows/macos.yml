@@ -6,6 +6,10 @@ on:
       tag:
         description: 'Release Tag'
         required: true
+      upload:
+        description: 'Should upload to release?'
+        required: true
+        default: true
 
 jobs:
   build:
@@ -18,10 +22,12 @@ jobs:
           cache: true
       - name: Flutter version
         run: flutter --version
+      - name: Set Up XCode
+        uses: devbotsxyz/xcode-select@v1.1.0
       - name: Install dependencies
         run: flutter pub get
       - name: Build App
-        run: flutter build macos
+        run: flutter build macos --build-name=${{ github.event.inputs.tag }}
       - name: Verify Build
         run: test -d build/macos/Build/Products/Release/toggl_target.app
       - name: Install create-dmg
@@ -40,6 +46,7 @@ jobs:
 
   upload:
     needs: [ build ]
+    if: ${{ github.event.inputs.upload == true }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v3
@@ -47,19 +54,10 @@ jobs:
           path: dist
       - name: Display structure of downloaded files
         run: ls -R dist
-      - name: Upload binaries (for Workflow dispatch)
-        if: ${{ github.event.inputs.tag != null }}
+      - name: Upload binaries to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/*
           tag: ${{ github.event.inputs.tag }}
-          file_glob: true
-      - name: Upload binaries (for release)
-        if: ${{ github.event.inputs.tag == null }}
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/*
-          tag: ${{ github.ref }}
           file_glob: true
