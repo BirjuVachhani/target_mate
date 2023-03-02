@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
@@ -12,6 +14,7 @@ import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/model/day_entry.dart';
 import 'package:toggl_target/model/time_entry.dart';
 import 'package:toggl_target/pages/target_store.dart';
+import 'package:toggl_target/utils/extensions.dart';
 import 'package:toggl_target/utils/system_tray_manager.dart';
 import 'package:toggl_target/utils/utils.dart';
 
@@ -34,9 +37,7 @@ abstract class _HomeStore with Store {
   late final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  _HomeStore(this.targetStore) {
-    init();
-  }
+  _HomeStore(this.targetStore);
 
   @observable
   DateTime? lastUpdated;
@@ -149,27 +150,32 @@ abstract class _HomeStore with Store {
   late String timezone;
   late String avatarUrl;
 
-  Future<void> init() async {
+  Future<void> init(BuildContext context) async {
     authKey = secretsBox.get(HiveKeys.authKey);
     fullName = secretsBox.get(HiveKeys.fullName);
     email = secretsBox.get(HiveKeys.email);
     timezone = secretsBox.get(HiveKeys.timezone);
     avatarUrl = secretsBox.get(HiveKeys.avatarUrl) ?? '';
 
-    await systemTrayManager.init(refreshCallback: refreshData);
+    await systemTrayManager.init(context, refreshCallback: refreshData);
     await refreshData();
   }
 
   void updateSystemTrayText() {
     String text;
     final percentage = (todayPercentage * 100).floor();
-    if (percentage >= 100) {
+    final completed = percentage >= 100;
+    if (completed) {
       text = 'Completed';
     } else {
       text = '$percentage%';
     }
 
     systemTrayManager.setTitle(text);
+
+    if (completed && defaultTargetPlatform.isMacOS) {
+      systemTrayManager.setIcon('assets/icon_done.png');
+    }
   }
 
   Future<List<TimeEntry>?> fetchData() async {

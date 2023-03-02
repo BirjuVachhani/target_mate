@@ -5,12 +5,14 @@ import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:paged_vertical_calendar/utils/date_utils.dart';
+import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/resources/colors.dart';
 import 'package:toggl_target/resources/theme.dart';
 
 import '../main.dart';
 import '../model/day_entry.dart';
+import '../pages/settings.dart';
 import '../pages/setup/auth_page.dart';
 import '../resources/keys.dart';
 
@@ -155,4 +157,16 @@ Offset? getSavedWindowPosition() {
   final double? top = Hive.box(HiveBoxes.window).get(HiveKeys.top);
   final double? left = Hive.box(HiveBoxes.window).get(HiveKeys.left);
   return top != null && left != null ? Offset(left, top) : null;
+}
+
+void openSettings(BuildContext context) {
+  final settingsStore = context.read<SettingsStore>();
+  Navigator.of(context).push(
+    CupertinoPageRoute(
+      builder: (_) => Provider.value(
+        value: settingsStore,
+        child: const SettingsPage(),
+      ),
+    ),
+  );
 }

@@ -1,3 +1,9 @@
+# 0.3.0 [Unreleased]
+
+- Fix system tray icon showing too big.
+- Show done icon when completed on macOS.
+- Add Settings option in system tray.
+
 # 0.2.1 - 2nd March, 2023
 
 - Fix app not opening properly on macOS.

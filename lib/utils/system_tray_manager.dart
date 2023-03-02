@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:system_tray/system_tray.dart';
 import 'package:toggl_target/resources/keys.dart';
@@ -23,6 +24,8 @@ class SystemTrayManager {
 
   bool get isNotSupported => kIsWeb || !defaultTargetPlatform.isDesktop;
 
+  late BuildContext context;
+
   late final Map<Duration, MenuItemCheckbox> intervalItems = {
     for (final interval in intervals)
       interval: MenuItemCheckbox(
@@ -38,7 +41,11 @@ class SystemTrayManager {
 
   late Duration refreshFrequency;
 
-  Future<void> init({required VoidCallback refreshCallback}) async {
+  Future<void> init(
+    BuildContext context, {
+    required VoidCallback refreshCallback,
+  }) async {
+    this.context = context;
     try {
       if (isNotSupported) return;
 
@@ -88,6 +95,14 @@ class SystemTrayManager {
         SubMenu(label: 'Sync Interval', children: intervalItems.values.toList())
           ..name = 'syncInterval',
         MenuSeparator(),
+        MenuItemLabel(
+          label: 'Settings',
+          name: 'settings',
+          onClicked: (menuItem) {
+            appWindow.show();
+            openSettings(context);
+          },
+        ),
         MenuItemLabel(
           label: 'Show',
           name: 'show',
@@ -143,6 +158,11 @@ class SystemTrayManager {
   Future<void> setTitle(String text) async {
     if (isNotSupported) return;
     await systemTray.setTitle(text);
+  }
+
+  Future<void> setIcon(String path) async {
+    if (isNotSupported) return;
+    await systemTray.setImage(path);
   }
 
   Future<void> setRefreshOption({

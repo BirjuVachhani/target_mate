@@ -74,6 +74,7 @@ class _HomePageState extends State<HomePage> {
       requestNotificationPermission();
       checkForUpdates();
     });
+    store.init(context);
   }
 
   void requestNotificationPermission() async {
@@ -1074,18 +1075,6 @@ class HomeHeader extends StatelessWidget {
 
     return '/ $totalString';
   }
-
-  void openSettings(BuildContext context) {
-    final settingsStore = context.read<SettingsStore>();
-    Navigator.of(context).push(
-      CupertinoPageRoute(
-        builder: (_) => Provider.value(
-          value: settingsStore,
-          child: const SettingsPage(),
-        ),
-      ),
-    );
-  }
 }
 
 class TodayProgressIndicator extends StatelessWidget {
@@ -1166,19 +1155,34 @@ class TodayProgressIndicator extends StatelessWidget {
                                   if (!store.isLoading ||
                                       store.isLoadingWithData)
                                     Positioned(
-                                      top: 4,
+                                      top: 0,
                                       bottom: 0,
                                       right: 8,
                                       child: Builder(
                                         builder: (context) {
-                                          return Text(
-                                            store.todayPercentage >= 1
-                                                ? 'Completed'
-                                                : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              letterSpacing: 0.2,
-                                            ),
+                                          return Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              const ImageIcon(
+                                                AssetImage(
+                                                    'assets/icon_done.png'),
+                                                color: Colors.white,
+                                                size: 16,
+                                              ),
+                                              const SizedBox(width: 2),
+                                              Text(
+                                                store.todayPercentage >= 1
+                                                    ? 'Completed'
+                                                    : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  height: 1,
+                                                  letterSpacing: 0.2,
+                                                ),
+                                              ),
+                                            ],
                                           );
                                         },
                                       ),
