@@ -1,3 +1,7 @@
+# 0.2.1 - 2nd March, 2023
+
+- Fix app not opening properly on macOS.
+
 # 0.2.0 - 21st Feb, 2023
 
 - Replace secure storage with encrypted shared preferences.
