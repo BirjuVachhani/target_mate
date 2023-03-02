@@ -130,12 +130,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     final appSettingsBox = getAppSettingsBox();
     final primaryColor = Color(appSettingsBox.get(HiveKeys.primaryColor));
+    final useMaterial3 =
+        appSettingsBox.get(HiveKeys.useMaterial3, defaultValue: false);
 
     final bool isOnboarded = getSecretsBox().containsKey(HiveKeys.onboarded);
     return AdaptiveTheme(
       initial: AdaptiveThemeMode.dark,
-      light: ThemeData.light(),
-      dark: getTheme(primaryColor),
+      light: getLightTheme(primaryColor, useMaterial3: useMaterial3),
+      dark: getDarkTheme(primaryColor, useMaterial3: useMaterial3),
       builder: (theme, darkTheme) => MaterialApp(
         title: 'Toggl Target',
         debugShowCheckedModeBanner: false,

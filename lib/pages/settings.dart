@@ -13,6 +13,7 @@ import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/resources/theme.dart';
+import 'package:toggl_target/ui/custom_switch.dart';
 import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/ui/widgets.dart';
 import 'package:toggl_target/utils/extensions.dart';
@@ -39,6 +40,9 @@ abstract class _SettingsStore with Store {
 
   @observable
   Color themeColor = Colors.transparent;
+
+  @observable
+  bool useMaterial3 = false;
 
   @observable
   Duration refreshFrequency = 5.minutes;
@@ -108,136 +112,196 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: CustomSafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: SizedBox(
-                    width: 350,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const CustomBackButton(usePrimaryColor: false),
-                        const SizedBox(height: 16),
-                        const SetupTitle('Select theme color'),
-                        const SizedBox(height: 8),
-                        Observer(
-                          builder: (context) {
-                            return ColorsView(
-                              current: store.themeColor,
-                              colors: customThemeColors,
-                              onSelected: (color) {
-                                store.setThemeColor(color);
-                                AdaptiveTheme.of(context).setTheme(
-                                    light: getTheme(color),
-                                    dark: getTheme(color));
-                              },
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 24),
-                        const FieldLabel('Refresh frequency'),
-                        Observer(
-                          builder: (context) {
-                            return CustomDropdown<Duration>(
-                              value: store.refreshFrequency,
-                              isExpanded: true,
-                              onSelected: (value) {
-                                store.setRefreshFrequency(value);
-                                systemTrayManager.setSyncInterval(value);
-                              },
-                              selectedItemBuilder: (context, item) => Text(
-                                formatDuration(store.refreshFrequency),
-                              ),
-                              itemBuilder: (context, item) =>
-                                  CustomDropdownMenuItem<Duration>(
-                                value: item,
-                                child: item.inMinutes != 5
-                                    ? Text(
-                                        formatDuration(item),
-                                      )
-                                    : Text.rich(
-                                        TextSpan(
-                                          text: formatDuration(item),
-                                          children: [
-                                            TextSpan(
-                                              text: ' (Recommended)',
-                                              style: TextStyle(
-                                                color:
-                                                    store.refreshFrequency ==
-                                                            item
-                                                        ? context
-                                                            .theme
-                                                            .colorScheme
-                                                            .onPrimary
-                                                        : Colors.white
-                                                            .withOpacity(0.5),
-                                                fontStyle: FontStyle.italic,
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                              ),
-                              items: intervals,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 40),
-                        Center(
-                          child: FilledButton.icon(
-                            onPressed: logout,
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.red,
-                              backgroundColor: Colors.red.withOpacity(0.1),
-                            ),
-                            icon: const Icon(Icons.logout_rounded),
-                            label: const Text('Logout'),
-                          ),
-                        ),
-                      ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Center(
+              child: SizedBox(
+                width: 350,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const CustomBackButton(usePrimaryColor: false),
+                    const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: SetupTitle('App Settings'),
                     ),
-                  ),
+                    const AppearanceSettings(),
+                    const SizedBox(height: 16),
+                    const SyncSettings(),
+                    const SizedBox(height: 16),
+                    const AccountSettings(),
+                    const SizedBox(height: 40),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'assets/logo_trimmed.png',
+                        width: 100,
+                        color: context.theme.colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: FutureBuilder<PackageInfo>(
+                        future: packageInfo,
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) return const SizedBox.shrink();
+                          final data = snapshot.data;
+                          if (data == null) return const SizedBox.shrink();
+                          return Text(
+                            'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white60,
+                              fontSize: 12,
+                              letterSpacing: 0.8,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                 ),
               ),
             ),
-            Container(
-              alignment: Alignment.center,
-              child: Image.asset(
-                'assets/logo_trimmed.png',
-                width: 100,
-                color: context.theme.colorScheme.primary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Center(
-              child: FutureBuilder<PackageInfo>(
-                future: packageInfo,
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) return const SizedBox.shrink();
-                  final data = snapshot.data;
-                  if (data == null) return const SizedBox.shrink();
-                  return Text(
-                    'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white60,
-                      fontSize: 12,
-                      letterSpacing: 0.8,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class AppearanceSettings extends StatelessObserverWidget {
+  const AppearanceSettings({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.read<SettingsStore>();
+    return SettingsSection(
+      title: 'Appearance',
+      children: [
+        const Text('Theme'),
+        const SizedBox(height: 8),
+        ColorsView(
+          current: store.themeColor,
+          colors: themeColors,
+          getPrimaryColor: (color) =>
+              store.useMaterial3 ? color.toPrimaryMaterial3() : color,
+          onSelected: (color) {
+            store.setThemeColor(color);
+            AdaptiveTheme.of(context).setTheme(
+              light: getLightTheme(color, useMaterial3: store.useMaterial3),
+              dark: getDarkTheme(color, useMaterial3: store.useMaterial3),
+            );
+          },
+        ),
+        const SizedBox(height: 16),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Use faded colors'),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Use Material 3 like desaturated version of the colors.',
+                    style: subtitleTextStyle.copyWith(
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            CustomSwitch(
+              labelStyle: const TextStyle(
+                fontSize: 14,
+              ),
+              value: store.useMaterial3,
+              onChanged: (value) {
+                store.useMaterial3 = value;
+                AdaptiveTheme.of(context).setTheme(
+                  light: getLightTheme(store.themeColor,
+                      useMaterial3: store.useMaterial3),
+                  dark: getDarkTheme(store.themeColor,
+                      useMaterial3: store.useMaterial3),
+                );
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class SyncSettings extends StatelessWidget {
+  const SyncSettings({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.read<SettingsStore>();
+    late final SystemTrayManager systemTrayManager =
+        GetIt.instance.get<SystemTrayManager>();
+    return SettingsSection(
+      title: 'Sync',
+      children: [
+        const Text('Refresh frequency'),
+        FractionallySizedBox(
+          widthFactor: 0.9,
+          child: Text(
+            'How often should the app sync with Toggl?',
+            style: subtitleTextStyle.copyWith(
+              fontSize: 13,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Observer(
+          builder: (context) {
+            return CustomDropdown<Duration>(
+              value: store.refreshFrequency,
+              isExpanded: true,
+              onSelected: (value) {
+                store.setRefreshFrequency(value);
+                systemTrayManager.setSyncInterval(value);
+              },
+              selectedItemBuilder: (context, item) => Text(
+                formatDuration(store.refreshFrequency),
+              ),
+              itemBuilder: (context, item) => CustomDropdownMenuItem<Duration>(
+                value: item,
+                child: item.inMinutes != 5
+                    ? Text(
+                        formatDuration(item),
+                      )
+                    : Text.rich(
+                        TextSpan(
+                          text: formatDuration(item),
+                          children: [
+                            TextSpan(
+                              text: ' (Recommended)',
+                              style: TextStyle(
+                                color: store.refreshFrequency == item
+                                    ? context.theme.colorScheme.onPrimary
+                                    : Colors.white.withOpacity(0.5),
+                                fontStyle: FontStyle.italic,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+              items: intervals,
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -254,20 +318,97 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
+class AccountSettings extends StatelessObserverWidget {
+  const AccountSettings({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.read<SettingsStore>();
+    return SettingsSection(
+      title: 'Account',
+      children: [
+        // const Text('Log out of your Toggl account?'),
+        Text(getSecretsBox().get(HiveKeys.fullName, defaultValue: '')),
+        // const SizedBox(height: 4),
+        Text(
+          '${getSecretsBox().get(HiveKeys.email, defaultValue: '')}',
+          // 'Logging out will remove all your data from this device.',
+          style: subtitleTextStyle,
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton.icon(
+          onPressed: logout,
+          style: TextButton.styleFrom(
+            foregroundColor: store.useMaterial3
+                ? context.theme.colorScheme.onTertiary
+                : context.theme.colorScheme.onPrimary,
+            backgroundColor: store.useMaterial3
+                ? context.theme.colorScheme.tertiary
+                : context.theme.colorScheme.primary,
+          ),
+          icon: const Icon(Icons.logout_rounded),
+          label: const Text('Logout'),
+        ),
+      ],
+    );
+  }
+}
+
+class SettingsSection extends StatelessWidget {
+  final String? title;
+  final List<Widget> children;
+  final EdgeInsets? padding;
+
+  const SettingsSection({
+    super.key,
+    this.title,
+    this.padding,
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (title != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(
+              title!.toUpperCase(),
+              style: context.theme.textTheme.titleMedium!.copyWith(
+                color: context.theme.colorScheme.primary,
+                fontSize: 10,
+                letterSpacing: 1,
+              ),
+            ),
+          ),
+        const SizedBox(height: 6),
+        Container(
+          padding: padding ?? const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: context.theme.colorScheme.primary.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 final List<Color> themeColors = [
   AppColors.primaryColor,
   Colors.blue,
   Colors.red,
-  Colors.green,
-  Colors.purple,
   Colors.orange,
-  Colors.pink,
   Colors.teal,
-  Colors.cyan,
-  Colors.lime,
-  Colors.yellow,
-  Colors.indigo,
-  Colors.brown,
+  Colors.deepPurpleAccent,
   Colors.grey,
 ];
 
@@ -275,23 +416,24 @@ class ColorsView extends StatelessWidget {
   final Color current;
   final ValueChanged<Color> onSelected;
   final List<Color>? colors;
+  final Color Function(Color color) getPrimaryColor;
 
   const ColorsView({
     super.key,
     required this.current,
     required this.onSelected,
+    required this.getPrimaryColor,
     this.colors,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      runSpacing: 12,
-      spacing: 12,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         for (final color in colors ?? themeColors)
           ColorButton(
-            color: color,
+            color: getPrimaryColor(color),
             selected: color.value == current.value,
             onPressed: () => onSelected(color),
           ),
@@ -317,21 +459,29 @@ class ColorButton extends StatelessWidget {
     return GestureDetectorWithCursor(
       onTap: onPressed,
       child: Container(
-        width: 32,
-        height: 32,
+        width: 34,
+        height: 34,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: color,
+          gradient: LinearGradient(
+            colors: [
+              color,
+              color.darken(90),
+            ],
+            stops: const [0.48, 0.48],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
           border: Border.all(
-            color: selected ? Colors.white : Colors.transparent,
-            width: 1.5,
+            color: selected ? Colors.white : color,
+            width: selected ? 1.5 : 1.5,
           ),
         ),
         child: selected
-            ? const Icon(
-                Icons.done_rounded,
-                size: 16,
+            ? const ImageIcon(
+                AssetImage('assets/icon_done.png'),
+                size: 20,
                 color: Colors.white,
               )
             : null,

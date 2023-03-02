@@ -27,6 +27,7 @@ class HiveKeys {
   static const String primaryColor = 'primary_color';
   static const String refreshFrequency = 'refresh_frequency';
   static const String firstRun = 'first_run';
+  static const String useMaterial3 = 'use_material_3';
 }
 
 class HiveBoxes {

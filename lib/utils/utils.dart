@@ -59,8 +59,9 @@ Future<void> logout({bool navigate = true}) async {
   final adaptiveTheme = AdaptiveTheme.of(navigator.context);
   adaptiveTheme.reset();
   adaptiveTheme.setTheme(
-      light: getTheme(AppColors.primaryColor),
-      dark: getTheme(AppColors.primaryColor));
+    light: getLightTheme(AppColors.primaryColor, useMaterial3: false),
+    dark: getDarkTheme(AppColors.primaryColor, useMaterial3: false),
+  );
 
   // Delete saved data.
   await Hive.deleteBoxFromDisk(HiveBoxes.secrets);

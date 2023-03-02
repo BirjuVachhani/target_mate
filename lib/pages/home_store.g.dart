@@ -66,6 +66,13 @@ mixin _$HomeStore on _HomeStore, Store {
           () => super.todayPercentage,
           name: '_HomeStore.todayPercentage'))
       .value;
+  Computed<bool>? _$isTodayTargetAchievedComputed;
+
+  @override
+  bool get isTodayTargetAchieved => (_$isTodayTargetAchievedComputed ??=
+          Computed<bool>(() => super.isTodayTargetAchieved,
+              name: '_HomeStore.isTodayTargetAchieved'))
+      .value;
   Computed<Duration>? _$remainingForTodayComputed;
 
   @override
@@ -208,6 +215,7 @@ remainingTillToday: ${remainingTillToday},
 dailyAverageTarget: ${dailyAverageTarget},
 dailyAverageTargetTillToday: ${dailyAverageTargetTillToday},
 todayPercentage: ${todayPercentage},
+isTodayTargetAchieved: ${isTodayTargetAchieved},
 remainingForToday: ${remainingForToday},
 effectiveAverageTarget: ${effectiveAverageTarget},
 isMonthlyTargetAchieved: ${isMonthlyTargetAchieved}

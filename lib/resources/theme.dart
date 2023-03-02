@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:toggl_target/utils/extensions.dart';
 
-ThemeData getTheme(Color primaryColor) {
+ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
   final Color backgroundColor = primaryColor.darken(95);
 
   final m3colorScheme = ColorScheme.fromSeed(
@@ -14,8 +14,9 @@ ThemeData getTheme(Color primaryColor) {
   ).copyWith(background: backgroundColor);
 
   return ThemeData(
+    useMaterial3: true,
     primaryColor: primaryColor,
-    colorScheme: m2colorScheme,
+    colorScheme: useMaterial3 ? m3colorScheme : m2colorScheme,
     // useMaterial3: true,
     // colorSchemeSeed: primaryColor,
     brightness: Brightness.dark,
@@ -78,4 +79,9 @@ ThemeData getTheme(Color primaryColor) {
       ),
     ),
   );
+}
+
+ThemeData getLightTheme(Color primaryColor, {bool useMaterial3 = false}) {
+  // TODO: imeplement a light theme
+  return getDarkTheme(primaryColor, useMaterial3: useMaterial3);
 }

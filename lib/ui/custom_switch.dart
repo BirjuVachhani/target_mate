@@ -4,15 +4,17 @@ import 'package:flutter/material.dart';
 import 'gesture_detector_with_cursor.dart';
 
 class CustomSwitch extends StatelessWidget {
-  final String label;
+  final String? label;
   final bool value;
   final ValueChanged<bool> onChanged;
+  final TextStyle? labelStyle;
 
   const CustomSwitch({
     super.key,
-    required this.label,
+    this.label,
     required this.value,
     required this.onChanged,
+    this.labelStyle,
   });
 
   @override
@@ -23,16 +25,17 @@ class CustomSwitch extends StatelessWidget {
         onTap: () => onChanged(!value),
         child: Row(
           children: [
-            Expanded(
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+            if (label != null)
+              Expanded(
+                child: Text(
+                  label!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ).merge(labelStyle),
                 ),
               ),
-            ),
-            const SizedBox(height: 10),
+            if (label != null) const SizedBox(height: 10),
             Transform.translate(
               offset: const Offset(7, 0),
               child: Transform.scale(

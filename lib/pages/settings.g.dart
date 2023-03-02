@@ -25,6 +25,22 @@ mixin _$SettingsStore on _SettingsStore, Store {
     });
   }
 
+  late final _$useMaterial3Atom =
+      Atom(name: '_SettingsStore.useMaterial3', context: context);
+
+  @override
+  bool get useMaterial3 {
+    _$useMaterial3Atom.reportRead();
+    return super.useMaterial3;
+  }
+
+  @override
+  set useMaterial3(bool value) {
+    _$useMaterial3Atom.reportWrite(value, super.useMaterial3, () {
+      super.useMaterial3 = value;
+    });
+  }
+
   late final _$refreshFrequencyAtom =
       Atom(name: '_SettingsStore.refreshFrequency', context: context);
 
@@ -70,6 +86,7 @@ mixin _$SettingsStore on _SettingsStore, Store {
   String toString() {
     return '''
 themeColor: ${themeColor},
+useMaterial3: ${useMaterial3},
 refreshFrequency: ${refreshFrequency}
     ''';
   }
