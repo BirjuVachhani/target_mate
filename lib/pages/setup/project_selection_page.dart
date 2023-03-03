@@ -16,6 +16,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../ui/back_button.dart';
 import '../../ui/custom_dropdown.dart';
+import '../../ui/custom_scaffold.dart';
 import '../../ui/dropdown_button3.dart';
 import '../../ui/widgets.dart';
 
@@ -55,7 +56,7 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),

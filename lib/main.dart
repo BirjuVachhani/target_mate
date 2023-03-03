@@ -6,6 +6,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:toggl_target/resources/keys.dart';
@@ -22,9 +23,15 @@ import 'utils/window_resize_listener.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
-
+  if (defaultTargetPlatform.isDesktop) {
+    await windowManager.ensureInitialized();
+  }
   await initializeData();
+
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
 
   final bool isFirstRun =
       !Hive.box(HiveBoxes.secrets).containsKey(HiveKeys.firstRun);

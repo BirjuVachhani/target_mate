@@ -22,6 +22,7 @@ import '../resources/colors.dart';
 import '../ui/back_button.dart';
 import '../ui/custom_dropdown.dart';
 import '../ui/custom_safe_area.dart';
+import '../ui/custom_scaffold.dart';
 import '../ui/dropdown_button3.dart';
 import '../utils/system_tray_manager.dart';
 import '../utils/utils.dart';
@@ -110,7 +111,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
       body: CustomSafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 2),

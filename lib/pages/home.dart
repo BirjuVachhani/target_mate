@@ -24,6 +24,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../resources/colors.dart';
 import '../ui/custom_safe_area.dart';
+import '../ui/custom_scaffold.dart';
 import '../ui/gradient_background.dart';
 import '../utils/utils.dart';
 import 'home_store.dart';
@@ -134,7 +135,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return CustomScaffold(
+      systemNavigationBarColor: context.theme.colorScheme.primary.darken(85),
       body: GradientBackground(
         child: SafeArea(
           bottom: false,

@@ -4,6 +4,6 @@
     <item android:drawable="@color/background" />
 
     <!-- You can insert your own image assets here -->
-    <item android:drawable="@drawable/ic_launcher_foreground" />
+    <item android:gravity="center" android:drawable="@drawable/ic_launcher_foreground" />
 
 </layer-list>

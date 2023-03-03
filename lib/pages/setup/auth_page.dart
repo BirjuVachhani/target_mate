@@ -14,6 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:toggl_target/ui/custom_scaffold.dart';
 import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -62,7 +63,7 @@ class _AuthPageState extends State<AuthPage> {
       restoreTheme = false;
       Future.delayed(Duration.zero, () => AdaptiveTheme.of(context).reset());
     }
-    return Scaffold(
+    return CustomScaffold(
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),

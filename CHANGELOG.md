@@ -3,6 +3,12 @@
 - Fix system tray icon showing too big.
 - Show done icon when completed on macOS.
 - Add Settings option in system tray.
+- Fix system ui overlay colors and brightness for Android and iOS.
+- Fix stretched splash screen icon on Android.
+- Fix app not running on Android and iOS.
+- Fix app to only have portrait orientation.
+- Revamp settings screen UI.
+- Add option to use faded colors for themes.
 
 # 0.2.1 - 2nd March, 2023
 
