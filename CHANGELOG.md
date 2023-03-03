@@ -9,6 +9,9 @@
 - Fix app to only have portrait orientation.
 - Revamp settings screen UI.
 - Add option to use faded colors for themes.
+- Dismiss keyboard on background click.
+- Fix overflow on auth page due to virtual keyboard.
+- Fix decoration color for hyperlinks.
 
 # 0.2.1 - 2nd March, 2023
 

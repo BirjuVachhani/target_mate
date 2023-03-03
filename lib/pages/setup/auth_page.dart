@@ -65,72 +65,74 @@ class _AuthPageState extends State<AuthPage> {
     }
     return CustomScaffold(
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: SizedBox(
-            width: 350,
-            child: AnimatedSize(
-              alignment: Alignment.topCenter,
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Welcome to',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white70,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: SizedBox(
+              width: 350,
+              child: AnimatedSize(
+                alignment: Alignment.topCenter,
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'Welcome to',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white70,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      'assets/logo_trimmed.png',
-                      fit: BoxFit.fitWidth,
-                      width: 200,
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'assets/logo_trimmed.png',
+                        fit: BoxFit.fitWidth,
+                        width: 200,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text.rich(
-                    TextSpan(
-                      text: 'A companion app for  ',
-                      children: [
-                        TextSpan(
-                          text: 'Toggl Track.',
-                          recognizer: recognizer,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: context.theme.colorScheme.primary,
+                    const SizedBox(height: 12),
+                    Text.rich(
+                      TextSpan(
+                        text: 'A companion app for  ',
+                        children: [
+                          TextSpan(
+                            text: 'Toggl Track.',
+                            recognizer: recognizer,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: context.theme.colorScheme.primary,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white70,
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white70,
+                    const SizedBox(height: 48),
+                    Observer(
+                      builder: (context) => AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 250),
+                        reverseDuration: const Duration(milliseconds: 250),
+                        switchInCurve: Curves.easeInOut,
+                        switchOutCurve: Curves.easeInOut,
+                        child: store.loginWithAPIKey
+                            ? ApiKeyUI(onNext: onNext)
+                            : BasicAuthUI(onNext: onNext),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 48),
-                  Observer(
-                    builder: (context) => AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 250),
-                      reverseDuration: const Duration(milliseconds: 250),
-                      switchInCurve: Curves.easeInOut,
-                      switchOutCurve: Curves.easeInOut,
-                      child: store.loginWithAPIKey
-                          ? ApiKeyUI(onNext: onNext)
-                          : BasicAuthUI(onNext: onNext),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -193,6 +195,7 @@ class _ApiKeyUIState extends State<ApiKeyUI> {
                 recognizer: recognizer,
                 style: TextStyle(
                   decoration: TextDecoration.underline,
+                  decorationColor: context.theme.colorScheme.primary,
                   fontWeight: FontWeight.w600,
                   color: context.theme.colorScheme.primary,
                 ),
@@ -321,7 +324,8 @@ class _BasicAuthUIState extends State<BasicAuthUI> {
                 style: TextStyle(
                   decoration: TextDecoration.underline,
                   fontWeight: FontWeight.w600,
-                  color: context.theme.colorScheme.onSurface.withOpacity(0.8),
+                  decorationColor: context.theme.colorScheme.primary,
+                  color: context.theme.colorScheme.primary,
                 ),
               ),
             ],

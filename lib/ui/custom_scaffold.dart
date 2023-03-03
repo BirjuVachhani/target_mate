@@ -9,12 +9,14 @@ class CustomScaffold extends StatelessWidget {
   final Widget body;
   final Color? systemNavigationBarColor;
   final Future<bool> Function()? onWillPop;
+  final bool? resizeToAvoidBottomInset;
 
   const CustomScaffold({
     super.key,
     required this.body,
     this.systemNavigationBarColor,
     this.onWillPop,
+    this.resizeToAvoidBottomInset,
   });
 
   @override
@@ -35,7 +37,12 @@ class CustomScaffold extends StatelessWidget {
       child: WillPopScope(
         onWillPop: onWillPop ?? () async => true,
         child: Scaffold(
-          body: body,
+          resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            behavior: HitTestBehavior.opaque,
+            child: body,
+          ),
         ),
       ),
     );
