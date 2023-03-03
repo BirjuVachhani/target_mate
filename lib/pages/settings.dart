@@ -319,38 +319,55 @@ class SyncSettings extends StatelessWidget {
   }
 }
 
-class AccountSettings extends StatelessObserverWidget {
+class AccountSettings extends StatefulWidget {
   const AccountSettings({super.key});
+
+  @override
+  State<AccountSettings> createState() => _AccountSettingsState();
+}
+
+class _AccountSettingsState extends State<AccountSettings> {
+  late final String fullName;
+  late final String email;
+
+  @override
+  void initState() {
+    super.initState();
+    fullName = getSecretsBox().get(HiveKeys.fullName, defaultValue: '');
+    email = getSecretsBox().get(HiveKeys.email, defaultValue: '');
+  }
 
   @override
   Widget build(BuildContext context) {
     final store = context.read<SettingsStore>();
-    return SettingsSection(
-      title: 'Account',
-      children: [
-        // const Text('Log out of your Toggl account?'),
-        Text(getSecretsBox().get(HiveKeys.fullName, defaultValue: '')),
-        // const SizedBox(height: 4),
-        Text(
-          '${getSecretsBox().get(HiveKeys.email, defaultValue: '')}',
-          // 'Logging out will remove all your data from this device.',
-          style: subtitleTextStyle,
-        ),
-        const SizedBox(height: 12),
-        ElevatedButton.icon(
-          onPressed: logout,
-          style: TextButton.styleFrom(
-            foregroundColor: store.useMaterial3
-                ? context.theme.colorScheme.onTertiary
-                : context.theme.colorScheme.onPrimary,
-            backgroundColor: store.useMaterial3
-                ? context.theme.colorScheme.tertiary
-                : context.theme.colorScheme.primary,
+    return Observer(
+      builder: (context) => SettingsSection(
+        title: 'Account',
+        children: [
+          // const Text('Log out of your Toggl account?'),
+          Text(fullName),
+          // const SizedBox(height: 4),
+          Text(
+            email,
+            // 'Logging out will remove all your data from this device.',
+            style: subtitleTextStyle,
           ),
-          icon: const Icon(Icons.logout_rounded),
-          label: const Text('Logout'),
-        ),
-      ],
+          const SizedBox(height: 12),
+          ElevatedButton.icon(
+            onPressed: logout,
+            style: TextButton.styleFrom(
+              foregroundColor: store.useMaterial3
+                  ? context.theme.colorScheme.onTertiary
+                  : context.theme.colorScheme.onPrimary,
+              backgroundColor: store.useMaterial3
+                  ? context.theme.colorScheme.tertiary
+                  : context.theme.colorScheme.primary,
+            ),
+            icon: const Icon(Icons.logout_rounded),
+            label: const Text('Logout'),
+          ),
+        ],
+      ),
     );
   }
 }
