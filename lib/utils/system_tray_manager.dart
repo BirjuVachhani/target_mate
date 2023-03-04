@@ -7,6 +7,7 @@ import 'package:system_tray/system_tray.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/utils/extensions.dart';
 
+import '../model/user.dart';
 import 'utils.dart';
 
 class SystemTrayManager {
@@ -57,9 +58,7 @@ class SystemTrayManager {
       _appWindow = AppWindow();
       _menu = Menu();
 
-      final box = getSecretsBox();
-      final fullName = box.get(HiveKeys.fullName);
-      final email = box.get(HiveKeys.email);
+      final User? user = getUserFromStorage();
 
       String path = defaultTargetPlatform.isWindows
           ? 'assets/icon_system_tray.ico'
@@ -74,15 +73,15 @@ class SystemTrayManager {
 
       // create context menu
       await menu.buildFrom([
-        if (fullName.isNotEmpty)
+        if (user?.fullName != null && user!.fullName.isNotEmpty)
           MenuItemLabel(
-            label: fullName,
+            label: user.fullName,
             name: 'fullName',
             enabled: false,
           ),
-        if (email.isNotEmpty)
+        if (user?.email != null && user!.email.isNotEmpty)
           MenuItemLabel(
-            label: email,
+            label: user.email,
             name: 'email',
             enabled: false,
           ),

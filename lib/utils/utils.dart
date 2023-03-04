@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,11 +9,14 @@ import 'package:intl/intl.dart';
 import 'package:paged_vertical_calendar/utils/date_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:toggl_target/model/workspace.dart';
 import 'package:toggl_target/resources/colors.dart';
 import 'package:toggl_target/resources/theme.dart';
 
 import '../main.dart';
 import '../model/day_entry.dart';
+import '../model/project.dart';
+import '../model/user.dart';
 import '../pages/settings.dart';
 import '../pages/setup/auth_page.dart';
 import '../resources/keys.dart';
@@ -23,6 +28,25 @@ Box getAppSettingsBox() => Hive.box(HiveBoxes.settings);
 Box getTargetBox() => Hive.box(HiveBoxes.target);
 
 Box getNotificationsBox() => Hive.box(HiveBoxes.notifications);
+
+User? getUserFromStorage() {
+  if (!getSecretsBox().containsKey(HiveKeys.user)) return null;
+
+  return User.fromJson(json.decode(getSecretsBox().get(HiveKeys.user)));
+}
+
+Workspace? getWorkspaceFromStorage() {
+  if (!getSecretsBox().containsKey(HiveKeys.workspace)) return null;
+
+  return Workspace.fromJson(
+      json.decode(getSecretsBox().get(HiveKeys.workspace)));
+}
+
+Project? getProjectFromStorage() {
+  if (!getSecretsBox().containsKey(HiveKeys.project)) return null;
+
+  return Project.fromJson(json.decode(getSecretsBox().get(HiveKeys.project)));
+}
 
 List<int> getMonthDaysFromWeekDays(DateTime month, List<int> weekDays) {
   final days = <int>[];
@@ -171,3 +195,9 @@ void openSettings(BuildContext context) {
     ),
   );
 }
+
+bool deletedFromJson(String? value) => value != null;
+
+DateTime dateTimeFromJson(String json) => DateTime.parse(json);
+
+String dateTimeToJson(DateTime dateTime) => dateTime.toIso8601String();

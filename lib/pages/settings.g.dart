@@ -57,6 +57,30 @@ mixin _$SettingsStore on _SettingsStore, Store {
     });
   }
 
+  late final _$isLoadingProjectsAtom =
+      Atom(name: '_SettingsStore.isLoadingProjects', context: context);
+
+  @override
+  bool get isLoadingProjects {
+    _$isLoadingProjectsAtom.reportRead();
+    return super.isLoadingProjects;
+  }
+
+  @override
+  set isLoadingProjects(bool value) {
+    _$isLoadingProjectsAtom.reportWrite(value, super.isLoadingProjects, () {
+      super.isLoadingProjects = value;
+    });
+  }
+
+  late final _$fetchAllProjectsAsyncAction =
+      AsyncAction('_SettingsStore.fetchAllProjects', context: context);
+
+  @override
+  Future<void> fetchAllProjects() {
+    return _$fetchAllProjectsAsyncAction.run(() => super.fetchAllProjects());
+  }
+
   late final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore', context: context);
 
@@ -87,7 +111,8 @@ mixin _$SettingsStore on _SettingsStore, Store {
     return '''
 themeColor: ${themeColor},
 useMaterial3: ${useMaterial3},
-refreshFrequency: ${refreshFrequency}
+refreshFrequency: ${refreshFrequency},
+isLoadingProjects: ${isLoadingProjects}
     ''';
   }
 }

@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:toggl_target/api/toggl_api_service.dart';
 import 'package:toggl_target/model/day_entry.dart';
 import 'package:toggl_target/model/time_entry.dart';
 import 'package:toggl_target/pages/target_store.dart';
@@ -18,7 +19,9 @@ import 'package:toggl_target/utils/extensions.dart';
 import 'package:toggl_target/utils/system_tray_manager.dart';
 import 'package:toggl_target/utils/utils.dart';
 
+import '../model/user.dart';
 import '../resources/keys.dart';
+import '../utils/migration/migrator.dart';
 
 part 'home_store.g.dart';
 
@@ -33,6 +36,7 @@ abstract class _HomeStore with Store {
   late final Box secretsBox = getSecretsBox();
   late final Box settingsBox = getAppSettingsBox();
   late final Box notificationsBox = getNotificationsBox();
+  late final TogglApiService apiService = GetIt.instance.get<TogglApiService>();
 
   late final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -145,18 +149,27 @@ abstract class _HomeStore with Store {
       completed >= targetStore.requiredTargetDuration;
 
   late String authKey;
-  late String fullName;
-  late String email;
-  late String timezone;
-  late String avatarUrl;
+  User? user;
 
+  @action
   Future<void> init(BuildContext context) async {
     authKey = secretsBox.get(HiveKeys.authKey);
-    fullName = secretsBox.get(HiveKeys.fullName);
-    email = secretsBox.get(HiveKeys.email);
-    timezone = secretsBox.get(HiveKeys.timezone);
-    avatarUrl = secretsBox.get(HiveKeys.avatarUrl) ?? '';
 
+    // Check for migration
+    try {
+      log('Checking for migration...');
+      await Migrator.runMigrationIfRequired();
+    } catch (e) {
+      error =
+          "Unable to migrate data. Please restart the app. If that doesn't work, please delete the app and reinstall.";
+      isLoading = false;
+      return;
+    }
+
+    log('Loading user data...');
+    user = getUserFromStorage()!;
+
+    // ignore: use_build_context_synchronously
     await systemTrayManager.init(context, refreshCallback: refreshData);
     await refreshData();
   }
@@ -187,26 +200,17 @@ abstract class _HomeStore with Store {
       // endDate is exclusive, so we need use 1st of next month.
       final String endDate =
           format.format(DateTime(targetStore.year, targetStore.month + 1, 1));
-      final uri = Uri.parse(
-          'https://api.track.toggl.com/api/v9/me/time_entries?start_date=$startDate&end_date=$endDate');
-      log('Fetching data from $startDate until $endDate...');
-      log('URL: $uri');
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic $authKey',
-        },
-      );
 
-      if (response.statusCode != 200) {
+      log('Fetching data from $startDate until $endDate...');
+
+      final response = await apiService.getTimeEntries(startDate, endDate);
+
+      if (!response.isSuccessful) {
         log('Error', error: response.body);
         return null;
       }
 
-      final List<JsonMap> data = List<JsonMap>.from(jsonDecode(response.body));
-
-      final List<TimeEntry> timeEntries = data.map(TimeEntry.fromJson).toList();
+      final List<TimeEntry> timeEntries = response.body ?? [];
 
       return timeEntries;
     } catch (error, stackTrace) {
@@ -290,8 +294,8 @@ abstract class _HomeStore with Store {
   void processTimeEntries(List<TimeEntry> entries) {
     log('Processing time entries...');
 
-    final int? projectId = secretsBox.get(HiveKeys.projectId);
-    final int? workspaceId = secretsBox.get(HiveKeys.workspaceId);
+    final int? projectId = getProjectFromStorage()?.id;
+    final int? workspaceId = getWorkspaceFromStorage()?.id;
 
     List<TimeEntry> filtered = entries.where((item) {
       if (item.projectId == projectId && item.workspaceId == workspaceId) {

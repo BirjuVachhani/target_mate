@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:screwdriver/screwdriver.dart';
 
+import '../utils/utils.dart';
+
 part 'time_entry.g.dart';
 
 @JsonSerializable()
@@ -92,16 +94,10 @@ class TimeEntry with EquatableMixin {
       ];
 }
 
-bool deletedFromJson(String? value) => value != null;
-
-DateTime dateTimeFromJson(String json) => DateTime.parse(json);
-
 DateTime stopDateTimeFromJson(String? json) {
   if (json == null) return DateTime.now();
   return DateTime.parse(json);
 }
-
-String dateTimeToJson(DateTime dateTime) => dateTime.toIso8601String();
 
 /// For running entries should be -1 * (Unix start time)
 Duration durationFromJson(int value) {

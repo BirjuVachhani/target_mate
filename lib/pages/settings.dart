@@ -18,6 +18,7 @@ import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/ui/widgets.dart';
 import 'package:toggl_target/utils/extensions.dart';
 
+import '../model/user.dart';
 import '../resources/colors.dart';
 import '../ui/back_button.dart';
 import '../ui/custom_dropdown.dart';
@@ -47,6 +48,9 @@ abstract class _SettingsStore with Store {
 
   @observable
   Duration refreshFrequency = 5.minutes;
+
+  @observable
+  bool isLoadingProjects = false;
 
   StreamSubscription? subscription;
 
@@ -83,6 +87,13 @@ abstract class _SettingsStore with Store {
   void dispose() {
     subscription?.cancel();
   }
+
+  @action
+  Future<void> fetchAllProjects() async {
+    isLoadingProjects = true;
+    await Future.delayed(1.seconds);
+    isLoadingProjects = false;
+  }
 }
 
 class SettingsPage extends StatefulWidget {
@@ -113,58 +124,58 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return CustomScaffold(
       body: CustomSafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Center(
-              child: SizedBox(
-                width: 350,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const CustomBackButton(usePrimaryColor: false),
-                    const Padding(
-                      padding: EdgeInsets.all(8),
-                      child: SetupTitle('App Settings'),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          primary: true,
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Center(
+            child: SizedBox(
+              width: 350,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const CustomBackButton(usePrimaryColor: false),
+                  const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: SetupTitle('App Settings'),
+                  ),
+                  const AppearanceSettings(),
+                  const SizedBox(height: 16),
+                  const SyncSettings(),
+                  const SizedBox(height: 16),
+                  const AccountSettings(),
+                  const SizedBox(height: 40),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      'assets/logo_trimmed.png',
+                      width: 100,
+                      color: context.theme.colorScheme.primary,
                     ),
-                    const AppearanceSettings(),
-                    const SizedBox(height: 16),
-                    const SyncSettings(),
-                    const SizedBox(height: 16),
-                    const AccountSettings(),
-                    const SizedBox(height: 40),
-                    Container(
-                      alignment: Alignment.center,
-                      child: Image.asset(
-                        'assets/logo_trimmed.png',
-                        width: 100,
-                        color: context.theme.colorScheme.primary,
-                      ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: FutureBuilder<PackageInfo>(
+                      future: packageInfo,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return const SizedBox.shrink();
+                        final data = snapshot.data;
+                        if (data == null) return const SizedBox.shrink();
+                        return Text(
+                          'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white60,
+                            fontSize: 12,
+                            letterSpacing: 0.8,
+                          ),
+                        );
+                      },
                     ),
-                    const SizedBox(height: 8),
-                    Center(
-                      child: FutureBuilder<PackageInfo>(
-                        future: packageInfo,
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) return const SizedBox.shrink();
-                          final data = snapshot.data;
-                          if (data == null) return const SizedBox.shrink();
-                          return Text(
-                            'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white60,
-                              fontSize: 12,
-                              letterSpacing: 0.8,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
               ),
             ),
           ),
@@ -327,14 +338,12 @@ class AccountSettings extends StatefulWidget {
 }
 
 class _AccountSettingsState extends State<AccountSettings> {
-  late final String fullName;
-  late final String email;
+  late final User user;
 
   @override
   void initState() {
     super.initState();
-    fullName = getSecretsBox().get(HiveKeys.fullName, defaultValue: '');
-    email = getSecretsBox().get(HiveKeys.email, defaultValue: '');
+    user = getUserFromStorage()!;
   }
 
   @override
@@ -345,10 +354,10 @@ class _AccountSettingsState extends State<AccountSettings> {
         title: 'Account',
         children: [
           // const Text('Log out of your Toggl account?'),
-          Text(fullName),
+          Text(user.fullName),
           // const SizedBox(height: 4),
           Text(
-            email,
+            user.email,
             // 'Logging out will remove all your data from this device.',
             style: subtitleTextStyle,
           ),

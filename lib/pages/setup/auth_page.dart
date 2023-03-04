@@ -9,16 +9,19 @@ import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
-import 'package:http/http.dart' as http;
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:toggl_target/api/toggl_api_service.dart';
+import 'package:toggl_target/model/workspace.dart';
 import 'package:toggl_target/ui/custom_scaffold.dart';
 import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../model/user.dart';
 import '../../resources/keys.dart';
 import '../../ui/widgets.dart';
 import 'workspace_selection_page.dart';
@@ -67,7 +70,7 @@ class _AuthPageState extends State<AuthPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(24),
             child: SizedBox(
               width: 350,
               child: AnimatedSize(
@@ -454,6 +457,8 @@ abstract class _AuthStore with Store {
 
   late final Box box = getSecretsBox();
 
+  late final TogglApiService apiService = GetIt.instance.get<TogglApiService>();
+
   @observable
   bool isLoading = false;
 
@@ -463,7 +468,7 @@ abstract class _AuthStore with Store {
   @observable
   String apiKey = '';
 
-  List<Map<String, dynamic>> workspaces = [];
+  List<Workspace> workspaces = [];
 
   @observable
   bool loginWithAPIKey = false;
@@ -491,16 +496,11 @@ abstract class _AuthStore with Store {
           ? base64Encode('$apiKey:api_token'.codeUnits)
           : base64Encode('$email:$password'.codeUnits);
 
-      final profileResponse = await http.get(
-        Uri.parse('https://api.track.toggl.com/api/v9/me'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic $authKey',
-        },
-      );
+      box.put(HiveKeys.authKey, authKey);
 
-      if (profileResponse.statusCode != 200) {
-        log(profileResponse.body);
+      final userResponse = await apiService.getProfile();
+
+      if (!userResponse.isSuccessful) {
         if (loginWithAPIKey) {
           error = 'Invalid API key';
         } else {
@@ -510,20 +510,13 @@ abstract class _AuthStore with Store {
         return false;
       }
 
-      final JsonMap profile = jsonDecode(profileResponse.body);
+      final User user = userResponse.body!;
 
       // Load workspaces.
-      final response = await http.get(
-        Uri.parse('https://api.track.toggl.com/api/v9/workspaces'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic $authKey',
-        },
-      );
+      final response = await apiService.getAllWorkspaces();
 
       isLoading = false;
-      if (response.statusCode != 200) {
-        log(response.body);
+      if (!response.isSuccessful) {
         if (loginWithAPIKey) {
           error = 'Invalid API key';
         } else {
@@ -531,8 +524,7 @@ abstract class _AuthStore with Store {
         }
         return false;
       }
-      final data = List.from(jsonDecode(response.body));
-      workspaces = data.map((e) => Map<String, dynamic>.from(e)).toList();
+      workspaces = response.body ?? [];
 
       if (workspaces.isEmpty) {
         error = 'No workspaces found';
@@ -542,10 +534,7 @@ abstract class _AuthStore with Store {
 
       await box.putAll({
         HiveKeys.authKey: authKey,
-        HiveKeys.fullName: profile['fullname'],
-        HiveKeys.email: profile['email'],
-        HiveKeys.timezone: profile['timezone'],
-        HiveKeys.avatarUrl: profile['image_url'],
+        HiveKeys.user: json.encode(user.toJson()),
       });
 
       return true;

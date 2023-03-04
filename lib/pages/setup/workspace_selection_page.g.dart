@@ -41,19 +41,19 @@ mixin _$WorkspaceSelectionStore on _WorkspaceSelectionStore, Store {
     });
   }
 
-  late final _$selectedWorkspaceIdAtom = Atom(
-      name: '_WorkspaceSelectionStore.selectedWorkspaceId', context: context);
+  late final _$selectedWorkspaceAtom = Atom(
+      name: '_WorkspaceSelectionStore.selectedWorkspace', context: context);
 
   @override
-  int? get selectedWorkspaceId {
-    _$selectedWorkspaceIdAtom.reportRead();
-    return super.selectedWorkspaceId;
+  Workspace? get selectedWorkspace {
+    _$selectedWorkspaceAtom.reportRead();
+    return super.selectedWorkspace;
   }
 
   @override
-  set selectedWorkspaceId(int? value) {
-    _$selectedWorkspaceIdAtom.reportWrite(value, super.selectedWorkspaceId, () {
-      super.selectedWorkspaceId = value;
+  set selectedWorkspace(Workspace? value) {
+    _$selectedWorkspaceAtom.reportWrite(value, super.selectedWorkspace, () {
+      super.selectedWorkspace = value;
     });
   }
 
@@ -70,7 +70,7 @@ mixin _$WorkspaceSelectionStore on _WorkspaceSelectionStore, Store {
     return '''
 isLoading: ${isLoading},
 error: ${error},
-selectedWorkspaceId: ${selectedWorkspaceId}
+selectedWorkspace: ${selectedWorkspace}
     ''';
   }
 }

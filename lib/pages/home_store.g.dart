@@ -190,6 +190,14 @@ mixin _$HomeStore on _HomeStore, Store {
     });
   }
 
+  late final _$initAsyncAction =
+      AsyncAction('_HomeStore.init', context: context);
+
+  @override
+  Future<void> init(BuildContext context) {
+    return _$initAsyncAction.run(() => super.init(context));
+  }
+
   late final _$refreshDataAsyncAction =
       AsyncAction('_HomeStore.refreshData', context: context);
 

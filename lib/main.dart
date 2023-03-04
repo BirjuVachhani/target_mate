@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-
+import 'package:path_provider/path_provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:logging/logging.dart';
+import 'package:toggl_target/api/toggl_api_service.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/utils/extensions.dart';
 import 'package:window_manager/window_manager.dart';
@@ -43,7 +45,18 @@ void main() async {
     await Hive.box(HiveBoxes.secrets).put(HiveKeys.firstRun, false);
   }
 
+  setupLogging();
+
   runApp(const MyApp());
+}
+
+void setupLogging() {
+  if (!kReleaseMode) {
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((record) {
+      print('${record.level.name}: ${record.time}: ${record.message}');
+    });
+  }
 }
 
 Future<void> initializeData() async {
@@ -90,6 +103,12 @@ Future<void> initializeData() async {
   GetIt.instance.registerSingleton<EncryptedSharedPreferences>(encryptedPrefs);
   GetIt.instance.registerSingleton<SystemTrayManager>(SystemTrayManager(),
       dispose: (manager) => manager.dispose());
+
+  GetIt.instance.registerSingleton<TogglApiService>(TogglApiService.create());
+
+  if (!kIsWeb) {
+    log('Hive path: ${await getApplicationDocumentsDirectory()}');
+  }
 }
 
 /// Sets up the window on desktop platforms.

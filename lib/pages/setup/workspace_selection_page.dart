@@ -1,20 +1,24 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
-import 'package:http/http.dart' as http;
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
+import 'package:toggl_target/api/toggl_api_service.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../model/project.dart';
+import '../../model/workspace.dart';
 import '../../ui/back_button.dart';
 import '../../ui/custom_dropdown.dart';
 import '../../ui/custom_scaffold.dart';
@@ -25,7 +29,7 @@ import 'project_selection_page.dart';
 part 'workspace_selection_page.g.dart';
 
 class WorkspaceSelectionPageWrapper extends StatelessWidget {
-  final List<Map<String, dynamic>> workspaces;
+  final List<Workspace> workspaces;
 
   const WorkspaceSelectionPageWrapper({
     super.key,
@@ -61,7 +65,7 @@ class _WorkspaceSelectionPageState extends State<WorkspaceSelectionPage> {
     return CustomScaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(24),
           child: SizedBox(
             width: 350,
             child: Column(
@@ -78,18 +82,16 @@ class _WorkspaceSelectionPageState extends State<WorkspaceSelectionPage> {
                 Observer(
                   name: 'WorkspaceSelection-dropdown',
                   builder: (context) {
-                    return CustomDropdown<int>(
-                      value: store.selectedWorkspaceId,
+                    return CustomDropdown<Workspace>(
+                      value: store.selectedWorkspace,
                       isExpanded: true,
-                      onSelected: (value) => store.selectedWorkspaceId = value,
+                      onSelected: (value) => store.selectedWorkspace = value,
                       itemBuilder: (context, item) =>
-                          CustomDropdownMenuItem<int>(
+                          CustomDropdownMenuItem<Workspace>(
                         value: item,
-                        child: Text(store.workspaces
-                            .firstWhere((e) => e['id'] == item)['name']
-                            .toString()),
+                        child: Text(item.name),
                       ),
-                      items: store.workspaces.map<int>((e) => e['id']).toList(),
+                      items: store.workspaces,
                     );
                   },
                 ),
@@ -101,7 +103,7 @@ class _WorkspaceSelectionPageState extends State<WorkspaceSelectionPage> {
                       Expanded(
                         child: FilledButton(
                           onPressed:
-                              store.selectedWorkspaceId == -1 ? null : onNext,
+                              store.selectedWorkspace == null ? null : onNext,
                           child: store.isLoading
                               ? FittedBox(
                                   child: SpinKitThreeBounce(
@@ -166,7 +168,7 @@ class WorkspaceSelectionStore = _WorkspaceSelectionStore
 
 abstract class _WorkspaceSelectionStore with Store {
   _WorkspaceSelectionStore(this.workspaces) {
-    selectedWorkspaceId = workspaces.first['id'];
+    selectedWorkspace = workspaces.firstOrNull;
     authKey = box.get(HiveKeys.authKey);
   }
 
@@ -178,13 +180,16 @@ abstract class _WorkspaceSelectionStore with Store {
   @observable
   String? error;
 
-  final List<Map<String, dynamic>> workspaces;
+  final List<Workspace> workspaces;
+
   late final String authKey;
 
-  List<Map<String, dynamic>> projects = [];
+  List<Project> projects = [];
+
+  late final TogglApiService apiService = GetIt.instance.get<TogglApiService>();
 
   @observable
-  int? selectedWorkspaceId;
+  Workspace? selectedWorkspace;
 
   @action
   Future<bool> saveAndContinue() async {
@@ -193,23 +198,15 @@ abstract class _WorkspaceSelectionStore with Store {
     error = null;
     try {
       // Load projects.
-      final response = await http.get(
-        Uri.parse(
-            'https://api.track.toggl.com/api/v9/workspaces/$selectedWorkspaceId/projects'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic $authKey',
-        },
-      );
+      final response =
+          await apiService.getWorkspaceProjects(selectedWorkspace!.id);
 
       isLoading = false;
-      if (response.statusCode != 200) {
-        log(response.body);
+      if (!response.isSuccessful) {
         error = 'Invalid API key';
         return false;
       }
-      final data = List.from(jsonDecode(response.body));
-      projects = data.map((e) => Map<String, dynamic>.from(e)).toList();
+      projects = response.body ?? [];
 
       if (projects.isEmpty) {
         error = 'No projects found';
@@ -217,10 +214,8 @@ abstract class _WorkspaceSelectionStore with Store {
       }
       log('${projects.length} projects found');
 
-      final String name = workspaces.firstWhere(
-          (element) => element['id'] == selectedWorkspaceId)['name'];
-      await box.put(HiveKeys.workspaceId, selectedWorkspaceId);
-      await box.put(HiveKeys.workspaceName, name);
+      await box.put(
+          HiveKeys.workspace, json.encode(selectedWorkspace!.toJson()));
 
       return true;
     } catch (err, stacktrace) {

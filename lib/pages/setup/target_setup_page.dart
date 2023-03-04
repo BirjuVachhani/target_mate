@@ -63,225 +63,221 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
         return true;
       },
       body: CustomSafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: SizedBox(
-                width: 350,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const CustomBackButton(
-                      usePrimaryColor: false,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Center(
+            child: SizedBox(
+              width: 350,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const CustomBackButton(
+                    usePrimaryColor: false,
+                  ),
+                  const SizedBox(height: 16),
+                  const SetupTitle('Select your working days'),
+                  Text(
+                    'This will be used to automatically select your working days for a month.',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
                     ),
-                    const SizedBox(height: 16),
-                    const SetupTitle('Select your working days'),
-                    Text(
-                      'This will be used to automatically select your working days for a month.',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Observer(
+                  ),
+                  const SizedBox(height: 16),
+                  Observer(
+                    builder: (context) {
+                      return WeekDaysSelection(
+                        selectedDays: store.selectedWeekDays,
+                        onChanged: (days) => store.selectedWeekDays = [...days],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Observer(
+                    builder: (context) {
+                      return CustomSwitch(
+                        label: 'Select custom days',
+                        value: store.hasCustomDaysSelection,
+                        onChanged: (value) => store.onShowCalendar(value),
+                      );
+                    },
+                  ),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
+                    child: Observer(
                       builder: (context) {
-                        return WeekDaysSelection(
-                          selectedDays: store.selectedWeekDays,
-                          onChanged: (days) =>
-                              store.selectedWeekDays = [...days],
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    Observer(
-                      builder: (context) {
-                        return CustomSwitch(
-                          label: 'Select custom days',
-                          value: store.hasCustomDaysSelection,
-                          onChanged: (value) => store.onShowCalendar(value),
-                        );
-                      },
-                    ),
-                    AnimatedSize(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeInOut,
-                      child: Observer(
-                        builder: (context) {
-                          if (store.hasCustomDaysSelection) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const SizedBox(height: 8),
-                                CalenderSelection(
-                                  month: DateTime(
-                                      DateTime.now().year, store.month),
-                                  selectedDays: store.selectedDays,
-                                  onChanged: (days) {
-                                    store.selectedDays = [...days];
-                                  },
-                                ),
-                                const SizedBox(height: 8),
-                              ],
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        const Expanded(
-                          flex: 2,
-                          child: FieldLabel('Working hours'),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: Text.rich(
-                              TextSpan(
-                                text: 'Max hours ',
-                                children: [
-                                  TextSpan(
-                                    text: '(Optional)',
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.25),
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ],
+                        if (store.hasCustomDaysSelection) {
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const SizedBox(height: 8),
+                              CalenderSelection(
+                                month:
+                                    DateTime(DateTime.now().year, store.month),
+                                selectedDays: store.selectedDays,
+                                onChanged: (days) {
+                                  store.selectedDays = [...days];
+                                },
                               ),
-                              style: TextStyle(
-                                color: Colors.white.withOpacity(0.5),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: TextFormField(
-                            controller: store.workingHoursController,
-                            keyboardType: TextInputType.number,
-                            maxLines: 1,
-                            maxLength: 4,
-                            textInputAction: TextInputAction.next,
-                            onChanged: (value) {
-                              store.workingHours = double.tryParse(value);
-                            },
-                            onFieldSubmitted: (value) {
-                              store.workingHours = double.tryParse(value);
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}'),
-                              ),
+                              const SizedBox(height: 8),
                             ],
-                            decoration: InputDecoration(
-                              counterText: '',
-                              hintText: 'e.g. 8',
-                              suffixIcon: Align(
-                                alignment: Alignment.center,
-                                widthFactor: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: Text(
-                                    'per day',
-                                    style: context
-                                        .theme.inputDecorationTheme.hintStyle!
-                                        .copyWith(
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          flex: 3,
-                          child: TextFormField(
-                            controller: store.maxMonthlyWorkingHoursController,
-                            keyboardType: TextInputType.number,
-                            maxLines: 1,
-                            maxLength: 5,
-                            onChanged: (value) {
-                              store.maxMonthlyWorkingHours =
-                                  double.tryParse(value);
-                            },
-                            onFieldSubmitted: (value) {
-                              store.maxMonthlyWorkingHours =
-                                  double.tryParse(value);
-                            },
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}'),
-                              ),
-                            ],
-                            decoration: InputDecoration(
-                              hintText: 'e.g. 160',
-                              counterText: '',
-                              suffixIcon: Align(
-                                alignment: Alignment.center,
-                                widthFactor: 1,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Text(
-                                    'hrs/month',
-                                    style: context
-                                        .theme.inputDecorationTheme.hintStyle!
-                                        .copyWith(
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 32),
-                    Observer(
-                      builder: (context) => FilledButton(
-                        onPressed: !store.hasAllData ? null : onSave,
-                        child: Text(
-                          store.secretsBox.containsKey(HiveKeys.onboarded)
-                              ? 'Save'
-                              : 'Next',
-                        ),
-                      ),
-                    ),
-                    Observer(
-                      builder: (context) {
-                        if (store.error == null) {
-                          return const SizedBox.shrink();
+                          );
                         }
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Text(
-                            'Error: ${store.error}',
-                            style: const TextStyle(
-                              color: Colors.red,
-                            ),
-                          ),
-                        );
+                        return const SizedBox.shrink();
                       },
                     ),
-                    const SizedBox(height: 32),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Expanded(
+                        flex: 2,
+                        child: FieldLabel('Working hours'),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text.rich(
+                            TextSpan(
+                              text: 'Max hours ',
+                              children: [
+                                TextSpan(
+                                  text: '(Optional)',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.25),
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: TextFormField(
+                          controller: store.workingHoursController,
+                          keyboardType: TextInputType.number,
+                          maxLines: 1,
+                          maxLength: 4,
+                          textInputAction: TextInputAction.next,
+                          onChanged: (value) {
+                            store.workingHours = double.tryParse(value);
+                          },
+                          onFieldSubmitted: (value) {
+                            store.workingHours = double.tryParse(value);
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d{0,2}'),
+                            ),
+                          ],
+                          decoration: InputDecoration(
+                            counterText: '',
+                            hintText: 'e.g. 8',
+                            suffixIcon: Align(
+                              alignment: Alignment.center,
+                              widthFactor: 1,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: Text(
+                                  'per day',
+                                  style: context
+                                      .theme.inputDecorationTheme.hintStyle!
+                                      .copyWith(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 3,
+                        child: TextFormField(
+                          controller: store.maxMonthlyWorkingHoursController,
+                          keyboardType: TextInputType.number,
+                          maxLines: 1,
+                          maxLength: 5,
+                          onChanged: (value) {
+                            store.maxMonthlyWorkingHours =
+                                double.tryParse(value);
+                          },
+                          onFieldSubmitted: (value) {
+                            store.maxMonthlyWorkingHours =
+                                double.tryParse(value);
+                          },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d{0,2}'),
+                            ),
+                          ],
+                          decoration: InputDecoration(
+                            hintText: 'e.g. 160',
+                            counterText: '',
+                            suffixIcon: Align(
+                              alignment: Alignment.center,
+                              widthFactor: 1,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                child: Text(
+                                  'hrs/month',
+                                  style: context
+                                      .theme.inputDecorationTheme.hintStyle!
+                                      .copyWith(
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  Observer(
+                    builder: (context) => FilledButton(
+                      onPressed: !store.hasAllData ? null : onSave,
+                      child: Text(
+                        store.secretsBox.containsKey(HiveKeys.onboarded)
+                            ? 'Save'
+                            : 'Next',
+                      ),
+                    ),
+                  ),
+                  Observer(
+                    builder: (context) {
+                      if (store.error == null) {
+                        return const SizedBox.shrink();
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          'Error: ${store.error}',
+                          style: const TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 32),
+                ],
               ),
             ),
           ),
@@ -691,8 +687,8 @@ class CustomDayTile extends StatelessWidget {
       onTap!(day);
     }
 
-    AwesomeCalendar.of(context)!.setSelectedDate(day);
-    AwesomeCalendar.of(context)!.setCurrentDate(day);
+    AwesomeCalendar.of(context)?.setSelectedDate(day);
+    AwesomeCalendar.of(context)?.setCurrentDate(day);
   }
 }
 

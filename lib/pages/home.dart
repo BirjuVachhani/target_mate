@@ -726,7 +726,9 @@ class HomeHeader extends StatelessWidget {
                   CircleAvatar(
                     backgroundColor: AppColors.backgroundColorDarker,
                     radius: 18,
-                    backgroundImage: NetworkImage(store.avatarUrl),
+                    backgroundImage: store.user != null
+                        ? NetworkImage(store.user!.avatarUrl)
+                        : null,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -746,7 +748,7 @@ class HomeHeader extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            store.fullName,
+                            store.user?.fullName ?? '',
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,

@@ -78,6 +78,11 @@ ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
         borderSide: BorderSide(color: primaryColor),
       ),
     ),
+    scrollbarTheme: ScrollbarThemeData(
+      interactive: true,
+      crossAxisMargin: 4,
+      thickness: MaterialStateProperty.all(4),
+    ),
   );
 }
 

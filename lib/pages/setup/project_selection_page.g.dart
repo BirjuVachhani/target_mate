@@ -41,19 +41,19 @@ mixin _$ProjectSelectionStore on _ProjectSelectionStore, Store {
     });
   }
 
-  late final _$selectedProjectIdAtom =
-      Atom(name: '_ProjectSelectionStore.selectedProjectId', context: context);
+  late final _$selectedProjectAtom =
+      Atom(name: '_ProjectSelectionStore.selectedProject', context: context);
 
   @override
-  int? get selectedProjectId {
-    _$selectedProjectIdAtom.reportRead();
-    return super.selectedProjectId;
+  Project? get selectedProject {
+    _$selectedProjectAtom.reportRead();
+    return super.selectedProject;
   }
 
   @override
-  set selectedProjectId(int? value) {
-    _$selectedProjectIdAtom.reportWrite(value, super.selectedProjectId, () {
-      super.selectedProjectId = value;
+  set selectedProject(Project? value) {
+    _$selectedProjectAtom.reportWrite(value, super.selectedProject, () {
+      super.selectedProject = value;
     });
   }
 
@@ -70,7 +70,7 @@ mixin _$ProjectSelectionStore on _ProjectSelectionStore, Store {
     return '''
 isLoading: ${isLoading},
 error: ${error},
-selectedProjectId: ${selectedProjectId}
+selectedProject: ${selectedProject}
     ''';
   }
 }
