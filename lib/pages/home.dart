@@ -843,9 +843,7 @@ class HomeHeader extends StatelessWidget {
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.white.withOpacity(0.1),
                         ),
-                        onPressed: () {
-                          openSettings(context);
-                        },
+                        onPressed: () => openSettings(context),
                         child: const Icon(Icons.settings, size: 20),
                         // label: const Text('Logout'),
                       ),
@@ -1200,7 +1198,8 @@ class TodayProgressIndicator extends StatelessObserverWidget {
               if (store.isLoading && !store.isLoadingWithData) {
                 return const SizedBox.shrink();
               }
-              if (targetStore.isTodayWorkingDay) {
+              if (targetStore.isTodayWorkingDay ||
+                  store.todayDuration == Duration.zero) {
                 return const SizedBox(height: 8);
               }
 

@@ -48,19 +48,5 @@ class Project with EquatableMixin {
   Map<String, dynamic> toJson() => _$ProjectToJson(this);
 
   @override
-  List<Object?> get props => [
-        id,
-        workspaceId,
-        name,
-        isPrivate,
-        active,
-        at,
-        createdAt,
-        isDeleted,
-        color,
-        billable,
-        currency,
-        recurring,
-        wid,
-      ];
+  List<Object?> get props => [id];
 }

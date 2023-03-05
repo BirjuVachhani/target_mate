@@ -10,6 +10,7 @@ import 'package:paged_vertical_calendar/utils/date_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/model/workspace.dart';
+import 'package:toggl_target/pages/home_store.dart';
 import 'package:toggl_target/resources/colors.dart';
 import 'package:toggl_target/resources/theme.dart';
 
@@ -187,10 +188,14 @@ Offset? getSavedWindowPosition() {
 
 void openSettings(BuildContext context) {
   final settingsStore = context.read<SettingsStore>();
+  final homeStore = context.read<HomeStore>();
   Navigator.of(context).push(
     CupertinoPageRoute(
-      builder: (_) => Provider.value(
-        value: settingsStore,
+      builder: (_) => MultiProvider(
+        providers: [
+          Provider.value(value: settingsStore),
+          Provider.value(value: homeStore),
+        ],
         child: const SettingsPage(),
       ),
     ),

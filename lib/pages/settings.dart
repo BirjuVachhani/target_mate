@@ -11,6 +11,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/model/workspace.dart';
+import 'package:toggl_target/pages/home_store.dart';
 import 'package:toggl_target/resources/theme.dart';
 import 'package:toggl_target/ui/custom_switch.dart';
 import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
@@ -351,6 +352,7 @@ class ProjectSettings extends StatelessObserverWidget {
   @override
   Widget build(BuildContext context) {
     final store = context.read<SettingsStore>();
+    final homeStore = context.read<HomeStore>();
     return Stack(
       children: [
         SettingsSection(
@@ -361,7 +363,11 @@ class ProjectSettings extends StatelessObserverWidget {
             CustomDropdown<Workspace>(
               value: store.selectedWorkspace,
               isExpanded: true,
-              onSelected: (value) => store.onWorkspaceSelected(value),
+              onSelected: (value) async {
+                if (value.id == store.selectedWorkspace!.id) return;
+                await store.onWorkspaceSelected(value);
+                homeStore.refreshData();
+              },
               itemBuilder: (context, item) => CustomDropdownMenuItem<Workspace>(
                 value: item,
                 child: Text(item.name),
@@ -374,7 +380,11 @@ class ProjectSettings extends StatelessObserverWidget {
             CustomDropdown<Project>(
               value: store.selectedProject,
               isExpanded: true,
-              onSelected: (value) => store.onProjectSelected(value),
+              onSelected: (value) async {
+                if (value.id == store.selectedProject?.id) return;
+                await store.onProjectSelected(value);
+                homeStore.refreshData();
+              },
               itemBuilder: (context, item) {
                 return CustomDropdownMenuItem<Project>(
                   value: item,

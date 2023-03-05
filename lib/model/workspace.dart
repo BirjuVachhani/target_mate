@@ -31,12 +31,5 @@ class Workspace with EquatableMixin {
   Map<String, dynamic> toJson() => _$WorkspaceToJson(this);
 
   @override
-  List<Object?> get props => [
-        id,
-        organizationId,
-        name,
-        defaultCurrency,
-        projectsBillableByDefault,
-        logoUrl,
-      ];
+  List<Object?> get props => [id];
 }
