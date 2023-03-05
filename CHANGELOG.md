@@ -12,6 +12,12 @@
 - Dismiss keyboard on background click.
 - Fix overflow on auth page due to virtual keyboard.
 - Fix decoration color for hyperlinks.
+- Add workspace and project selection options in settings screen.
+- Add option to show remaining total hours and working days instead of completed.
+- Show working extra label only when some progress has made on non-working day.
+- Improve UI for today's progress bar.
+- Merge workspace and project selection pages in onboarding flow.
+- Implement chopper for making api requests.
 
 # 0.2.1 - 2nd March, 2023
 
