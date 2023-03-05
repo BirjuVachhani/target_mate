@@ -187,7 +187,7 @@ class AppearanceSettings extends StatelessObserverWidget {
   }
 }
 
-class SyncSettings extends StatelessWidget {
+class SyncSettings extends StatelessObserverWidget {
   const SyncSettings({super.key});
 
   @override
@@ -196,7 +196,7 @@ class SyncSettings extends StatelessWidget {
     late final SystemTrayManager systemTrayManager =
         GetIt.instance.get<SystemTrayManager>();
     return SettingsSection(
-      title: 'Sync',
+      title: 'Sync & Info',
       children: [
         const Text('Refresh frequency'),
         FractionallySizedBox(
@@ -209,46 +209,73 @@ class SyncSettings extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        Observer(
-          builder: (context) {
-            return CustomDropdown<Duration>(
-              value: store.refreshFrequency,
-              isExpanded: true,
-              onSelected: (value) {
-                store.setRefreshFrequency(value);
-                systemTrayManager.setSyncInterval(value);
-              },
-              selectedItemBuilder: (context, item) => Text(
-                formatDuration(store.refreshFrequency),
-                style: const TextStyle(fontSize: 14),
-              ),
-              itemBuilder: (context, item) => CustomDropdownMenuItem<Duration>(
-                value: item,
-                child: item.inMinutes != 5
-                    ? Text(
-                        formatDuration(item),
-                      )
-                    : Text.rich(
-                        TextSpan(
-                          text: formatDuration(item),
-                          children: [
-                            TextSpan(
-                              text: ' (Recommended)',
-                              style: TextStyle(
-                                color: store.refreshFrequency == item
-                                    ? context.theme.colorScheme.onPrimary
-                                    : Colors.white.withOpacity(0.5),
-                                fontStyle: FontStyle.italic,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-              ),
-              items: intervals,
-            );
+        CustomDropdown<Duration>(
+          value: store.refreshFrequency,
+          isExpanded: true,
+          onSelected: (value) {
+            store.setRefreshFrequency(value);
+            systemTrayManager.setSyncInterval(value);
           },
+          selectedItemBuilder: (context, item) => Text(
+            formatDuration(store.refreshFrequency),
+            style: const TextStyle(fontSize: 14),
+          ),
+          itemBuilder: (context, item) => CustomDropdownMenuItem<Duration>(
+            value: item,
+            child: item.inMinutes != 5
+                ? Text(
+                    formatDuration(item),
+                  )
+                : Text.rich(
+                    TextSpan(
+                      text: formatDuration(item),
+                      children: [
+                        TextSpan(
+                          text: ' (Recommended)',
+                          style: TextStyle(
+                            color: store.refreshFrequency == item
+                                ? context.theme.colorScheme.onPrimary
+                                : Colors.white.withOpacity(0.5),
+                            fontStyle: FontStyle.italic,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+          items: intervals,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Show remaining'),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Show remaining total hours and working days instead of completed.',
+                    style: subtitleTextStyle.copyWith(
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            CustomSwitch(
+              labelStyle: const TextStyle(
+                fontSize: 14,
+              ),
+              value: store.showRemaining,
+              onChanged: (value) {
+                store.onToggleShowRemaining(value);
+              },
+            ),
+          ],
         ),
       ],
     );

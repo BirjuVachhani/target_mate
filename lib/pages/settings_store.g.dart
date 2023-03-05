@@ -41,6 +41,22 @@ mixin _$SettingsStore on _SettingsStore, Store {
     });
   }
 
+  late final _$showRemainingAtom =
+      Atom(name: '_SettingsStore.showRemaining', context: context);
+
+  @override
+  bool get showRemaining {
+    _$showRemainingAtom.reportRead();
+    return super.showRemaining;
+  }
+
+  @override
+  set showRemaining(bool value) {
+    _$showRemainingAtom.reportWrite(value, super.showRemaining, () {
+      super.showRemaining = value;
+    });
+  }
+
   late final _$refreshFrequencyAtom =
       Atom(name: '_SettingsStore.refreshFrequency', context: context);
 
@@ -205,6 +221,17 @@ mixin _$SettingsStore on _SettingsStore, Store {
   }
 
   @override
+  void onToggleShowRemaining(bool value) {
+    final _$actionInfo = _$_SettingsStoreActionController.startAction(
+        name: '_SettingsStore.onToggleShowRemaining');
+    try {
+      return super.onToggleShowRemaining(value);
+    } finally {
+      _$_SettingsStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void setThemeColor(Color color) {
     final _$actionInfo = _$_SettingsStoreActionController.startAction(
         name: '_SettingsStore.setThemeColor');
@@ -231,6 +258,7 @@ mixin _$SettingsStore on _SettingsStore, Store {
     return '''
 themeColor: ${themeColor},
 useMaterial3: ${useMaterial3},
+showRemaining: ${showRemaining},
 refreshFrequency: ${refreshFrequency},
 isLoadingProjects: ${isLoadingProjects},
 selectedWorkspace: ${selectedWorkspace},

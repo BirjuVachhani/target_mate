@@ -687,6 +687,7 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final HomeStore store = context.read<HomeStore>();
     final TargetStore targetStore = context.read<TargetStore>();
+    final SettingsStore settingsStore = context.read<SettingsStore>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -894,8 +895,11 @@ class HomeHeader extends StatelessWidget {
                                 )
                               else
                                 TextSpan(
-                                  text: formatCompletedDuration(
-                                      store, targetStore),
+                                  text: settingsStore.showRemaining
+                                      ? formatRemainingDuration(
+                                          store, targetStore)
+                                      : formatCompletedDuration(
+                                          store, targetStore),
                                 ),
                               TextSpan(
                                 text: formatTotalDuration(store, targetStore),
@@ -1025,8 +1029,12 @@ class HomeHeader extends StatelessWidget {
               ),
               Observer(
                 builder: (context) {
+                  final days = settingsStore.showRemaining
+                      ? targetStore.daysRemainingAfterToday
+                      : targetStore.currentDay;
                   return Column(
                     mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       const Text(
                         'Working days',
@@ -1040,8 +1048,7 @@ class HomeHeader extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text.rich(
                         TextSpan(
-                          text:
-                              '${targetStore.currentDay}/${targetStore.effectiveDays.length}',
+                          text: '$days/${targetStore.effectiveDays.length}',
                           children: const [
                             TextSpan(
                               text: ' days',
@@ -1056,6 +1063,7 @@ class HomeHeader extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                        textAlign: TextAlign.end,
                       ),
                     ],
                   );
@@ -1072,6 +1080,10 @@ class HomeHeader extends StatelessWidget {
 
   String formatCompletedDuration(HomeStore store, TargetStore targetStore) {
     return '${store.completed.inHours > 0 ? '${store.completed.inHours} h ' : ''}${store.completed.inMinutes.remainder(60)}m ';
+  }
+
+  String formatRemainingDuration(HomeStore store, TargetStore targetStore) {
+    return '${store.remaining.inHours > 0 ? '${store.remaining.inHours} h ' : ''}${store.remaining.inMinutes.remainder(60)}m ';
   }
 
   String formatTotalDuration(HomeStore store, TargetStore targetStore) {

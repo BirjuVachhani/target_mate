@@ -35,6 +35,9 @@ abstract class _SettingsStore with Store {
   bool useMaterial3 = false;
 
   @observable
+  bool showRemaining = false;
+
+  @observable
   Duration refreshFrequency = 5.minutes;
 
   @observable
@@ -75,6 +78,7 @@ abstract class _SettingsStore with Store {
     selectedProject = getProjectFromStorage() ?? emptyProject;
 
     useMaterial3 = box.get(HiveKeys.useMaterial3, defaultValue: false);
+    showRemaining = box.get(HiveKeys.showRemaining, defaultValue: false);
 
     loadWorkspacesAndProjects();
   }
@@ -89,6 +93,12 @@ abstract class _SettingsStore with Store {
   void onToggleUseMaterial3(bool value) {
     useMaterial3 = value;
     box.put(HiveKeys.useMaterial3, value);
+  }
+
+  @action
+  void onToggleShowRemaining(bool value) {
+    showRemaining = value;
+    box.put(HiveKeys.showRemaining, value);
   }
 
   @action
