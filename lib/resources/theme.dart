@@ -85,8 +85,9 @@ ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
     ),
     tooltipTheme: TooltipThemeData(
       decoration: BoxDecoration(
-        color: (useMaterial3 ? m3colorScheme.primary : m2colorScheme.primary)
-            .darken(65),
+        color: (useMaterial3
+            ? m3colorScheme.primary
+            : m2colorScheme.primary.darken(65)),
         borderRadius: BorderRadius.circular(4),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
