@@ -835,6 +835,7 @@ class HomeHeader extends StatelessWidget {
                     width: 38,
                     child: Tooltip(
                       message: 'Settings',
+                      waitDuration: 700.milliseconds,
                       child: FilledButton(
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
