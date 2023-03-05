@@ -1,4 +1,4 @@
-# 0.3.0 [Unreleased]
+# 0.3.0
 
 - Fix system tray icon showing too big.
 - Show done icon when completed on macOS.
