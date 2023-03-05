@@ -21,10 +21,11 @@ import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../model/project.dart';
 import '../../model/user.dart';
 import '../../resources/keys.dart';
 import '../../ui/widgets.dart';
-import 'workspace_selection_page.dart';
+import 'project_selection_page.dart';
 
 part 'auth_page.g.dart';
 
@@ -72,7 +73,7 @@ class _AuthPageState extends State<AuthPage> {
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: SizedBox(
-              width: 350,
+              width: 400,
               child: AnimatedSize(
                 alignment: Alignment.topCenter,
                 duration: const Duration(milliseconds: 250),
@@ -152,8 +153,9 @@ class _AuthPageState extends State<AuthPage> {
   void onSuccess() {
     Navigator.of(context).push(
       CupertinoPageRoute(
-        builder: (_) => WorkspaceSelectionPageWrapper(
+        builder: (_) => ProjectSelectionPageWrapper(
           workspaces: store.workspaces,
+          projects: store.projects,
         ),
       ),
     );
@@ -470,6 +472,8 @@ abstract class _AuthStore with Store {
 
   List<Workspace> workspaces = [];
 
+  List<Project> projects = [];
+
   @observable
   bool loginWithAPIKey = false;
 
@@ -513,10 +517,10 @@ abstract class _AuthStore with Store {
       final User user = userResponse.body!;
 
       // Load workspaces.
-      final response = await apiService.getAllWorkspaces();
+      final workspacesResponse = await apiService.getAllWorkspaces();
 
       isLoading = false;
-      if (!response.isSuccessful) {
+      if (!workspacesResponse.isSuccessful) {
         if (loginWithAPIKey) {
           error = 'Invalid API key';
         } else {
@@ -524,13 +528,23 @@ abstract class _AuthStore with Store {
         }
         return false;
       }
-      workspaces = response.body ?? [];
+      workspaces = workspacesResponse.body ?? [];
 
       if (workspaces.isEmpty) {
         error = 'No workspaces found';
         return false;
       }
       log('${workspaces.length} workspaces found');
+
+      // Load projects.
+      final projectsResponse = await apiService.getAllProjects();
+
+      isLoading = false;
+      if (!projectsResponse.isSuccessful) {
+        error = projectsResponse.bodyString;
+        return false;
+      }
+      projects = projectsResponse.body ?? [];
 
       await box.putAll({
         HiveKeys.authKey: authKey,

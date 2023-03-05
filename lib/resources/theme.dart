@@ -83,6 +83,20 @@ ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
       crossAxisMargin: 4,
       thickness: MaterialStateProperty.all(4),
     ),
+    tooltipTheme: TooltipThemeData(
+      decoration: BoxDecoration(
+        color: (useMaterial3 ? m3colorScheme.primary : m2colorScheme.primary)
+            .darken(65),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      textStyle: TextStyle(
+        fontSize: 12,
+        letterSpacing: 0.2,
+        color:
+            (useMaterial3 ? m3colorScheme.onPrimary : m2colorScheme.onPrimary),
+      ),
+    ),
   );
 }
 

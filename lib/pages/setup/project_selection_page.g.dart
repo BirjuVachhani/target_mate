@@ -41,6 +41,38 @@ mixin _$ProjectSelectionStore on _ProjectSelectionStore, Store {
     });
   }
 
+  late final _$filteredProjectsAtom =
+      Atom(name: '_ProjectSelectionStore.filteredProjects', context: context);
+
+  @override
+  List<Project> get filteredProjects {
+    _$filteredProjectsAtom.reportRead();
+    return super.filteredProjects;
+  }
+
+  @override
+  set filteredProjects(List<Project> value) {
+    _$filteredProjectsAtom.reportWrite(value, super.filteredProjects, () {
+      super.filteredProjects = value;
+    });
+  }
+
+  late final _$selectedWorkspaceAtom =
+      Atom(name: '_ProjectSelectionStore.selectedWorkspace', context: context);
+
+  @override
+  Workspace? get selectedWorkspace {
+    _$selectedWorkspaceAtom.reportRead();
+    return super.selectedWorkspace;
+  }
+
+  @override
+  set selectedWorkspace(Workspace? value) {
+    _$selectedWorkspaceAtom.reportWrite(value, super.selectedWorkspace, () {
+      super.selectedWorkspace = value;
+    });
+  }
+
   late final _$selectedProjectAtom =
       Atom(name: '_ProjectSelectionStore.selectedProject', context: context);
 
@@ -65,11 +97,27 @@ mixin _$ProjectSelectionStore on _ProjectSelectionStore, Store {
     return _$saveAndContinueAsyncAction.run(() => super.saveAndContinue());
   }
 
+  late final _$_ProjectSelectionStoreActionController =
+      ActionController(name: '_ProjectSelectionStore', context: context);
+
+  @override
+  void onWorkspaceSelected(Workspace value) {
+    final _$actionInfo = _$_ProjectSelectionStoreActionController.startAction(
+        name: '_ProjectSelectionStore.onWorkspaceSelected');
+    try {
+      return super.onWorkspaceSelected(value);
+    } finally {
+      _$_ProjectSelectionStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''
 isLoading: ${isLoading},
 error: ${error},
+filteredProjects: ${filteredProjects},
+selectedWorkspace: ${selectedWorkspace},
 selectedProject: ${selectedProject}
     ''';
   }

@@ -18,6 +18,7 @@ import '../model/day_entry.dart';
 import '../model/project.dart';
 import '../model/user.dart';
 import '../pages/settings.dart';
+import '../pages/settings_store.dart';
 import '../pages/setup/auth_page.dart';
 import '../resources/keys.dart';
 
@@ -196,8 +197,20 @@ void openSettings(BuildContext context) {
   );
 }
 
-bool deletedFromJson(String? value) => value != null;
+bool deletedFromJson(dynamic value) => value != null;
 
 DateTime dateTimeFromJson(String json) => DateTime.parse(json);
 
 String dateTimeToJson(DateTime dateTime) => dateTime.toIso8601String();
+
+final Project emptyProject = Project(
+  id: -1,
+  workspaceId: -1,
+  name: 'All',
+  isPrivate: false,
+  active: true,
+  at: DateTime.now(),
+  createdAt: DateTime.now(),
+  isDeleted: false,
+  currency: 'USD',
+);

@@ -14,7 +14,7 @@ Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
       active: json['active'] as bool,
       at: dateTimeFromJson(json['at'] as String),
       createdAt: dateTimeFromJson(json['created_at'] as String),
-      isDeleted: deletedFromJson(json['server_deleted_at'] as String?),
+      isDeleted: deletedFromJson(json['server_deleted_at']),
       color: json['color'] as String?,
       billable: json['billable'] as bool? ?? false,
       currency: json['currency'] as String?,

@@ -10,12 +10,14 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
+import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/model/project.dart';
 import 'package:toggl_target/pages/setup/target_setup_page.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../model/workspace.dart';
 import '../../ui/back_button.dart';
 import '../../ui/custom_dropdown.dart';
 import '../../ui/custom_scaffold.dart';
@@ -25,17 +27,19 @@ import '../../ui/widgets.dart';
 part 'project_selection_page.g.dart';
 
 class ProjectSelectionPageWrapper extends StatelessWidget {
+  final List<Workspace> workspaces;
   final List<Project> projects;
 
   const ProjectSelectionPageWrapper({
     super.key,
+    required this.workspaces,
     required this.projects,
   });
 
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (context) => ProjectSelectionStore(projects),
+      create: (context) => ProjectSelectionStore(workspaces, projects),
       // dispose: (context, store) => store.dispose(),
       child: const ProjectSelectionPage(),
     );
@@ -63,7 +67,7 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: SizedBox(
-            width: 350,
+            width: 400,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -72,6 +76,24 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
                   builder: (context) => CustomBackButton(
                     disabled: store.isLoading,
                   ),
+                ),
+                const SizedBox(height: 24),
+                const FieldLabel('Select Workspace'),
+                Observer(
+                  name: 'WorkspaceSelection-dropdown',
+                  builder: (context) {
+                    return CustomDropdown<Workspace>(
+                      value: store.selectedWorkspace,
+                      isExpanded: true,
+                      onSelected: (value) => store.onWorkspaceSelected(value),
+                      itemBuilder: (context, item) =>
+                          CustomDropdownMenuItem<Workspace>(
+                        value: item,
+                        child: Text(item.name),
+                      ),
+                      items: store.workspaces,
+                    );
+                  },
                 ),
                 const SizedBox(height: 24),
                 const FieldLabel('Select Project'),
@@ -99,11 +121,10 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
                           ),
                         );
                       },
-                      items: store.projects
-                        ..insert(
-                          0,
-                          store.emptyProject,
-                        ),
+                      items: [
+                        emptyProject,
+                        ...store.filteredProjects,
+                      ],
                     );
                   },
                 ),
@@ -178,9 +199,11 @@ class ProjectSelectionStore = _ProjectSelectionStore
     with _$ProjectSelectionStore;
 
 abstract class _ProjectSelectionStore with Store {
-  _ProjectSelectionStore(this.projects) {
+  _ProjectSelectionStore(this.workspaces, this.projects) {
+    selectedWorkspace = workspaces.firstOrNull;
     authKey = box.get(HiveKeys.authKey);
     selectedProject = emptyProject;
+    filteredProjects = [...projects];
   }
 
   late final Box box = getSecretsBox();
@@ -191,23 +214,26 @@ abstract class _ProjectSelectionStore with Store {
   @observable
   String? error;
 
+  final List<Workspace> workspaces;
   final List<Project> projects;
   late final String authKey;
 
   @observable
+  List<Project> filteredProjects = [];
+
+  @observable
+  Workspace? selectedWorkspace;
+
+  @observable
   Project? selectedProject;
 
-  final Project emptyProject = Project(
-    id: -1,
-    workspaceId: -1,
-    name: 'All',
-    isPrivate: false,
-    active: true,
-    at: DateTime.now(),
-    createdAt: DateTime.now(),
-    isDeleted: false,
-    currency: 'USD',
-  );
+  @action
+  void onWorkspaceSelected(Workspace value) {
+    selectedWorkspace = value;
+    selectedProject = emptyProject;
+    filteredProjects =
+        projects.where((element) => element.workspaceId == value.id).toList();
+  }
 
   @action
   Future<bool> saveAndContinue() async {
@@ -215,6 +241,9 @@ abstract class _ProjectSelectionStore with Store {
     isLoading = true;
     error = null;
     try {
+      await box.put(
+          HiveKeys.workspace, json.encode(selectedWorkspace!.toJson()));
+
       if (selectedProject == null || selectedProject!.id == -1) {
         await box.delete(HiveKeys.projectId);
       } else {

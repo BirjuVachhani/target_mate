@@ -2245,6 +2245,7 @@ class CustomDropdownMenuItem<T> extends StatelessWidget {
               color: hovering && hoverTextColor != null
                   ? hoverTextColor
                   : textColor,
+              fontSize: 14,
             ),
         child: child!,
       ),

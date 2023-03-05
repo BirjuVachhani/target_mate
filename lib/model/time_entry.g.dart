@@ -20,7 +20,7 @@ TimeEntry _$TimeEntryFromJson(Map<String, dynamic> json) => TimeEntry(
       wid: json['wid'] as int?,
       pid: json['pid'] as int?,
       billable: json['billable'] as bool,
-      isDeleted: deletedFromJson(json['server_deleted_at'] as String?),
+      isDeleted: deletedFromJson(json['server_deleted_at']),
       isRunning: json['isRunning'] as bool? ?? false,
     );
 

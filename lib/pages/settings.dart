@@ -3,21 +3,21 @@ import 'dart:async';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hive/hive.dart';
-import 'package:mobx/mobx.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:toggl_target/resources/keys.dart';
+import 'package:toggl_target/model/workspace.dart';
 import 'package:toggl_target/resources/theme.dart';
 import 'package:toggl_target/ui/custom_switch.dart';
 import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
 import 'package:toggl_target/ui/widgets.dart';
 import 'package:toggl_target/utils/extensions.dart';
 
+import '../model/project.dart';
 import '../model/user.dart';
 import '../resources/colors.dart';
 import '../ui/back_button.dart';
@@ -27,74 +27,7 @@ import '../ui/custom_scaffold.dart';
 import '../ui/dropdown_button3.dart';
 import '../utils/system_tray_manager.dart';
 import '../utils/utils.dart';
-
-part 'settings.g.dart';
-
-// ignore: library_private_types_in_public_api
-class SettingsStore = _SettingsStore with _$SettingsStore;
-
-abstract class _SettingsStore with Store {
-  late final Box box = getAppSettingsBox();
-
-  _SettingsStore() {
-    init();
-  }
-
-  @observable
-  Color themeColor = Colors.transparent;
-
-  @observable
-  bool useMaterial3 = false;
-
-  @observable
-  Duration refreshFrequency = 5.minutes;
-
-  @observable
-  bool isLoadingProjects = false;
-
-  StreamSubscription? subscription;
-
-  void init() {
-    subscription = getAppSettingsBox()
-        .watch(key: HiveKeys.refreshFrequency)
-        .listen((event) {
-      refresh();
-    });
-
-    themeColor = Color(box.get(HiveKeys.primaryColor));
-    refreshFrequency =
-        Duration(minutes: box.get(HiveKeys.refreshFrequency, defaultValue: 5));
-  }
-
-  void refresh() {
-    themeColor = Color(box.get(HiveKeys.primaryColor));
-    refreshFrequency =
-        Duration(minutes: box.get(HiveKeys.refreshFrequency, defaultValue: 5));
-  }
-
-  @action
-  void setThemeColor(Color color) {
-    themeColor = color;
-    box.put(HiveKeys.primaryColor, color.value);
-  }
-
-  @action
-  void setRefreshFrequency(Duration duration) {
-    refreshFrequency = duration;
-    box.put(HiveKeys.refreshFrequency, duration.inMinutes);
-  }
-
-  void dispose() {
-    subscription?.cancel();
-  }
-
-  @action
-  Future<void> fetchAllProjects() async {
-    isLoadingProjects = true;
-    await Future.delayed(1.seconds);
-    isLoadingProjects = false;
-  }
-}
+import 'settings_store.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -124,58 +57,61 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return CustomScaffold(
       body: CustomSafeArea(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          primary: true,
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Center(
-            child: SizedBox(
-              width: 350,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const CustomBackButton(usePrimaryColor: false),
-                  const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: SetupTitle('App Settings'),
-                  ),
-                  const AppearanceSettings(),
-                  const SizedBox(height: 16),
-                  const SyncSettings(),
-                  const SizedBox(height: 16),
-                  const AccountSettings(),
-                  const SizedBox(height: 40),
-                  Container(
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      'assets/logo_trimmed.png',
-                      width: 100,
-                      color: context.theme.colorScheme.primary,
+        child: Center(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            primary: true,
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+            child: Center(
+              child: SizedBox(
+                width: 400,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const CustomBackButton(usePrimaryColor: false),
+                    const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: SetupTitle('App Settings'),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Center(
-                    child: FutureBuilder<PackageInfo>(
-                      future: packageInfo,
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) return const SizedBox.shrink();
-                        final data = snapshot.data;
-                        if (data == null) return const SizedBox.shrink();
-                        return Text(
-                          'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white60,
-                            fontSize: 12,
-                            letterSpacing: 0.8,
-                          ),
-                        );
-                      },
+                    const AppearanceSettings(),
+                    const SizedBox(height: 16),
+                    const SyncSettings(),
+                    const SizedBox(height: 16),
+                    const ProjectSettings(),
+                    const SizedBox(height: 16),
+                    const AccountSettings(),
+                    const SizedBox(height: 40),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'assets/logo_trimmed.png',
+                        width: 100,
+                        color: context.theme.colorScheme.primary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                ],
+                    const SizedBox(height: 8),
+                    Center(
+                      child: FutureBuilder<PackageInfo>(
+                        future: packageInfo,
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) return const SizedBox.shrink();
+                          final data = snapshot.data;
+                          if (data == null) return const SizedBox.shrink();
+                          return Text(
+                            'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white60,
+                              fontSize: 12,
+                              letterSpacing: 0.8,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -235,7 +171,7 @@ class AppearanceSettings extends StatelessObserverWidget {
               ),
               value: store.useMaterial3,
               onChanged: (value) {
-                store.useMaterial3 = value;
+                store.onToggleUseMaterial3(value);
                 AdaptiveTheme.of(context).setTheme(
                   light: getLightTheme(store.themeColor,
                       useMaterial3: store.useMaterial3),
@@ -284,6 +220,7 @@ class SyncSettings extends StatelessWidget {
               },
               selectedItemBuilder: (context, item) => Text(
                 formatDuration(store.refreshFrequency),
+                style: const TextStyle(fontSize: 14),
               ),
               itemBuilder: (context, item) => CustomDropdownMenuItem<Duration>(
                 value: item,
@@ -377,6 +314,89 @@ class _AccountSettingsState extends State<AccountSettings> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ProjectSettings extends StatelessObserverWidget {
+  const ProjectSettings({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.read<SettingsStore>();
+    return Stack(
+      children: [
+        SettingsSection(
+          title: 'Workspace & Project',
+          children: [
+            const Text('Workspace'),
+            const SizedBox(height: 8),
+            CustomDropdown<Workspace>(
+              value: store.selectedWorkspace,
+              isExpanded: true,
+              onSelected: (value) => store.onWorkspaceSelected(value),
+              itemBuilder: (context, item) => CustomDropdownMenuItem<Workspace>(
+                value: item,
+                child: Text(item.name),
+              ),
+              items: store.workspaces,
+            ),
+            const SizedBox(height: 16),
+            const Text('Project'),
+            const SizedBox(height: 8),
+            CustomDropdown<Project>(
+              value: store.selectedProject,
+              isExpanded: true,
+              onSelected: (value) => store.onProjectSelected(value),
+              itemBuilder: (context, item) {
+                return CustomDropdownMenuItem<Project>(
+                  value: item,
+                  child: Text(
+                    item.name.isNotEmpty ? item.name : 'Untitled',
+                    style: TextStyle(
+                      color: item.name.isEmpty
+                          ? context.theme.colorScheme.onSurface.withOpacity(0.5)
+                          : null,
+                      fontStyle: item.name.isNotEmpty ? null : FontStyle.italic,
+                      fontSize: 14,
+                    ),
+                  ),
+                );
+              },
+              items: [
+                emptyProject,
+                ...store.filteredProjects,
+              ],
+            ),
+          ],
+        ),
+        Positioned(
+          top: 34,
+          right: 16,
+          child: Tooltip(
+            message: 'Refresh',
+            waitDuration: const Duration(milliseconds: 700),
+            preferBelow: false,
+            child: IconButton(
+              splashRadius: 12,
+              constraints: const BoxConstraints(),
+              padding: const EdgeInsets.all(6),
+              onPressed: store.loadWorkspacesAndProjects,
+              icon: Observer(builder: (context) {
+                const icon = Icon(Icons.sync);
+                if (store.isLoadingProjects) {
+                  return icon
+                      .animate(onPlay: (controller) => controller.repeat())
+                      .rotate(duration: 2.seconds);
+                }
+
+                return icon;
+              }),
+              iconSize: 14,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

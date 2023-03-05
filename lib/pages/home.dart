@@ -16,18 +16,19 @@ import 'package:provider/provider.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:toggl_target/model/day_entry.dart';
-import 'package:toggl_target/pages/settings.dart';
 import 'package:toggl_target/pages/setup/target_setup_page.dart';
 import 'package:toggl_target/pages/target_store.dart';
 import 'package:toggl_target/utils/extensions.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../resources/colors.dart';
+import '../ui/animated_horizontal_progress_bar.dart';
 import '../ui/custom_safe_area.dart';
 import '../ui/custom_scaffold.dart';
 import '../ui/gradient_background.dart';
 import '../utils/utils.dart';
 import 'home_store.dart';
+import 'settings_store.dart';
 
 class HomePageWrapper extends StatelessWidget {
   const HomePageWrapper({super.key});
@@ -1081,188 +1082,152 @@ class HomeHeader extends StatelessWidget {
   }
 }
 
-class TodayProgressIndicator extends StatelessWidget {
+class TodayProgressIndicator extends StatelessObserverWidget {
   const TodayProgressIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
     final HomeStore store = context.read<HomeStore>();
     final TargetStore targetStore = context.read<TargetStore>();
-    return Observer(
-      builder: (context) {
-        if (store.isMonthlyTargetAchieved) {
-          return const SizedBox.shrink();
-        }
-        return Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Observer(
-                  builder: (context) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            const Expanded(
-                              child: Text(
-                                "Today's Progress",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.2,
-                                  color: Colors.white60,
-                                ),
-                              ),
-                            ),
-                            if (!store.isLoading || store.isLoadingWithData)
-                              Text(
-                                formatTodayProgressPercentage(store),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.2,
-                                ),
-                              ),
-                            const SizedBox(width: 2),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Observer(
-                          builder: (context) {
-                            return SizedBox(
-                              height: 24,
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(4),
-                                      child: LinearProgressIndicator(
-                                        value: store.todayPercentage,
-                                        minHeight: 24,
-                                        backgroundColor:
-                                            Colors.white.withOpacity(0.15),
-                                        valueColor: AlwaysStoppedAnimation(
-                                          ColorTween(
-                                            begin: Colors.redAccent,
-                                            end: Colors.green.shade700,
-                                          ).transform(
-                                            store.todayPercentage.clamp(0, 1),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  if (!store.isLoading ||
-                                      store.isLoadingWithData)
-                                    Positioned(
-                                      top: 0,
-                                      bottom: 0,
-                                      right: 8,
-                                      child: Builder(
-                                        builder: (context) {
-                                          return Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              const ImageIcon(
-                                                AssetImage(
-                                                    'assets/icon_done.png'),
-                                                color: Colors.white,
-                                                size: 16,
-                                              ),
-                                              const SizedBox(width: 2),
-                                              Text(
-                                                store.todayPercentage >= 1
-                                                    ? 'Completed'
-                                                    : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
-                                                style: const TextStyle(
-                                                  fontSize: 12,
-                                                  height: 1,
-                                                  letterSpacing: 0.2,
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      ),
-                                    )
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                        Observer(
-                          builder: (context) {
-                            if (store.isLoading && !store.isLoadingWithData) {
-                              return const SizedBox.shrink();
-                            }
-                            if (targetStore.isTodayWorkingDay) {
-                              return const SizedBox(height: 8);
-                            }
 
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 8),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: Tooltip(
-                                  message: 'Today is not your working day!',
-                                  waitDuration:
-                                      const Duration(milliseconds: 500),
-                                  decoration: BoxDecoration(
-                                    color: context.theme.colorScheme.primary
-                                        .darken(65),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  textAlign: TextAlign.end,
-                                  preferBelow: true,
-                                  verticalOffset: 14,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 6),
-                                  textStyle: const TextStyle(
-                                    fontSize: 12,
-                                    letterSpacing: 0.2,
-                                    color: Colors.white70,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Text(
-                                        'Working extra!',
-                                        textAlign: TextAlign.end,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          letterSpacing: 0.2,
-                                          color: Colors.white60,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Icon(
-                                        Icons.error_outline_rounded,
-                                        size: 16,
-                                        color:
-                                            context.theme.colorScheme.primary,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    );
-                  },
+    if (store.isMonthlyTargetAchieved) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  "Today's Progress",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                    color: Colors.white60,
+                  ),
                 ),
               ),
+              if (!store.isLoading || store.isLoadingWithData)
+                Text(
+                  formatTodayProgressPercentage(store),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              const SizedBox(width: 2),
             ],
           ),
-        );
-      },
+          const SizedBox(height: 6),
+          SizedBox(
+            height: 24,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: AnimatedHorizontalProgressBar(
+                      value: store.todayPercentage,
+                      backgroundColor: Colors.white.withOpacity(0.15),
+                      duration: 1.seconds,
+                      curve: Curves.fastOutSlowIn,
+                      valueColor: AlwaysStoppedAnimation(
+                        ColorTween(
+                          begin: Colors.redAccent,
+                          end: Colors.green.shade700,
+                        ).transform(
+                          store.todayPercentage.clamp(0, 1),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                if (!store.isLoading || store.isLoadingWithData)
+                  Positioned(
+                    top: 0,
+                    bottom: 0,
+                    right: 8,
+                    child: Builder(
+                      builder: (context) {
+                        return Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const ImageIcon(
+                              AssetImage('assets/icon_done.png'),
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              store.todayPercentage >= 1
+                                  ? 'Completed'
+                                  : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                height: 1,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  )
+              ],
+            ),
+          ),
+          Observer(
+            builder: (context) {
+              if (store.isLoading && !store.isLoadingWithData) {
+                return const SizedBox.shrink();
+              }
+              if (targetStore.isTodayWorkingDay) {
+                return const SizedBox(height: 8);
+              }
+
+              return Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Tooltip(
+                    message: 'Today is not your working day!',
+                    waitDuration: const Duration(milliseconds: 500),
+                    textAlign: TextAlign.end,
+                    preferBelow: true,
+                    verticalOffset: 14,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Working extra!',
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                            fontSize: 12,
+                            letterSpacing: 0.2,
+                            color: Colors.white60,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.error_outline_rounded,
+                          size: 16,
+                          color: context.theme.colorScheme.primary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
