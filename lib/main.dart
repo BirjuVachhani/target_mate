@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:toggl_target/api/toggl_api_service.dart';
 import 'package:toggl_target/resources/keys.dart';
 import 'package:toggl_target/utils/extensions.dart';
@@ -60,7 +61,7 @@ void setupLogging() {
 }
 
 Future<void> initializeData() async {
-  await Hive.initFlutter();
+  await Hive.initFlutter(!kReleaseMode ? 'dev' : null);
 
   final EncryptedSharedPreferences encryptedPrefs =
       EncryptedSharedPreferences();
