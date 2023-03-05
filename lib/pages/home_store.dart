@@ -21,7 +21,6 @@ import 'package:toggl_target/utils/utils.dart';
 
 import '../model/user.dart';
 import '../resources/keys.dart';
-import '../utils/migration/migrator.dart';
 
 part 'home_store.g.dart';
 
@@ -154,17 +153,6 @@ abstract class _HomeStore with Store {
   @action
   Future<void> init(BuildContext context) async {
     authKey = secretsBox.get(HiveKeys.authKey);
-
-    // Check for migration
-    try {
-      log('Checking for migration...');
-      await Migrator.runMigrationIfRequired();
-    } catch (e) {
-      error =
-          "Unable to migrate data. Please restart the app. If that doesn't work, please delete the app and reinstall.";
-      isLoading = false;
-      return;
-    }
 
     log('Loading user data...');
     user = getUserFromStorage()!;

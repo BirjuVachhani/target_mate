@@ -17,9 +17,11 @@ import 'package:toggl_target/utils/extensions.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'pages/home.dart';
+import 'pages/migration_page.dart';
 import 'pages/setup/auth_page.dart';
 import 'resources/colors.dart';
 import 'resources/theme.dart';
+import 'utils/migration/migrator.dart';
 import 'utils/system_tray_manager.dart';
 import 'utils/utils.dart';
 import 'utils/window_resize_listener.dart';
@@ -161,6 +163,9 @@ class _MyAppState extends State<MyApp> {
         appSettingsBox.get(HiveKeys.useMaterial3, defaultValue: false);
 
     final bool isOnboarded = getSecretsBox().containsKey(HiveKeys.onboarded);
+
+    final bool requiresMigration = Migrator.requiresMigration();
+
     return AdaptiveTheme(
       initial: AdaptiveThemeMode.dark,
       light: getLightTheme(primaryColor, useMaterial3: useMaterial3),
@@ -171,7 +176,11 @@ class _MyAppState extends State<MyApp> {
         navigatorKey: navigatorKey,
         theme: theme,
         darkTheme: darkTheme,
-        home: isOnboarded ? const HomePageWrapper() : const AuthPageWrapper(),
+        home: requiresMigration
+            ? const MigrationPage()
+            : isOnboarded
+                ? const HomePageWrapper()
+                : const AuthPageWrapper(),
       ),
     );
   }

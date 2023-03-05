@@ -11,9 +11,9 @@ import '../model/user.dart';
 import 'utils.dart';
 
 class SystemTrayManager {
-  late SystemTray? _systemTray;
-  late AppWindow? _appWindow;
-  late Menu? _menu;
+  SystemTray? _systemTray;
+  AppWindow? _appWindow;
+  Menu? _menu;
 
   SystemTray get systemTray => _systemTray!;
 
@@ -178,7 +178,7 @@ class SystemTrayManager {
 
   Future<void> dispose() async {
     if (isNotSupported) return;
-    await systemTray.destroy();
+    await _systemTray?.destroy();
     _systemTray = null;
     _appWindow = null;
     _menu = null;
