@@ -496,7 +496,7 @@ class PerDayTimeEntryView extends StatelessWidget {
         children: <Widget>[
           Container(
             color: context.theme.colorScheme.primary.withOpacity(0.05),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

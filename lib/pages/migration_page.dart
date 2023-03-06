@@ -137,7 +137,7 @@ class _MigrationPageState extends State<MigrationPage> {
   Future<void> migrate() async {
     final navigator = Navigator.of(context);
     try {
-      await Future.delayed(const Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 1));
       await Migrator.runMigrationIfRequired();
 
       // Reset GetIt registry. (stores, etc.)

@@ -98,6 +98,10 @@ ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
             (useMaterial3 ? m3colorScheme.onPrimary : m2colorScheme.onPrimary),
       ),
     ),
+    dividerTheme: DividerThemeData(
+      thickness: 1,
+      color: useMaterial3 ? m3colorScheme.onSurface.withOpacity(0.2) : m2colorScheme.onSurface.withOpacity(0.1),
+    ),
   );
 }
 
