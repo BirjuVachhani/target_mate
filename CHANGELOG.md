@@ -1,4 +1,9 @@
-# 0.3.0
+# 0.3.1 - [Unreleased]
+
+- Fix date parsing not accounting for local time zone.
+- Fix dividers in home screen.
+
+# 0.3.0 - 6th March, 2023
 
 - Fix system tray icon showing too big.
 - Show done icon when completed on macOS.
