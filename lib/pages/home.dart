@@ -23,9 +23,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../resources/colors.dart';
 import '../ui/animated_horizontal_progress_bar.dart';
-import '../ui/custom_safe_area.dart';
 import '../ui/custom_scaffold.dart';
-import '../ui/gradient_background.dart';
 import '../utils/utils.dart';
 import 'home_store.dart';
 import 'settings_store.dart';
@@ -138,116 +136,100 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return CustomScaffold(
       systemNavigationBarColor: context.theme.colorScheme.primary.darken(85),
-      body: GradientBackground(
-        child: SafeArea(
-          bottom: false,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              HomeHeader(onEdit: onEdit),
-              Expanded(
-                child: Observer(builder: (context) {
-                  if (store.isLoading && !store.isLoadingWithData) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SpinKitPouringHourGlassRefined(
-                            size: 64,
-                            color: context.theme.colorScheme.primary
-                                .withOpacity(0.25),
-                            duration: const Duration(milliseconds: 2000),
+      gradientBackground: true,
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const StatsHeader(),
+            Expanded(
+              child: Observer(builder: (context) {
+                if (store.isLoading && !store.isLoadingWithData) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SpinKitPouringHourGlassRefined(
+                          size: 64,
+                          color: context.theme.colorScheme.primary
+                              .withOpacity(0.25),
+                          duration: const Duration(milliseconds: 2000),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Hold on, loading your entries...',
+                          style: TextStyle(
+                            color: Colors.white54,
+                            fontSize: 14,
                           ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Hold on, loading your entries...',
-                            style: TextStyle(
-                              color: Colors.white54,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  if (store.timeEntries == null && store.error != null) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.error_outline_rounded,
-                            size: 64,
-                            color: context.theme.colorScheme.error,
-                          ),
-                          const SizedBox(height: 16),
-                          FractionallySizedBox(
-                            widthFactor: 0.8,
-                            child: Text(
-                              store.error ??
-                                  'Unable to load entries.\nPlease check your internet connection!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: context.theme.colorScheme.error,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          TextButton.icon(
-                            onPressed: store.refreshData,
-                            icon: const Icon(Icons.refresh_rounded),
-                            label: const Text('Retry'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                  if (store.timeEntries == null || store.timeEntries!.isEmpty) {
-                    return const Center(
-                      child: Text('No entries found'),
-                    );
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: ListView.separated(
-                      itemCount: store.dayEntries.length,
-                      primary: false,
-                      padding: const EdgeInsets.fromLTRB(14, 8, 14, 16),
-                      physics: const BouncingScrollPhysics(),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 16),
-                      itemBuilder: (context, index) {
-                        return PerDayTimeEntryView(
-                          date: store.dayEntries.keys.elementAt(index),
-                          entry: store.dayEntries.values.elementAt(index),
-                        );
-                      },
+                        ),
+                      ],
                     ),
                   );
-                }),
-              ),
-              const BottomBar(),
-            ],
-          ),
+                }
+                if (store.timeEntries == null && store.error != null) {
+                  return Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.error_outline_rounded,
+                          size: 64,
+                          color: context.theme.colorScheme.error,
+                        ),
+                        const SizedBox(height: 16),
+                        FractionallySizedBox(
+                          widthFactor: 0.8,
+                          child: Text(
+                            store.error ??
+                                'Unable to load entries.\nPlease check your internet connection!',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: context.theme.colorScheme.error,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextButton.icon(
+                          onPressed: store.refreshData,
+                          icon: const Icon(Icons.refresh_rounded),
+                          label: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                if (store.timeEntries == null || store.timeEntries!.isEmpty) {
+                  return const Center(
+                    child: Text('No entries found'),
+                  );
+                }
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: ListView.separated(
+                    itemCount: store.dayEntries.length,
+                    primary: false,
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                    physics: const BouncingScrollPhysics(),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 16),
+                    itemBuilder: (context, index) {
+                      return PerDayTimeEntryView(
+                        date: store.dayEntries.keys.elementAt(index),
+                        entry: store.dayEntries.values.elementAt(index),
+                      );
+                    },
+                  ),
+                );
+              }),
+            ),
+            const BottomBar(),
+          ],
         ),
       ),
     );
-  }
-
-  Future<void> onEdit() async {
-    final bool? modified = await Navigator.of(context).push<bool?>(
-      CupertinoPageRoute(
-        builder: (context) => Provider.value(
-          value: targetStore,
-          child: const TargetSetupPage(),
-        ),
-      ),
-    );
-    if (modified == true) {
-      targetStore.refresh();
-      store.refreshData();
-    }
   }
 
   void onDidReceiveLocalNotification(
@@ -678,174 +660,239 @@ class PerDayTimeEntryView extends StatelessWidget {
   }
 }
 
-class HomeHeader extends StatelessWidget {
-  final VoidCallback onEdit;
+class StatsHeader extends StatelessWidget {
+  const StatsHeader({super.key});
 
-  const HomeHeader({super.key, required this.onEdit});
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: const [
+          SizedBox(height: 8),
+          HomeAppBar(),
+          SizedBox(height: 16),
+          MonthlyStats(),
+          SizedBox(height: 16),
+          DailyStats(),
+          SizedBox(height: 16),
+          TodayProgressIndicator(),
+        ],
+      ),
+    );
+  }
+}
+
+class HomeAppBar extends StatelessObserverWidget {
+  const HomeAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
     final HomeStore store = context.read<HomeStore>();
-    final TargetStore targetStore = context.read<TargetStore>();
-    final SettingsStore settingsStore = context.read<SettingsStore>();
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (context.theme.platform.isDesktop)
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: AppColors.backgroundColorDarker,
+              radius: 18,
+              backgroundImage: store.user != null
+                  ? NetworkImage(store.user!.avatarUrl)
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Builder(builder: (context) {
+                if (constraints.maxWidth <= 305) {
+                  return const SizedBox.shrink();
+                }
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Welcome back,',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                    Text(
+                      store.user?.fullName ?? '',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    // Text(
+                    //   DateFormat('EEEE, dd').format(DateTime.now()),
+                    //   style: TextStyle(
+                    //     fontSize: 13,
+                    //     color: Colors.white.withOpacity(0.5),
+                    //   ),
+                    // ),
+                    // Text(
+                    //   store.email,
+                    //   style: TextStyle(
+                    //     fontSize: 13,
+                    //     color: Colors.white.withOpacity(0.5),
+                    //   ),
+                    // ),
+                  ],
+                );
+              }),
+            ),
+            if (constraints.maxWidth <= 190)
+              SizedBox(
+                width: 38,
+                child: Observer(
+                  builder: (context) {
+                    return TextButton(
+                      onPressed: store.isLoading ? null : store.refreshData,
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.white.withOpacity(0.1),
+                      ),
+                      child: store.isLoading
+                          ? const SizedBox.square(
+                              dimension: 20,
+                              child: Center(
+                                child: SizedBox.square(
+                                  dimension: 14,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : const Icon(Icons.refresh_rounded, size: 20),
+                    );
+                  },
+                ),
+              )
+            else
+              Observer(
+                builder: (context) {
+                  return FilledButton.icon(
+                    onPressed: store.isLoading ? null : store.refreshData,
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white.withOpacity(0.1),
+                    ),
+                    icon: store.isLoading
+                        ? const SizedBox.square(
+                            dimension: 20,
+                            child: Center(
+                              child: SizedBox.square(
+                                dimension: 14,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ),
+                          )
+                        : const Icon(Icons.refresh_rounded, size: 20),
+                    label: const Text('Refresh'),
+                  );
+                },
+              ),
+            const SizedBox(width: 10),
             SizedBox(
-              height: kMacOSTopPadding,
-              child: Center(
-                child: Image.asset(
-                  'assets/logo_trimmed.png',
-                  fit: BoxFit.fitHeight,
-                  height: 16,
-                  color: context.theme.colorScheme.background,
+              width: 38,
+              child: Tooltip(
+                message: 'Settings',
+                waitDuration: 700.milliseconds,
+                child: FilledButton(
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.white.withOpacity(0.1),
+                  ),
+                  onPressed: () => openSettings(context),
+                  child: const Icon(Icons.settings, size: 20),
+                  // label: const Text('Logout'),
                 ),
               ),
             ),
-          // SizedBox(
-          //     height: kMacOSTopPadding,
-          //     child: Center(
-          //       child: Text(
-          //         'Toggl Target',
-          //         style: TextStyle(
-          //           fontSize: 13,
-          //           fontWeight: FontWeight.w500,
-          //           color: context.theme.colorScheme.onPrimary.withOpacity(0.8),
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          const SizedBox(height: 8),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return Row(
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Shows daily average and working days stats.
+class MonthlyStats extends StatelessObserverWidget {
+  const MonthlyStats({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final HomeStore store = context.read<HomeStore>();
+    final SettingsStore settingsStore = context.read<SettingsStore>();
+    final TargetStore targetStore = context.read<TargetStore>();
+
+    return Row(
+      children: [
+        Expanded(
+          child: Observer(
+            builder: (context) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: AppColors.backgroundColorDarker,
-                    radius: 18,
-                    backgroundImage: store.user != null
-                        ? NetworkImage(store.user!.avatarUrl)
-                        : null,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Builder(builder: (context) {
-                      if (constraints.maxWidth <= 305) {
-                        return const SizedBox.shrink();
-                      }
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Welcome back,',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.white.withOpacity(0.8),
-                            ),
-                          ),
-                          Text(
-                            store.user?.fullName ?? '',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          // Text(
-                          //   DateFormat('EEEE, dd').format(DateTime.now()),
-                          //   style: TextStyle(
-                          //     fontSize: 13,
-                          //     color: Colors.white.withOpacity(0.5),
-                          //   ),
-                          // ),
-                          // Text(
-                          //   store.email,
-                          //   style: TextStyle(
-                          //     fontSize: 13,
-                          //     color: Colors.white.withOpacity(0.5),
-                          //   ),
-                          // ),
-                        ],
-                      );
-                    }),
-                  ),
-                  if (constraints.maxWidth <= 190)
-                    SizedBox(
-                      width: 38,
-                      child: Observer(
-                        builder: (context) {
-                          return TextButton(
-                            onPressed:
-                                store.isLoading ? null : store.refreshData,
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Colors.white.withOpacity(0.1),
-                            ),
-                            child: store.isLoading
-                                ? const SizedBox.square(
-                                    dimension: 20,
-                                    child: Center(
-                                      child: SizedBox.square(
-                                        dimension: 14,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : const Icon(Icons.refresh_rounded, size: 20),
-                          );
-                        },
-                      ),
-                    )
-                  else
-                    Observer(
-                      builder: (context) {
-                        return FilledButton.icon(
-                          onPressed: store.isLoading ? null : store.refreshData,
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Colors.white.withOpacity(0.1),
-                          ),
-                          icon: store.isLoading
-                              ? const SizedBox.square(
-                                  dimension: 20,
-                                  child: Center(
-                                    child: SizedBox.square(
-                                      dimension: 14,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : const Icon(Icons.refresh_rounded, size: 20),
-                          label: const Text('Refresh'),
-                        );
-                      },
+                  Text(
+                    DateFormat('MMMM yyyy')
+                        .format(DateTime.now())
+                        .toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.2,
+                      color: Colors.white60,
                     ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: 38,
-                    child: Tooltip(
-                      message: 'Settings',
-                      waitDuration: 700.milliseconds,
-                      child: FilledButton(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.white.withOpacity(0.1),
+                  ),
+                  const SizedBox(height: 4),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        if (store.isLoading)
+                          const WidgetSpan(
+                            child: SizedBox(
+                              width: 48,
+                              height: 24,
+                              child: Center(
+                                child: SpinKitThreeBounce(
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          TextSpan(
+                            text: settingsStore.showRemaining
+                                ? formatRemainingDuration(store, targetStore)
+                                : formatCompletedDuration(store, targetStore),
+                          ),
+                        TextSpan(
+                          text: formatTotalDuration(store, targetStore),
                         ),
-                        onPressed: () => openSettings(context),
-                        child: const Icon(Icons.settings, size: 20),
-                        // label: const Text('Logout'),
+                        const TextSpan(
+                          text: ' hours',
+                          style: TextStyle(
+                            color: Colors.white60,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -853,227 +900,44 @@ class HomeHeader extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: Observer(
-                  builder: (context) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          DateFormat('MMMM yyyy')
-                              .format(DateTime.now())
-                              .toUpperCase(),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.2,
-                            color: Colors.white60,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              if (store.isLoading)
-                                const WidgetSpan(
-                                  child: SizedBox(
-                                    width: 48,
-                                    height: 24,
-                                    child: Center(
-                                      child: SpinKitThreeBounce(
-                                        size: 16,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              else
-                                TextSpan(
-                                  text: settingsStore.showRemaining
-                                      ? formatRemainingDuration(
-                                          store, targetStore)
-                                      : formatCompletedDuration(
-                                          store, targetStore),
-                                ),
-                              TextSpan(
-                                text: formatTotalDuration(store, targetStore),
-                              ),
-                              const TextSpan(
-                                text: ' hours',
-                                style: TextStyle(
-                                  color: Colors.white60,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-              FilledButton.icon(
-                onPressed: onEdit,
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.white.withOpacity(0.1),
-                  textStyle: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-                icon: const Icon(
-                  Icons.edit_rounded,
-                  size: 16,
-                ),
-                label: const Text('Edit'),
-              ),
-            ],
+        ),
+        FilledButton.icon(
+          onPressed: () => onEdit(context),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.white.withOpacity(0.1),
+            textStyle: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            ),
           ),
-          const SizedBox(height: 20),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Observer(
-                  builder: (context) {
-                    if (store.isMonthlyTargetAchieved) {
-                      return const SizedBox(
-                        height: 50,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Goal achieved! ✌🏻🎉',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.2,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text(
-                          'Daily average to achieve goal',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.2,
-                            color: Colors.white60,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              if (store.isLoading)
-                                const WidgetSpan(
-                                  child: SizedBox(
-                                    width: 48,
-                                    height: 24,
-                                    child: Center(
-                                      child: SpinKitThreeBounce(
-                                        size: 16,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              else
-                                TextSpan(
-                                  text: formatDailyTargetDuration(
-                                      store.effectiveAverageTarget),
-                                ),
-                              const TextSpan(
-                                text: ' / day',
-                                style: TextStyle(
-                                  color: Colors.white60,
-                                  fontSize: 20,
-                                ),
-                              ),
-                              const TextSpan(
-                                text: ' ',
-                                style: TextStyle(
-                                  color: Colors.white60,
-                                  fontSize: 24,
-                                ),
-                              ),
-                            ],
-                          ),
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-              Observer(
-                builder: (context) {
-                  final days = settingsStore.showRemaining
-                      ? targetStore.daysRemainingAfterToday
-                      : targetStore.currentDay;
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const Text(
-                        'Working days',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.2,
-                          color: Colors.white60,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text.rich(
-                        TextSpan(
-                          text: '$days/${targetStore.effectiveDays.length}',
-                          children: const [
-                            TextSpan(
-                              text: ' days',
-                              style: TextStyle(
-                                color: Colors.white60,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        textAlign: TextAlign.end,
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
+          icon: const Icon(
+            Icons.edit_rounded,
+            size: 16,
           ),
-          const SizedBox(height: 10),
-          const TodayProgressIndicator(),
-        ],
+          label: const Text('Edit'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> onEdit(BuildContext context) async {
+    final HomeStore store = context.read<HomeStore>();
+    final TargetStore targetStore = context.read<TargetStore>();
+
+    final bool? modified = await Navigator.of(context).push<bool?>(
+      CupertinoPageRoute(
+        builder: (context) => Provider.value(
+          value: targetStore,
+          child: const TargetSetupPage(),
+        ),
       ),
     );
+    if (modified == true) {
+      targetStore.refresh();
+      store.refreshData();
+    }
   }
 
   String formatCompletedDuration(HomeStore store, TargetStore targetStore) {
@@ -1093,27 +957,48 @@ class HomeHeader extends StatelessWidget {
   }
 }
 
-class TodayProgressIndicator extends StatelessObserverWidget {
-  const TodayProgressIndicator({super.key});
+/// Shows daily average and working days stats.
+class DailyStats extends StatelessObserverWidget {
+  const DailyStats({super.key});
 
   @override
   Widget build(BuildContext context) {
     final HomeStore store = context.read<HomeStore>();
+    final SettingsStore settingsStore = context.read<SettingsStore>();
     final TargetStore targetStore = context.read<TargetStore>();
 
-    if (store.isMonthlyTargetAchieved) return const SizedBox.shrink();
+    final days = settingsStore.showRemaining
+        ? targetStore.daysRemainingAfterToday
+        : targetStore.currentDay;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 8),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const Expanded(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (store.isMonthlyTargetAchieved)
+          const Expanded(
+            child: SizedBox(
+              height: 50,
+              child: Align(
+                alignment: Alignment.centerLeft,
                 child: Text(
-                  "Today's Progress",
+                  'Goal achieved! ✌🏻🎉',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+            ),
+          )
+        else
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  'Daily average to achieve goal',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -1121,125 +1006,229 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                     color: Colors.white60,
                   ),
                 ),
-              ),
-              if (!store.isLoading || store.isLoadingWithData)
-                Text(
-                  formatTodayProgressPercentage(store),
+                const SizedBox(height: 4),
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      if (store.isLoading)
+                        const WidgetSpan(
+                          child: SizedBox(
+                            width: 48,
+                            height: 24,
+                            child: Center(
+                              child: SpinKitThreeBounce(
+                                size: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        )
+                      else
+                        TextSpan(
+                          text: formatDailyTargetDuration(
+                              store.effectiveAverageTarget),
+                        ),
+                      const TextSpan(
+                        text: ' / day',
+                        style: TextStyle(
+                          color: Colors.white60,
+                          fontSize: 20,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: ' ',
+                        style: TextStyle(
+                          color: Colors.white60,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ],
+                  ),
                   style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              const SizedBox(width: 2),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 6),
-          SizedBox(
-            height: 24,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: AnimatedHorizontalProgressBar(
-                      value: store.todayPercentage,
-                      backgroundColor: Colors.white.withOpacity(0.15),
-                      duration: 1.seconds,
-                      curve: Curves.fastOutSlowIn,
-                      valueColor: AlwaysStoppedAnimation(
-                        ColorTween(
-                          begin: Colors.redAccent,
-                          end: Colors.green.shade700,
-                        ).transform(
-                          store.todayPercentage.clamp(0, 1),
-                        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const Text(
+              'Working days',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.2,
+                color: Colors.white60,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text.rich(
+              TextSpan(
+                text: '$days/${targetStore.effectiveDays.length}',
+                children: const [
+                  TextSpan(
+                    text: ' days',
+                    style: TextStyle(
+                      color: Colors.white60,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              textAlign: TextAlign.end,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class TodayProgressIndicator extends StatelessObserverWidget {
+  const TodayProgressIndicator({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final HomeStore store = context.read<HomeStore>();
+
+    if (store.isMonthlyTargetAchieved) return const SizedBox.shrink();
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            const Expanded(
+              child: Text(
+                "Today's Progress",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
+                  color: Colors.white60,
+                ),
+              ),
+            ),
+            if (!store.isLoading || store.isLoadingWithData)
+              Text(
+                formatTodayProgressPercentage(store),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            const SizedBox(width: 2),
+          ],
+        ),
+        const SizedBox(height: 6),
+        SizedBox(
+          height: 24,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: AnimatedHorizontalProgressBar(
+                    value: store.todayPercentage,
+                    backgroundColor: Colors.white.withOpacity(0.15),
+                    duration: 1.seconds,
+                    curve: Curves.fastOutSlowIn,
+                    valueColor: AlwaysStoppedAnimation(
+                      ColorTween(
+                        begin: Colors.redAccent,
+                        end: Colors.green.shade700,
+                      ).transform(
+                        store.todayPercentage.clamp(0, 1),
                       ),
                     ),
                   ),
                 ),
-                if (!store.isLoading || store.isLoadingWithData)
-                  Positioned(
-                    top: 0,
-                    bottom: 0,
-                    right: 8,
-                    child: Builder(
-                      builder: (context) {
-                        return Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            const ImageIcon(
-                              AssetImage('assets/icon_done.png'),
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                            const SizedBox(width: 2),
-                            Text(
-                              store.todayPercentage >= 1
-                                  ? 'Completed'
-                                  : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                height: 1,
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  )
-              ],
-            ),
-          ),
-          Observer(
-            builder: (context) {
-              if (store.isLoading && !store.isLoadingWithData) {
-                return const SizedBox.shrink();
-              }
-              if (targetStore.isTodayWorkingDay ||
-                  store.todayDuration == Duration.zero) {
-                return const SizedBox(height: 8);
-              }
-
-              return Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Tooltip(
-                    message: 'Today is not your working day!',
-                    waitDuration: const Duration(milliseconds: 500),
-                    textAlign: TextAlign.end,
-                    preferBelow: true,
-                    verticalOffset: 14,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Working extra!',
-                          textAlign: TextAlign.end,
-                          style: TextStyle(
-                            fontSize: 12,
-                            letterSpacing: 0.2,
-                            color: Colors.white60,
+              ),
+              if (!store.isLoading || store.isLoadingWithData)
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  right: 8,
+                  child: Builder(
+                    builder: (context) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          const ImageIcon(
+                            AssetImage('assets/icon_done.png'),
+                            color: Colors.white,
+                            size: 16,
                           ),
+                          const SizedBox(width: 2),
+                          Text(
+                            store.todayPercentage >= 1
+                                ? 'Completed'
+                                : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              height: 1,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                )
+            ],
+          ),
+        ),
+        Observer(
+          builder: (context) {
+            if (!store.isWorkingExtra) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Tooltip(
+                  message: 'Today is not your working day!',
+                  waitDuration: const Duration(milliseconds: 500),
+                  textAlign: TextAlign.end,
+                  preferBelow: true,
+                  verticalOffset: 14,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'Working extra!',
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: 12,
+                          letterSpacing: 0.2,
+                          color: Colors.white60,
                         ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          Icons.error_outline_rounded,
-                          size: 16,
-                          color: context.theme.colorScheme.primary,
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.error_outline_rounded,
+                        size: 16,
+                        color: context.theme.colorScheme.primary,
+                      ),
+                    ],
                   ),
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+      ],
     );
   }
 

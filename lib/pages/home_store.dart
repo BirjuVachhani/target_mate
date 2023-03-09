@@ -91,6 +91,17 @@ abstract class _HomeStore with Store {
     return diff;
   }
 
+  @computed
+  bool get isWorkingExtra {
+    if (isLoading && !isLoadingWithData) {
+      return false;
+    }
+    if (targetStore.isTodayWorkingDay || todayDuration == Duration.zero) {
+      return false;
+    }
+    return true;
+  }
+
   @observable
   Map<DateTime, DayEntry> dayEntries = {};
 

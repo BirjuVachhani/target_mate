@@ -44,6 +44,13 @@ mixin _$HomeStore on _HomeStore, Store {
           Computed<Duration>(() => super.remainingTillToday,
               name: '_HomeStore.remainingTillToday'))
       .value;
+  Computed<bool>? _$isWorkingExtraComputed;
+
+  @override
+  bool get isWorkingExtra =>
+      (_$isWorkingExtraComputed ??= Computed<bool>(() => super.isWorkingExtra,
+              name: '_HomeStore.isWorkingExtra'))
+          .value;
   Computed<Duration>? _$dailyAverageTargetComputed;
 
   @override
@@ -220,6 +227,7 @@ completedTillToday: ${completedTillToday},
 isLoadingWithData: ${isLoadingWithData},
 remaining: ${remaining},
 remainingTillToday: ${remainingTillToday},
+isWorkingExtra: ${isWorkingExtra},
 dailyAverageTarget: ${dailyAverageTarget},
 dailyAverageTargetTillToday: ${dailyAverageTargetTillToday},
 todayPercentage: ${todayPercentage},

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_color_utilities/palettes/core_palette.dart';
 import 'package:screwdriver/screwdriver.dart';
 
@@ -6,9 +7,10 @@ import '../model/time_entry.dart';
 
 extension TargetPlatformExt on TargetPlatform {
   bool get isDesktop =>
-      this == TargetPlatform.macOS ||
-      this == TargetPlatform.linux ||
-      this == TargetPlatform.windows;
+      !kIsWeb &&
+      (this == TargetPlatform.macOS ||
+          this == TargetPlatform.linux ||
+          this == TargetPlatform.windows);
 
   bool get isMobile =>
       this == TargetPlatform.android || this == TargetPlatform.iOS;
