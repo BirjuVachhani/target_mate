@@ -12,7 +12,7 @@ void main() {
 
   final String password = fromEnv;
 
-  final File configFile = File('local.yaml');
+  final File configFile = File('installers/msix/local.yaml');
 
   if (!configFile.existsSync()) {
     stderr.writeln('Config file not found at path: local.yaml');

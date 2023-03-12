@@ -33,7 +33,7 @@ jobs:
       - name: Build
         run: flutter build windows --build-name=${{ github.event.inputs.tag }}
       - name: Setup MSIX configs
-        run: dart installers\msix\setup.dart ci.yaml ${{ secrets.WIN_CERT_PASSWORD }}
+        run: dart installers\msix\setup.dart installers\msix\ci.yaml ${{ secrets.WIN_CERT_PASSWORD }}
       - name: Create MSIX Installer
         run: flutter pub run msix:create
       - name: Rename file
