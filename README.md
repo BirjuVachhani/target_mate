@@ -11,6 +11,8 @@ A companion app for [Toggl track][toggl] to track & manage your working hours to
 
 <a href="https://github.com/BirjuVachhani/toggl_target/releases/download/0.2.0/TogglTarget.apk"><img src=".github/assets/android.png" height="70px" /></a> &nbsp; <a href="https://github.com/BirjuVachhani/toggl_target/releases/download/0.2.0/TogglTarget.dmg"><img src=".github/assets/macos.png" height="70px" /></a> 
 
+See [Installation Guide](#installation) for installing on desktop.
+
 # Features
 
 - Supports auth via credentials and API key.
@@ -34,6 +36,40 @@ A companion app for [Toggl track][toggl] to track & manage your working hours to
 ### Disclaimer
 
 > This is not an independent timer tracking app. It does not have ability to record your time. You have to use [Toggl Track][toggl] to track your time. This is a companion app to help you track your goals for achieving daily/monthly goals. It also allows you to set a max limit for monthly goal.
+
+## Installation Guide
+
+### MacOS
+In order to install Toggl Target on MacOS, download the file named `TogglTarget-macos-x.x.x.dmg`.
+
+#### Installing with DMG (Recommended)
+To install Toggl Target in your Mac simply open `TogglTarget.dmg` and drag the Toogl Target app to the `Applications` folder next to it. If you are updating the app you'll need to click `Replace`.
+
+1. Open `TogglTarget-macos-x.x.x.dmg` and drag the Toogl Target app to the `Applications` folder next to it. If you are updating the app you'll need to click `Replace`.
+2. Toggl Target should now appear in your Laucnhpad. However, if you try to open it you might get a message saying that `"Toggl Target" can't be opened because Apple cannot check it for malicious software.`
+3. To fix this, open `System Preferences` and click on `Security and Privacy`.
+4. you'll see a message saying `"Toggl Target" was blocked from use because it is not from an identified developer`.
+5. Click on `Open Anyway` and then `Open` in the popup.
+6. Done! You should now be able to use Toggl Target normally!
+
+### Windows
+
+#### Installing with MSIX (Recommended)
+
+Download the `TogglTarget-windows-x.x.x.msix`.
+
+Unfortunately, it isn't as easy as opening the file and installing it as I do not have a signed certificate.
+
+To install Toggl Target, 
+
+1. Make sure the installer is not running. 
+2. Right-click on the `msix` file and click on Properties.
+3. Navigate to `Digital Signatures`. You will see only one signature called 'Birju Vachhani`.
+4. Double click on the signature and then click on `View Certificate`.
+5. Click on `Install Certificate`.
+6. Select `Local System` and click on `Browse` button.
+7. Select `Trusted Root Certification Authorities` and click ok.
+8. Done! Close any open window by clicking on `ok`. Now you should be able to install `Toggl Target` by just double-clicking `msix` file.
 
 ## Motivation
 
