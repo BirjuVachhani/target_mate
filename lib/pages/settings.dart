@@ -99,8 +99,15 @@ class _SettingsPageState extends State<SettingsPage> {
                           if (!snapshot.hasData) return const SizedBox.shrink();
                           final data = snapshot.data;
                           if (data == null) return const SizedBox.shrink();
+                          final buildNumber = data.buildNumber.isNotEmpty
+                              ? '(${data.buildNumber})'
+                              : '';
+                          final suffix =
+                              data.packageName.endsWith('dev') || !kReleaseMode
+                                  ? '-dev'
+                                  : '';
                           return Text(
-                            'v${data.version}(${data.buildNumber})${data.packageName.endsWith('dev') || !kReleaseMode ? '-dev' : ''}',
+                            'v${data.version}$buildNumber$suffix',
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Colors.white60,
