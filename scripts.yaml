@@ -5,11 +5,16 @@ build:
   apk: flutter build apk --release
   aab: flutter build appbundle --release
   macos: flutter build macos
+  windows: flutter build windows
   dmg:
     - flutter build macos
     - ./installers/dmg/create.sh
 bundle:
   dmg: ./installers/dmg/create.sh
+  msix:
+    prelocal: dart ./installers/msix/setup_local.dart
+    local: flutter pub run msix:create
+    postlocal: git restore pubspec.yaml
 pod:
   - cd macos && pod install
   - cd ios && pod install

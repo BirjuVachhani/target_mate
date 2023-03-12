@@ -6,13 +6,15 @@
 name: Windows Build
 
 on:
-#   push:
-#     branches: [ "main" ]
   workflow_dispatch:
     inputs:
       tag:
         description: 'Release Tag'
         required: true
+      upload:
+        description: 'Upload to release?'
+        required: true
+        default: true
 
 jobs:
   build:
@@ -29,13 +31,26 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
       - name: Build
-        run: flutter build windows
+        run: flutter build windows --build-name=${{ github.event.inputs.tag }}
+      - name: Setup MSIX configs
+        run: dart installers\msix\setup.dart ci.yaml ${{ secrets.WIN_CERT_PASSWORD }}
+      - name: Create MSIX Installer
+        run: flutter pub run msix:create
+      - name: Rename file
+        run: ren TogglTarget.msix TogglTarget-windows-${{ github.event.inputs.tag }}.msix
       - name: Compress artifacts
-        run: tar.exe -a -c -f windows-${{ github.event.inputs.tag }}.zip build/windows/Runner/release
-      - name: Upload Artifacts
+        run: tar.exe -a -c -f windows-${{ github.event.inputs.tag }}.zip build/windows/runner/release
+      - name: Upload MSIX Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: windows
+          name: TogglTarget-windows-${{ github.event.inputs.tag }}.msix
+          path: TogglTarget-windows-${{ github.event.inputs.tag }}.msix
+          if-no-files-found: error
+          retention-days: 5
+      - name: Upload Zip Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-${{ github.event.inputs.tag }}.zip
           path: windows-${{ github.event.inputs.tag }}.zip
           if-no-files-found: error
           retention-days: 5
