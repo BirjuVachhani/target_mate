@@ -38,8 +38,6 @@ jobs:
         run: flutter pub run msix:create
       - name: Rename file
         run: ren TogglTarget.msix TogglTarget-windows-${{ github.event.inputs.tag }}.msix
-      - name: Compress artifacts
-        run: tar.exe -a -c -f windows-${{ github.event.inputs.tag }}.zip build/windows/runner/release
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
