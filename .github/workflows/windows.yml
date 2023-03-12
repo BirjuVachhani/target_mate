@@ -40,17 +40,27 @@ jobs:
         run: ren TogglTarget.msix TogglTarget-windows-${{ github.event.inputs.tag }}.msix
       - name: Compress artifacts
         run: tar.exe -a -c -f windows-${{ github.event.inputs.tag }}.zip build/windows/runner/release
-      - name: Upload MSIX Artifact
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: TogglTarget-windows-${{ github.event.inputs.tag }}.msix
           path: TogglTarget-windows-${{ github.event.inputs.tag }}.msix
           if-no-files-found: error
           retention-days: 5
-      - name: Upload Zip Artifact
-        uses: actions/upload-artifact@v3
+
+  upload:
+    needs: [ build ]
+    if: ${{ github.event.inputs.upload == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
         with:
-          name: windows-${{ github.event.inputs.tag }}.zip
-          path: windows-${{ github.event.inputs.tag }}.zip
-          if-no-files-found: error
-          retention-days: 5
+          path: dist
+      - name: Display structure of downloaded files
+        run: ls -R dist
+      - name: Upload binaries to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ github.event.inputs.tag }}
+          file_glob: true

@@ -37,11 +37,12 @@ jobs:
           ./installers/dmg/create.sh
       - name: list files
         run: ls -la build/macos/Build/Products/Release/
+      - name: Rename file
+        run: mv "TogglTarget.dmg" "TogglTarget-macos-${{ github.event.inputs.tag }}.dmg"
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: TogglTarget
-          path: TogglTarget.dmg
+          path: TogglTarget-macos-${{ github.event.inputs.tag }}.dmg
           if-no-files-found: error
           retention-days: 5
 

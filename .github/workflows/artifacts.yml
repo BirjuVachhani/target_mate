@@ -38,25 +38,18 @@ jobs:
         run: echo "${{ secrets.KEYSTORE_PROPERTIES }}" > android/keystore.properties
       - name: Build APK
         run: flutter build apk --release
-      - name: Build AAB
-        run: flutter build appbundle --release
+      - name: remove SHA
+        run: rm build/app/outputs/flutter-apk/app-release.apk.sha1
       - name: Rename APK
-        run: |
-          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/TogglTarget.apk
-          mv build/app/outputs/flutter-apk/app-release.apk.sha1 build/app/outputs/flutter-apk/TogglTarget.apk.sha1
-      - name: Rename AppBundle
-        run: |
-          mv build/app/outputs/bundle/release/app-release.aab build/app/outputs/bundle/release/TogglTarget.aab
+        if: ${{ github.event.inputs.tag != null }}
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/TogglTarget-android-${{ github.event.inputs.tag }}.apk
+      - name: Rename APK
+        if: ${{ github.event.inputs.tag == null }}
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/TogglTarget-android-${{ github.event.release.tag_name }}.apk
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           path: build/app/outputs/flutter-apk/*
-          if-no-files-found: error
-          retention-days: 5
-      - name: Upload AAB
-        uses: actions/upload-artifact@v3
-        with:
-          path: build/app/outputs/bundle/release/TogglTarget.aab
           if-no-files-found: error
           retention-days: 5
       - name: Clean up keystore and keystore.properties
@@ -88,15 +81,70 @@ jobs:
           ./installers/dmg/create.sh
       - name: list files
         run: ls -la build/macos/Build/Products/Release/
+      - name: Rename dmg
+        if: ${{ github.event.inputs.tag != null }}
+        run: mv "TogglTarget.dmg" "TogglTarget-macos-${{ github.event.inputs.tag }}.dmg"
+      - name: Rename dmg
+        if: ${{ github.event.inputs.tag == null }}
+        run: mv "TogglTarget.dmg" "TogglTarget-macos-${{ github.event.release.tag_name }}.dmg"
       - name: Upload Artifacts
+        if: ${{ github.event.inputs.tag != null }}
         uses: actions/upload-artifact@v3
         with:
-          path: TogglTarget.dmg
+          path: TogglTarget-macos-${{ github.event.inputs.tag }}.dmg
+          if-no-files-found: error
+          retention-days: 5
+      - name: Upload Artifacts
+        if: ${{ github.event.inputs.tag == null }}
+        uses: actions/upload-artifact@v3
+        with:
+          path: TogglTarget-macos-${{ github.event.release.tag_name }}.dmg
+          if-no-files-found: error
+          retention-days: 5
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Flutter version
+        run: flutter --version
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build App
+        run: flutter build windows
+      - name: Build App
+        run: flutter build windows
+      - name: Setup MSIX configs
+        run: dart installers\msix\setup.dart installers\msix\ci.yaml ${{ secrets.WIN_CERT_PASSWORD }}
+      - name: Create MSIX Installer
+        run: flutter pub run msix:create
+      - name: Rename file
+        if: ${{ github.event.inputs.tag != null }}
+        run: ren TogglTarget.msix TogglTarget-windows-${{ github.event.inputs.tag }}.msix
+      - name: Rename file
+        if: ${{ github.event.inputs.tag == null }}
+        run: ren TogglTarget.msix TogglTarget-windows-${{ github.event.release.tag_name }}.msix
+      - name: Upload Artifacts
+        if: ${{ github.event.inputs.tag != null }}
+        uses: actions/upload-artifact@v3
+        with:
+          path: TogglTarget-windows-${{ github.event.inputs.tag }}.msix
+          if-no-files-found: error
+          retention-days: 5
+      - name: Upload Artifacts
+        if: ${{ github.event.inputs.tag == null }}
+        uses: actions/upload-artifact@v3
+        with:
+          path: TogglTarget-windows-${{ github.event.release.tag_name }}.msix
           if-no-files-found: error
           retention-days: 5
 
   upload:
-    needs: [ android, macos ]
+    needs: [ android, macos, windows ]
     if: always()
     runs-on: ubuntu-latest
     permissions: write-all
