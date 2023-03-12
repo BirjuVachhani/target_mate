@@ -27,17 +27,10 @@ class CustomSafeArea extends StatelessWidget {
             child: child,
           ),
         );
-      case TargetPlatform.fuchsia:
-        return SafeArea(top: top, bottom: bottom, child: child);
       case TargetPlatform.iOS:
-        return SafeArea(top: top, bottom: bottom, child: child);
+      case TargetPlatform.fuchsia:
       case TargetPlatform.linux:
-        return SafeArea(top: top, bottom: bottom, child: child);
       case TargetPlatform.macOS:
-        return Padding(
-          padding: const EdgeInsets.only(top: kMacOSTopPadding + 8, bottom: 0),
-          child: child,
-        );
       case TargetPlatform.windows:
         return SafeArea(top: top, bottom: bottom, child: child);
     }
