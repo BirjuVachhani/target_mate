@@ -1,53 +1,6 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 
-const sidebarColor = Color(0xFFF6A00C);
-
-class LeftSide extends StatelessWidget {
-  const LeftSide({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-        width: 200,
-        child: Container(
-            color: sidebarColor,
-            child: Column(
-              children: [
-                WindowTitleBarBox(child: MoveWindow()),
-                Expanded(child: Container())
-              ],
-            )));
-  }
-}
-
-const backgroundStartColor = Color(0xFFFFD500);
-const backgroundEndColor = Color(0xFFF6A00C);
-
-class RightSide extends StatelessWidget {
-  const RightSide({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-        child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [backgroundStartColor, backgroundEndColor],
-                  stops: [0.0, 1.0]),
-            ),
-            child: Column(children: [
-              WindowTitleBarBox(
-                  child: Row(children: [
-                Expanded(child: MoveWindow()),
-                const WindowButtons()
-              ])),
-            ])));
-  }
-}
-
 class WindowButtons extends StatelessWidget {
   const WindowButtons({super.key});
 
@@ -58,18 +11,18 @@ class WindowButtons extends StatelessWidget {
           ? Colors.white
           : Colors.black,
       mouseOver: Theme.of(context).brightness == Brightness.dark
-          ? Colors.grey.shade600
-          : Colors.grey.shade300,
+          ? Colors.white.withOpacity(0.2)
+          : Colors.black.withOpacity(0.2),
       mouseDown: Theme.of(context).brightness == Brightness.dark
-          ? Colors.grey.shade700
-          : Colors.grey.shade400,
+          ? Colors.white.withOpacity(0.4)
+          : Colors.black.withOpacity(0.4),
       iconMouseOver: Theme.of(context).brightness == Brightness.dark
           ? Colors.white
           : Colors.black,
       iconMouseDown: Theme.of(context).brightness == Brightness.dark
           ? Colors.white
           : Colors.black,
-      normal: Theme.of(context).colorScheme.surface,
+      normal: Colors.transparent,
     );
 
     final closeButtonColors = WindowButtonColors(
@@ -79,7 +32,7 @@ class WindowButtons extends StatelessWidget {
           ? Colors.white
           : Colors.black,
       iconMouseOver: Colors.white,
-      normal: Theme.of(context).colorScheme.surface,
+      normal: Colors.transparent,
     );
     return Row(
       children: [
