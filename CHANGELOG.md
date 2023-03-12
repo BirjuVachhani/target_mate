@@ -1,8 +1,9 @@
-# 0.3.1 - [Unreleased]
+# 0.3.1 - 12th March, 2023
 
 - Fix date parsing not accounting for local time zone.
 - Fix dividers in home screen.
 - Fix Toolbars for macOS and Windows.
+- Release for Windows.
 
 # 0.3.0 - 6th March, 2023
 
