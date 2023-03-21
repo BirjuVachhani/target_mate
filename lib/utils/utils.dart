@@ -9,19 +9,19 @@ import 'package:intl/intl.dart';
 import 'package:paged_vertical_calendar/utils/date_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:toggl_target/model/workspace.dart';
-import 'package:toggl_target/pages/home_store.dart';
-import 'package:toggl_target/resources/colors.dart';
-import 'package:toggl_target/resources/theme.dart';
 
 import '../main.dart';
 import '../model/day_entry.dart';
 import '../model/project.dart';
 import '../model/user.dart';
+import '../model/workspace.dart';
+import '../pages/home_store.dart';
 import '../pages/settings.dart';
 import '../pages/settings_store.dart';
 import '../pages/setup/auth_page.dart';
+import '../resources/colors.dart';
 import '../resources/keys.dart';
+import '../resources/theme.dart';
 
 Box getSecretsBox() => Hive.box(HiveBoxes.secrets);
 

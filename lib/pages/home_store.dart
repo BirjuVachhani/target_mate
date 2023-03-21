@@ -11,16 +11,16 @@ import 'package:intl/intl.dart';
 import 'package:mobx/mobx.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:toggl_target/api/toggl_api_service.dart';
-import 'package:toggl_target/model/day_entry.dart';
-import 'package:toggl_target/model/time_entry.dart';
-import 'package:toggl_target/pages/target_store.dart';
-import 'package:toggl_target/utils/extensions.dart';
-import 'package:toggl_target/utils/system_tray_manager.dart';
-import 'package:toggl_target/utils/utils.dart';
 
+import '../api/toggl_api_service.dart';
+import '../model/day_entry.dart';
+import '../model/time_entry.dart';
 import '../model/user.dart';
 import '../resources/keys.dart';
+import '../utils/extensions.dart';
+import '../utils/system_tray_manager.dart';
+import '../utils/utils.dart';
+import 'target_store.dart';
 
 part 'home_store.g.dart';
 

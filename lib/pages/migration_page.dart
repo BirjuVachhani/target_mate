@@ -8,13 +8,13 @@ import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
-import 'package:toggl_target/main.dart';
-import 'package:toggl_target/pages/home.dart';
-import 'package:toggl_target/ui/custom_scaffold.dart';
-import 'package:toggl_target/utils/utils.dart';
 
+import '../main.dart';
 import '../resources/keys.dart';
+import '../ui/custom_scaffold.dart';
 import '../utils/migration/migrator.dart';
+import '../utils/utils.dart';
+import 'home.dart';
 import 'setup/auth_page.dart';
 
 class MigrationPage extends StatefulWidget {

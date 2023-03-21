@@ -6,9 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
-import 'package:toggl_target/ui/gradient_background.dart';
-import 'package:toggl_target/utils/extensions.dart';
 
+import '../utils/extensions.dart';
+import 'gradient_background.dart';
 import 'window_border.dart';
 
 class CustomScaffold extends StatelessWidget {

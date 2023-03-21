@@ -11,17 +11,17 @@ import 'package:intl/intl.dart';
 import 'package:paged_vertical_calendar/paged_vertical_calendar.dart';
 import 'package:paged_vertical_calendar/utils/date_utils.dart';
 import 'package:provider/provider.dart';
-import 'package:toggl_target/ui/custom_switch.dart';
-import 'package:toggl_target/ui/widgets.dart';
-import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../resources/keys.dart';
 import '../../ui/back_button.dart';
+import '../../ui/custom_calendar.dart';
 import '../../ui/custom_safe_area.dart';
 import '../../ui/custom_scaffold.dart';
+import '../../ui/custom_switch.dart';
 import '../../ui/gesture_detector_with_cursor.dart';
-import '../../ui/custom_calendar.dart';
+import '../../ui/widgets.dart';
+import '../../utils/utils.dart';
 import '../home.dart';
 import '../target_store.dart';
 

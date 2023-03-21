@@ -1,9 +1,8 @@
 import 'dart:developer';
 
-import 'package:toggl_target/utils/migration/migration.dart';
-
 import '../../resources/keys.dart';
 import '../utils.dart';
+import 'migration.dart';
 import 'migrations.dart';
 
 class Migrator {

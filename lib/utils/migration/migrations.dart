@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:get_it/get_it.dart';
-import 'package:toggl_target/model/project.dart';
 
 import '../../api/toggl_api_service.dart';
+import '../../model/project.dart';
 import '../../model/user.dart';
 import '../../model/workspace.dart';
 import '../../resources/keys.dart';

@@ -4,10 +4,10 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:system_tray/system_tray.dart';
-import 'package:toggl_target/resources/keys.dart';
-import 'package:toggl_target/utils/extensions.dart';
 
 import '../model/user.dart';
+import '../resources/keys.dart';
+import 'extensions.dart';
 import 'utils.dart';
 
 class SystemTrayManager {

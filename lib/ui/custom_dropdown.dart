@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
-import 'package:toggl_target/utils/extensions.dart';
 
 import '../resources/colors.dart';
+import '../utils/extensions.dart';
 import 'dropdown_button3.dart';
 
 /// Flutter's default dropdown.

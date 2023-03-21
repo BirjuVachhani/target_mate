@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:toggl_target/model/time_entry.dart';
+
+import 'time_entry.dart';
 
 class DayEntry with EquatableMixin {
   final DateTime date;

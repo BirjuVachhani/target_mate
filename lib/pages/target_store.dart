@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:toggl_target/resources/keys.dart';
-import 'package:toggl_target/utils/extensions.dart';
 
+import '../resources/keys.dart';
+import '../utils/extensions.dart';
 import '../utils/utils.dart';
 
 part 'target_store.g.dart';

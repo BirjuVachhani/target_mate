@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
-import 'package:toggl_target/utils/extensions.dart';
+
+import '../utils/extensions.dart';
 
 class GradientBackground extends StatelessWidget {
   final Widget child;

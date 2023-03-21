@@ -10,24 +10,24 @@ import 'package:get_it/get_it.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:toggl_target/model/workspace.dart';
-import 'package:toggl_target/pages/home_store.dart';
-import 'package:toggl_target/resources/theme.dart';
-import 'package:toggl_target/ui/custom_switch.dart';
-import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
-import 'package:toggl_target/ui/widgets.dart';
-import 'package:toggl_target/utils/extensions.dart';
 
 import '../model/project.dart';
 import '../model/user.dart';
+import '../model/workspace.dart';
 import '../resources/colors.dart';
+import '../resources/theme.dart';
 import '../ui/back_button.dart';
 import '../ui/custom_dropdown.dart';
 import '../ui/custom_safe_area.dart';
 import '../ui/custom_scaffold.dart';
+import '../ui/custom_switch.dart';
 import '../ui/dropdown_button3.dart';
+import '../ui/gesture_detector_with_cursor.dart';
+import '../ui/widgets.dart';
+import '../utils/extensions.dart';
 import '../utils/system_tray_manager.dart';
 import '../utils/utils.dart';
+import 'home_store.dart';
 import 'settings_store.dart';
 
 class SettingsPage extends StatefulWidget {

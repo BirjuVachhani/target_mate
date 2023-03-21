@@ -15,17 +15,17 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:toggl_target/model/day_entry.dart';
-import 'package:toggl_target/pages/setup/target_setup_page.dart';
-import 'package:toggl_target/pages/target_store.dart';
-import 'package:toggl_target/utils/extensions.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../model/day_entry.dart';
 import '../ui/animated_horizontal_progress_bar.dart';
 import '../ui/custom_scaffold.dart';
+import '../utils/extensions.dart';
 import '../utils/utils.dart';
 import 'home_store.dart';
 import 'settings_store.dart';
+import 'setup/target_setup_page.dart';
+import 'target_store.dart';
 
 class HomePageWrapper extends StatelessWidget {
   const HomePageWrapper({super.key});

@@ -14,17 +14,17 @@ import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:toggl_target/api/toggl_api_service.dart';
-import 'package:toggl_target/model/workspace.dart';
-import 'package:toggl_target/ui/custom_scaffold.dart';
-import 'package:toggl_target/ui/gesture_detector_with_cursor.dart';
-import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../api/toggl_api_service.dart';
 import '../../model/project.dart';
 import '../../model/user.dart';
+import '../../model/workspace.dart';
 import '../../resources/keys.dart';
+import '../../ui/custom_scaffold.dart';
+import '../../ui/gesture_detector_with_cursor.dart';
 import '../../ui/widgets.dart';
+import '../../utils/utils.dart';
 import 'project_selection_page.dart';
 
 part 'auth_page.g.dart';

@@ -11,18 +11,18 @@ import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:toggl_target/model/project.dart';
-import 'package:toggl_target/pages/setup/target_setup_page.dart';
-import 'package:toggl_target/resources/keys.dart';
-import 'package:toggl_target/utils/utils.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../model/project.dart';
 import '../../model/workspace.dart';
+import '../../resources/keys.dart';
 import '../../ui/back_button.dart';
 import '../../ui/custom_dropdown.dart';
 import '../../ui/custom_scaffold.dart';
 import '../../ui/dropdown_button3.dart';
 import '../../ui/widgets.dart';
+import '../../utils/utils.dart';
+import 'target_setup_page.dart';
 
 part 'project_selection_page.g.dart';
 

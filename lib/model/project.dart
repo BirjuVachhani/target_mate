@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:toggl_target/utils/utils.dart';
+
+import '../utils/utils.dart';
 
 part 'project.g.dart';
 

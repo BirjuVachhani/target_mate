@@ -3,13 +3,13 @@ import 'dart:convert';
 
 import 'package:chopper/chopper.dart';
 import 'package:flutter/foundation.dart';
-import 'package:toggl_target/model/workspace.dart';
-import 'package:toggl_target/resources/keys.dart';
-import 'package:toggl_target/utils/utils.dart';
 
 import '../model/project.dart';
 import '../model/time_entry.dart';
 import '../model/user.dart';
+import '../model/workspace.dart';
+import '../resources/keys.dart';
+import '../utils/utils.dart';
 
 part 'toggl_api_service.chopper.dart';
 

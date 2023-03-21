@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
-import 'package:toggl_target/utils/extensions.dart';
+
+import '../utils/extensions.dart';
 
 ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
   final Color backgroundColor = primaryColor.darken(95);
