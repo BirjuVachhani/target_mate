@@ -21,6 +21,7 @@ import 'pages/migration_page.dart';
 import 'pages/setup/auth_page.dart';
 import 'resources/colors.dart';
 import 'resources/theme.dart';
+import 'utils/migration/migrations.dart';
 import 'utils/migration/migrator.dart';
 import 'utils/system_tray_manager.dart';
 import 'utils/utils.dart';
@@ -41,6 +42,10 @@ void main() async {
   final bool isFirstRun =
       !Hive.box(HiveBoxes.secrets).containsKey(HiveKeys.firstRun);
 
+  if (isFirstRun) {
+    await getSecretsBox().put(HiveKeys.databaseVersion, kDatabaseVersion);
+  }
+
   await setupWindowManager(isFirstRun: isFirstRun);
 
   // Save first run status.
@@ -50,7 +55,7 @@ void main() async {
 
   setupLogging();
 
-  runApp(const MyApp());
+  runApp(MyApp(isFirstRun: isFirstRun));
 }
 
 void setupLogging() {
@@ -148,7 +153,9 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final bool isFirstRun;
+
+  const MyApp({super.key, required this.isFirstRun});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -160,7 +167,7 @@ class _MyAppState extends State<MyApp> {
     final appSettingsBox = getAppSettingsBox();
     final primaryColor = Color(appSettingsBox.get(HiveKeys.primaryColor));
     final useMaterial3 =
-        appSettingsBox.get(HiveKeys.useMaterial3, defaultValue: false);
+        appSettingsBox.get(HiveKeys.useMaterial3, defaultValue: true);
 
     final bool isOnboarded = getSecretsBox().containsKey(HiveKeys.onboarded);
 

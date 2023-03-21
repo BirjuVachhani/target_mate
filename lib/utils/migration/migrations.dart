@@ -11,7 +11,7 @@ import '../../resources/keys.dart';
 import '../utils.dart';
 import 'migration.dart';
 
-const int kMigrationVersion = 2;
+const int kDatabaseVersion = 2;
 
 const Map<int, Migration> migrationRegistry = {
   2: MigrationV2(),

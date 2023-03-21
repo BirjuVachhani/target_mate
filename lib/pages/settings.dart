@@ -494,7 +494,7 @@ class SettingsSection extends StatelessWidget {
 }
 
 final List<Color> themeColors = [
-  AppColors.primaryColor,
+  AppColors.togglColor,
   Colors.blue,
   Colors.red,
   Colors.orange,

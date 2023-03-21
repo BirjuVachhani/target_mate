@@ -99,6 +99,7 @@ class _AuthPageState extends State<AuthPage> {
                         'assets/logo_trimmed.png',
                         fit: BoxFit.fitWidth,
                         width: 200,
+                        color: context.theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 12),

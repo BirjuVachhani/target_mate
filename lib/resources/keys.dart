@@ -28,7 +28,7 @@ class HiveKeys {
   static const String refreshFrequency = 'refresh_frequency';
   static const String firstRun = 'first_run';
   static const String useMaterial3 = 'use_material_3';
-  static const String migrationVersion = 'migration_version';
+  static const String databaseVersion = 'migration_version';
   static const String user = 'user';
   static const String workspace = 'workspace';
   static const String project = 'project';

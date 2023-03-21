@@ -21,7 +21,6 @@ import 'package:toggl_target/pages/target_store.dart';
 import 'package:toggl_target/utils/extensions.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../resources/colors.dart';
 import '../ui/animated_horizontal_progress_bar.dart';
 import '../ui/custom_scaffold.dart';
 import '../utils/utils.dart';
@@ -696,7 +695,7 @@ class HomeAppBar extends StatelessObserverWidget {
         return Row(
           children: [
             CircleAvatar(
-              backgroundColor: AppColors.backgroundColorDarker,
+              backgroundColor: context.theme.scaffoldBackgroundColor,
               radius: 18,
               backgroundImage: store.user != null
                   ? NetworkImage(store.user!.avatarUrl)

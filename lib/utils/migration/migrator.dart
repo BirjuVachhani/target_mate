@@ -10,8 +10,8 @@ class Migrator {
   Migrator._();
 
   static bool requiresMigration() =>
-      getSecretsBox().get(HiveKeys.migrationVersion, defaultValue: 1) <
-      kMigrationVersion;
+      getSecretsBox().get(HiveKeys.databaseVersion, defaultValue: 1) <
+      kDatabaseVersion;
 
   /// Returns true if migration was successful, false if it failed, and null if
   /// no migration was required.
@@ -28,8 +28,8 @@ class Migrator {
       log('-----------------------------------------------------------------');
       log('Starting migration...');
       final int currentVersion =
-          getSecretsBox().get(HiveKeys.migrationVersion, defaultValue: 1);
-      const int targetVersion = kMigrationVersion;
+          getSecretsBox().get(HiveKeys.databaseVersion, defaultValue: 1);
+      const int targetVersion = kDatabaseVersion;
 
       if (currentVersion > targetVersion) {
         for (int i = currentVersion; i > targetVersion; i--) {
@@ -48,7 +48,7 @@ class Migrator {
           log('Successfully upgraded to version $i');
         }
       }
-      await getSecretsBox().put(HiveKeys.migrationVersion, targetVersion);
+      await getSecretsBox().put(HiveKeys.databaseVersion, targetVersion);
       log('Migration successful!');
       log('-----------------------------------------------------------------');
       return true;
@@ -66,7 +66,7 @@ class Migrator {
       log('-----------------------------------------------------------------');
       log('Starting manual downgrade...');
       final int currentVersion =
-          getSecretsBox().get(HiveKeys.migrationVersion, defaultValue: 1);
+          getSecretsBox().get(HiveKeys.databaseVersion, defaultValue: 1);
       final int targetVersion = migration.version - 1;
 
       if (currentVersion == targetVersion) {
@@ -85,7 +85,7 @@ class Migrator {
         log('Successfully downgraded to version $i');
       }
 
-      await getSecretsBox().put(HiveKeys.migrationVersion, targetVersion);
+      await getSecretsBox().put(HiveKeys.databaseVersion, targetVersion);
       log('Manual downgrade successful!');
       log('-----------------------------------------------------------------');
       return true;
@@ -103,7 +103,7 @@ class Migrator {
       log('-----------------------------------------------------------------');
       log('Starting manual upgrade...');
       final int currentVersion =
-          getSecretsBox().get(HiveKeys.migrationVersion, defaultValue: 1);
+          getSecretsBox().get(HiveKeys.databaseVersion, defaultValue: 1);
       final int targetVersion = migration.version;
 
       if (currentVersion == targetVersion) {
@@ -122,7 +122,7 @@ class Migrator {
         log('Successfully upgraded to version $i');
       }
 
-      await getSecretsBox().put(HiveKeys.migrationVersion, targetVersion);
+      await getSecretsBox().put(HiveKeys.databaseVersion, targetVersion);
       log('Manual upgrade successful!');
       log('-----------------------------------------------------------------');
       return true;

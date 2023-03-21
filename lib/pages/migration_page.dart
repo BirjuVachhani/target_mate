@@ -121,7 +121,7 @@ class _MigrationPageState extends State<MigrationPage> {
                     'Hold on, migrating your app...',
                     style: TextStyle(
                       color:
-                          context.theme.colorScheme.onPrimary.withOpacity(0.5),
+                          context.theme.colorScheme.onSurface.withOpacity(0.5),
                       fontSize: 14,
                     ),
                   ),

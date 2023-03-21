@@ -1,3 +1,9 @@
+# 0.4.0 - [Unreleased]
+
+- Fix migration detection when the app is run for the first time.
+- Change default theme to blue.
+- Fix logo color on auth screen.
+
 # 0.3.1 - 12th March, 2023
 
 - Fix date parsing not accounting for local time zone.

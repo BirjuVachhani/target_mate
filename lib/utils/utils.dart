@@ -85,8 +85,8 @@ Future<void> logout({bool navigate = true}) async {
   final adaptiveTheme = AdaptiveTheme.of(navigator.context);
   adaptiveTheme.reset();
   adaptiveTheme.setTheme(
-    light: getLightTheme(AppColors.primaryColor, useMaterial3: false),
-    dark: getDarkTheme(AppColors.primaryColor, useMaterial3: false),
+    light: getLightTheme(AppColors.primaryColor, useMaterial3: true),
+    dark: getDarkTheme(AppColors.primaryColor, useMaterial3: true),
   );
 
   // Delete saved data.

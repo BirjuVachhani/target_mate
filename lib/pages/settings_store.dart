@@ -77,7 +77,7 @@ abstract class _SettingsStore with Store {
     selectedWorkspace = getWorkspaceFromStorage()!;
     selectedProject = getProjectFromStorage() ?? emptyProject;
 
-    useMaterial3 = box.get(HiveKeys.useMaterial3, defaultValue: false);
+    useMaterial3 = box.get(HiveKeys.useMaterial3, defaultValue: true);
     showRemaining = box.get(HiveKeys.showRemaining, defaultValue: false);
 
     loadWorkspacesAndProjects();
