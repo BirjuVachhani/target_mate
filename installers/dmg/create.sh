@@ -1,5 +1,5 @@
 #!/bin/sh
-test -f "TargetMate.dmg" && rm "MateTarget.dmg"
+test -f "TargetMate.dmg" && rm "TargetMate.dmg"
 mv "build/macos/Build/Products/Release/TargetMate.app" "build/macos/Build/Products/Release/Target Mate.app"
 create-dmg \
   --volname "Target Mate Installer" \
