@@ -1,7 +1,7 @@
 msix_config:
   display_name: Target Mate
   publisher_display_name: Birju Vachhani
-  logo_path: assets\app_icon.png
+  logo_path: installers\msix\app_icon.png
   architecture: x64
   capabilities: "internetClient"
   certificate_path: installers\msix\TARGET-MATE-CERT.pfx

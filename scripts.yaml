@@ -12,12 +12,10 @@ build:
 bundle:
   dmg: ./installers/dmg/create.sh
   msix:
-    prelocal: dart ./installers/msix/setup_local.dart
-    local: flutter pub run msix:create
-    postlocal: git restore pubspec.yaml
-    prelocal-installer: dart ./installers/msix/setup_local.dart
-    local-installer: flutter pub run msix:publish
-    postlocal-installer: git restore pubspec.yaml
+    local:
+      - dart ./installers/msix/setup_local.dart
+      - flutter pub run msix:create
+      - git restore pubspec.yaml
 pod:
   - cd macos && pod install
   - cd ios && pod install

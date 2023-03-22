@@ -4,7 +4,7 @@ mv "build/macos/Build/Products/Release/TargetMate.app" "build/macos/Build/Produc
 create-dmg \
   --volname "Target Mate Installer" \
   --volicon "./installers/dmg/AppIcon.icns" \
-  --background "./installers/dmg/background-colored@2x.png" \
+  --background "./installers/dmg/background@2x.png" \
   --window-size 600 390 \
   --icon-size 132 \
   --icon "Target Mate.app" 142 180 \

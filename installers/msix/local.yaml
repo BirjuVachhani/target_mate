@@ -1,18 +1,11 @@
 msix_config:
   display_name: Target Mate
   publisher_display_name: Birju Vachhani
-  logo_path: assets\app_icon.png
+  logo_path: installers\msix\app_icon.png
   architecture: x64
   capabilities: "internetClient"
   certificate_path: installers\msix\TARGET-MATE-CERT.pfx
   certificate_password: {{ password }}
-  app_installer: #<-- app installer configuration
-    publish_folder_path: \
-    hours_between_update_checks: 0
-    automatic_background_task: true
-    update_blocks_activation: true
-    show_prompt: true
-    force_update_from_any_version: false
   output_name: TargetMate
   output_path: . 
   build_windows: false
