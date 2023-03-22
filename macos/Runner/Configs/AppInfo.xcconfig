@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = toggl_target
+PRODUCT_NAME = target_mate
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.togglTarget
+PRODUCT_BUNDLE_IDENTIFIER = dev.birju.targetMate
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2023 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2023 dev.birju. All rights reserved.

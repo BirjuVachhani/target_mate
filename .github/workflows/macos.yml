@@ -29,7 +29,7 @@ jobs:
       - name: Build App
         run: flutter build macos --build-name=${{ github.event.inputs.tag }}
       - name: Verify Build
-        run: test -d build/macos/Build/Products/Release/TogglTarget.app
+        run: test -d build/macos/Build/Products/Release/TargetMate.app
       - name: Install create-dmg
         run: brew install create-dmg
       - name: Create dmg
@@ -38,11 +38,11 @@ jobs:
       - name: list files
         run: ls -la build/macos/Build/Products/Release/
       - name: Rename file
-        run: mv "TogglTarget.dmg" "TogglTarget-macos-${{ github.event.inputs.tag }}.dmg"
+        run: mv "TargetMate.dmg" "TargetMate-macos-${{ github.event.inputs.tag }}.dmg"
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: TogglTarget-macos-${{ github.event.inputs.tag }}.dmg
+          path: TargetMate-macos-${{ github.event.inputs.tag }}.dmg
           if-no-files-found: error
           retention-days: 5
 

@@ -1,15 +1,15 @@
 #!/bin/sh
-test -f "TogglTarget.dmg" && rm "TogglTarget.dmg"
-mv "build/macos/Build/Products/Release/TogglTarget.app" "build/macos/Build/Products/Release/Toggl Target.app"
+test -f "TargetMate.dmg" && rm "MateTarget.dmg"
+mv "build/macos/Build/Products/Release/TargetMate.app" "build/macos/Build/Products/Release/Target Mate.app"
 create-dmg \
-  --volname "Toggl Target Installer" \
+  --volname "Target Mate Installer" \
   --volicon "./installers/dmg/AppIcon.icns" \
-  --background "./installers/dmg/background@2x.png" \
-  --window-size 600 360 \
+  --background "./installers/dmg/background-colored@2x.png" \
+  --window-size 600 390 \
   --icon-size 132 \
-  --icon "Toggl Target.app" 142 180 \
-  --hide-extension "Toggl Target.app" \
+  --icon "Target Mate.app" 142 180 \
+  --hide-extension "Target Mate.app" \
   --app-drop-link 458 180 \
   --hdiutil-quiet \
-  "TogglTarget.dmg" \
-  "build/macos/Build/Products/Release/Toggl Target.app"
+  "TargetMate.dmg" \
+  "build/macos/Build/Products/Release/Target Mate.app"

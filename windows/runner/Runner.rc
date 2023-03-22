@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "dev.birju" "\0"
-            VALUE "FileDescription", "toggl_target" "\0"
+            VALUE "FileDescription", "target_mate" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "toggl_target" "\0"
+            VALUE "InternalName", "target_mate" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 dev.birju. All rights reserved." "\0"
-            VALUE "OriginalFilename", "toggl_target.exe" "\0"
-            VALUE "ProductName", "toggl_target" "\0"
+            VALUE "OriginalFilename", "target_mate.exe" "\0"
+            VALUE "ProductName", "target_mate" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

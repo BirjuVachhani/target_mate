@@ -264,7 +264,7 @@ class _HomePageState extends State<HomePage> {
           label: 'Download',
           onPressed: () {
             launchUrlString(
-                'https://github.com/birjuvachhani/toggl_target/releases/$latestVersion');
+                'https://github.com/birjuvachhani/target_mate/releases/$latestVersion');
           },
         ),
       ),

@@ -178,7 +178,7 @@ class _MyAppState extends State<MyApp> {
       light: getLightTheme(primaryColor, useMaterial3: useMaterial3),
       dark: getDarkTheme(primaryColor, useMaterial3: useMaterial3),
       builder: (theme, darkTheme) => MaterialApp(
-        title: 'Toggl Target',
+        title: 'Target Mate',
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
         theme: theme,

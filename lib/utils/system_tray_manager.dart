@@ -66,8 +66,8 @@ class SystemTrayManager {
 
       // We first init the systray menu
       await systemTray.initSystemTray(
-        title: 'Toggl Target',
-        toolTip: 'Toggl Target',
+        title: 'Target Mate',
+        toolTip: 'Target Mate',
         iconPath: path,
       );
 

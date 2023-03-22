@@ -255,7 +255,7 @@ abstract class _HomeStore with Store {
   }) {
     // test notification on refresh
     // showNotification(
-    //   title: 'Toggl Track',
+    //   title: 'Target Mate',
     //   body: 'Synced successfully!',
     // );
 
@@ -267,7 +267,7 @@ abstract class _HomeStore with Store {
       if (isAlreadyShown) return;
 
       showNotification(
-        title: 'Toggl Track',
+        title: 'Target Mate',
         body: 'Yay! You have achieved your monthly target!',
       );
 
@@ -280,7 +280,7 @@ abstract class _HomeStore with Store {
       if (isAlreadyShown) return;
 
       showNotification(
-        title: 'Toggl Track',
+        title: 'Target Mate',
         body: "Yay! You have achieved today's target!",
       );
 
@@ -366,7 +366,7 @@ abstract class _HomeStore with Store {
     try {
       const AndroidNotificationDetails androidNotificationDetails =
           AndroidNotificationDetails(
-        'toggl_target_channel',
+        'target_mate_channel',
         'General',
         channelDescription: 'A general notification channel.',
         importance: Importance.max,
@@ -401,7 +401,7 @@ abstract class _HomeStore with Store {
     try {
       final response = await http.get(
         Uri.parse(
-            'https://api.github.com/repos/BirjuVachhani/toggl_target/releases/latest'),
+            'https://api.github.com/repos/BirjuVachhani/target_mate/releases/latest'),
       );
 
       if (response.statusCode != 200) {

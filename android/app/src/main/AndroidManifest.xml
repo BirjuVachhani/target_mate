@@ -1,7 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="dev.birju.togglTarget">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="dev.birju.targetmate">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="Toggl Target"
+        android:label="Target Mate"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

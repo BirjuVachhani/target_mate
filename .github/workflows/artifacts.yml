@@ -42,10 +42,10 @@ jobs:
         run: rm build/app/outputs/flutter-apk/app-release.apk.sha1
       - name: Rename APK
         if: ${{ github.event.inputs.tag != null }}
-        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/TogglTarget-android-${{ github.event.inputs.tag }}.apk
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/TargetMate-android-${{ github.event.inputs.tag }}.apk
       - name: Rename APK
         if: ${{ github.event.inputs.tag == null }}
-        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/TogglTarget-android-${{ github.event.release.tag_name }}.apk
+        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/TargetMate-android-${{ github.event.release.tag_name }}.apk
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
@@ -73,7 +73,7 @@ jobs:
       - name: Build App
         run: flutter build macos
       - name: Verify Build
-        run: test -d build/macos/Build/Products/Release/TogglTarget.app
+        run: test -d build/macos/Build/Products/Release/TargetMate.app
       - name: Install create-dmg
         run: brew install create-dmg
       - name: Create dmg
@@ -83,22 +83,22 @@ jobs:
         run: ls -la build/macos/Build/Products/Release/
       - name: Rename dmg
         if: ${{ github.event.inputs.tag != null }}
-        run: mv "TogglTarget.dmg" "TogglTarget-macos-${{ github.event.inputs.tag }}.dmg"
+        run: mv "TargetMate.dmg" "TargetMate-macos-${{ github.event.inputs.tag }}.dmg"
       - name: Rename dmg
         if: ${{ github.event.inputs.tag == null }}
-        run: mv "TogglTarget.dmg" "TogglTarget-macos-${{ github.event.release.tag_name }}.dmg"
+        run: mv "TargetMate.dmg" "TargetMate-macos-${{ github.event.release.tag_name }}.dmg"
       - name: Upload Artifacts
         if: ${{ github.event.inputs.tag != null }}
         uses: actions/upload-artifact@v3
         with:
-          path: TogglTarget-macos-${{ github.event.inputs.tag }}.dmg
+          path: TargetMate-macos-${{ github.event.inputs.tag }}.dmg
           if-no-files-found: error
           retention-days: 5
       - name: Upload Artifacts
         if: ${{ github.event.inputs.tag == null }}
         uses: actions/upload-artifact@v3
         with:
-          path: TogglTarget-macos-${{ github.event.release.tag_name }}.dmg
+          path: TargetMate-macos-${{ github.event.release.tag_name }}.dmg
           if-no-files-found: error
           retention-days: 5
 
@@ -124,22 +124,22 @@ jobs:
         run: flutter pub run msix:create
       - name: Rename file
         if: ${{ github.event.inputs.tag != null }}
-        run: ren TogglTarget.msix TogglTarget-windows-${{ github.event.inputs.tag }}.msix
+        run: ren TargetMate.msix TargetMate-windows-${{ github.event.inputs.tag }}.msix
       - name: Rename file
         if: ${{ github.event.inputs.tag == null }}
-        run: ren TogglTarget.msix TogglTarget-windows-${{ github.event.release.tag_name }}.msix
+        run: ren TargetMate.msix TargetMate-windows-${{ github.event.release.tag_name }}.msix
       - name: Upload Artifacts
         if: ${{ github.event.inputs.tag != null }}
         uses: actions/upload-artifact@v3
         with:
-          path: TogglTarget-windows-${{ github.event.inputs.tag }}.msix
+          path: TargetMate-windows-${{ github.event.inputs.tag }}.msix
           if-no-files-found: error
           retention-days: 5
       - name: Upload Artifacts
         if: ${{ github.event.inputs.tag == null }}
         uses: actions/upload-artifact@v3
         with:
-          path: TogglTarget-windows-${{ github.event.release.tag_name }}.msix
+          path: TargetMate-windows-${{ github.event.release.tag_name }}.msix
           if-no-files-found: error
           retention-days: 5
 

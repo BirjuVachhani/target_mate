@@ -41,14 +41,14 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
-          name: TogglTarget.apk
+          name: TargetMate.apk
           path: build/app/outputs/flutter-apk/*
           if-no-files-found: error
           retention-days: 5
       - name: Upload AAB
         uses: actions/upload-artifact@v3
         with:
-          name: TogglTarget.aab
+          name: TargetMate.aab
           path: build/app/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 5

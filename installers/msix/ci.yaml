@@ -1,12 +1,12 @@
 msix_config:
-  display_name: Toggl Target
+  display_name: Target Mate
   publisher_display_name: Birju Vachhani
   logo_path: assets\app_icon.png
   architecture: x64
   capabilities: "internetClient"
-  certificate_path: installers\msix\TOGGL-TARGET-CERT.pfx
+  certificate_path: installers\msix\TARGET-MATE-CERT.pfx
   certificate_password: {{ password }}
-  output_name: TogglTarget
+  output_name: TargetMate
   output_path: . 
   build_windows: false
   install_certificate: false
