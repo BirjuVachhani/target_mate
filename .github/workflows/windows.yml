@@ -37,11 +37,11 @@ jobs:
       - name: Create MSIX Installer
         run: flutter pub run msix:create
       - name: Rename file
-        run: ren TogglTarget.msix TogglTarget-windows-${{ github.event.inputs.tag }}.msix
+        run: ren TargetMate.msix TargetMate-windows-${{ github.event.inputs.tag }}.msix
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: TogglTarget-windows-${{ github.event.inputs.tag }}.msix
+          path: TargetMate-windows-${{ github.event.inputs.tag }}.msix
           if-no-files-found: error
           retention-days: 5
 

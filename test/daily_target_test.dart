@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:screwdriver/screwdriver.dart';
-import 'package:toggl_target/model/day_entry.dart';
-import 'package:toggl_target/utils/utils.dart';
+import 'package:target_mate/model/day_entry.dart';
+import 'package:target_mate/utils/utils.dart';
 
 void main() {
   final List<DateTime> effectiveDays =

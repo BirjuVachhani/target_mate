@@ -1,5 +1,5 @@
 {
-  "title": "Toggl Target",
+  "title": "Target Mate",
   "icon": "AppIcon.icns",
   "background": "background.png",
   "icon-size": 132,
@@ -20,7 +20,7 @@
       "x": 142,
       "y": 180,
       "type": "file",
-      "path": "../../build/macos/Build/Products/Release/toggl_target.app"
+      "path": "../../build/macos/Build/Products/Release/target_mate.app"
     }
   ]
 }

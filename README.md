@@ -1,4 +1,4 @@
-![Banner](.github/assets/banner4.png)
+![Banner](.github/assets/banner.png)
 
 <!-- <img src=".github/assets/logo.svg" width="100px" /> -->
 
@@ -9,8 +9,8 @@ A companion app for [Toggl track][toggl] to track & manage your working hours to
 
 <br/>
 
-<a href="https://github.com/BirjuVachhani/toggl_target/releases/download/0.3.1/TogglTarget-android-0.3.1.apk"><img src=".github/assets/android.png" height="70px" /></a> &nbsp; <a href="https://github.com/BirjuVachhani/toggl_target/releases/download/0.3.1/TogglTarget-macos-0.3.1.dmg"><img src=".github/assets/macos.png" height="70px" /></a> &nbsp; 
-<a href="https://github.com/BirjuVachhani/toggl_target/releases/download/0.3.1/TogglTarget-windows-0.3.1.msix"><img src=".github/assets/windows.png" height="70px" /></a> 
+<a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.3.1/TargetMate-android-0.3.1.apk"><img src=".github/assets/android.png" height="70px" /></a> &nbsp; <a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.3.1/TargetMate-macos-0.3.1.dmg"><img src=".github/assets/macos.png" height="70px" /></a> &nbsp; 
+<a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.3.1/TargetMate-windows-0.3.1.msix"><img src=".github/assets/windows.png" height="70px" /></a> 
 
 See [Installation Guide](#installation-guide) for installing on desktop.
 
@@ -41,27 +41,27 @@ See [Installation Guide](#installation-guide) for installing on desktop.
 ## Installation Guide
 
 ### MacOS
-In order to install Toggl Target on MacOS, download the file named `TogglTarget-macos-x.x.x.dmg`.
+In order to install Target Mate on MacOS, download the file named `TargetMate-macos-x.x.x.dmg`.
 
 #### Installing with DMG (Recommended)
-To install Toggl Target in your Mac simply open `TogglTarget.dmg` and drag the Toogl Target app to the `Applications` folder next to it. If you are updating the app you'll need to click `Replace`.
+To install Target Mate in your Mac simply open `TargetMate.dmg` and drag the Toogl Target app to the `Applications` folder next to it. If you are updating the app you'll need to click `Replace`.
 
-1. Open `TogglTarget-macos-x.x.x.dmg` and drag the Toogl Target app to the `Applications` folder next to it. If you are updating the app you'll need to click `Replace`.
-2. Toggl Target should now appear in your Laucnhpad. However, if you try to open it you might get a message saying that `"Toggl Target" can't be opened because Apple cannot check it for malicious software.`
+1. Open `TargetMate-macos-x.x.x.dmg` and drag the Target Mate app to the `Applications` folder next to it. If you are updating the app you'll need to click `Replace`.
+2. Target Mate should now appear in your Laucnhpad. However, if you try to open it you might get a message saying that `"Target Mate" can't be opened because Apple cannot check it for malicious software.`
 3. To fix this, open `System Preferences` and click on `Security and Privacy`.
-4. you'll see a message saying `"Toggl Target" was blocked from use because it is not from an identified developer`.
+4. you'll see a message saying `"Target Mate" was blocked from use because it is not from an identified developer`.
 5. Click on `Open Anyway` and then `Open` in the popup.
-6. Done! You should now be able to use Toggl Target normally!
+6. Done! You should now be able to use Target Mate normally!
 
 ### Windows
 
 #### Installing with MSIX (Recommended)
 
-Download the `TogglTarget-windows-x.x.x.msix`.
+Download the `TargetMate-windows-x.x.x.msix`.
 
 Unfortunately, it isn't as easy as opening the file and installing it as I do not have a signed certificate.
 
-To install Toggl Target, 
+To install Target Mate, 
 
 1. Make sure the installer is not running. 
 2. Right-click on the `msix` file and click on Properties.
@@ -70,7 +70,7 @@ To install Toggl Target,
 5. Click on `Install Certificate`.
 6. Select `Local System` and click on `Browse` button.
 7. Select `Trusted Root Certification Authorities` and click ok.
-8. Done! Close any open window by clicking on `ok`. Now you should be able to install `Toggl Target` by just double-clicking `msix` file.
+8. Done! Close any open window by clicking on `ok`. Now you should be able to install `Target Mate` by just double-clicking `msix` file.
 
 ## Motivation
 
