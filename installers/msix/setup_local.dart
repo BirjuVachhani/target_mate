@@ -32,6 +32,8 @@ void main() {
   }
 
   pubspecFile.appendStringSync('\n\n$configContent');
+
+  stdout.writeln('local.yaml config file appended to pubspec.yaml');
 }
 
 String? loadPasswordFromEnv() {

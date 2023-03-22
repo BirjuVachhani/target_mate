@@ -37,4 +37,6 @@ void main(List<String> args) {
   }
 
   pubspecFile.appendStringSync('\n\n$configContent');
+
+  stdout.writeln('ci.yaml config file appended to pubspec.yaml');
 }
