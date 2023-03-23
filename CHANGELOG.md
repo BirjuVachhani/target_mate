@@ -1,5 +1,6 @@
-# 0.4.0 - [Unreleased]
+# 0.4.0
 
+- Rebranded to "Target Mate".
 - Fix migration detection when the app is run for the first time.
 - Change default theme to blue.
 - Fix logo color on auth screen.
