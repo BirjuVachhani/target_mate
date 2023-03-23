@@ -1,6 +1,5 @@
 ![Banner](.github/assets/banner.png)
 
-<br/>
 <img align="left" alt="android" width="200px" src=".github/assets/text_logo_dark.svg#gh-light-mode-only" />
 <img align="left" alt="android" width="200px" src=".github/assets/text_logo.svg#gh-dark-mode-only" />
 <br/>
