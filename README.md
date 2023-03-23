@@ -3,8 +3,8 @@
 <br/>
 <img align="left" alt="android" width="200px" src=".github/assets/text_logo_dark.svg#gh-light-mode-only" />
 <img align="left" alt="android" width="200px" src=".github/assets/text_logo.svg#gh-dark-mode-only" />
-
-<br/><br/>
+<br/>
+<br/>
 
 A companion app for [Toggl track][toggl] to track & manage your working hours to achieve your monthly goals. If you're using [Toggl Track][toggl] to track your time then, this app can help you manage your monthly working hours.
 
