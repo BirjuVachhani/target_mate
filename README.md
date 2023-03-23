@@ -7,8 +7,6 @@
 
 A companion app for [Toggl track][toggl] to track & manage your working hours to achieve your monthly goals. If you're using [Toggl Track][toggl] to track your time then, this app can help you manage your monthly working hours.
 
-<br/>
-
 <a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.3.1/TargetMate-android-0.3.1.apk"><img src=".github/assets/android.png" height="70px" /></a> &nbsp; <a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.3.1/TargetMate-macos-0.3.1.dmg"><img src=".github/assets/macos.png" height="70px" /></a> &nbsp; 
 <a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.3.1/TargetMate-windows-0.3.1.msix"><img src=".github/assets/windows.png" height="70px" /></a> 
 
