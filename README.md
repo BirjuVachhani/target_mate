@@ -113,11 +113,7 @@ Or You can
 
 # Sponsers
 
-<p align="center">
-  <a href="https://github.com/BirjuVachhani/target_mate/raw/main/.github/assets/sponsors_light.svg">
-    <img src='https://github.com/BirjuVachhani/target_mate/raw/main/.github/assets/sponsors_light.svg#gh-light-mode-only'/>
-    <img src='https://github.com/BirjuVachhani/target_mate/raw/main/.github/assets/sponsors_dark.svg#gh-dark-mode-only'/>
-  </a>
-</p>
+<img width="100%" src='https://github.com/BirjuVachhani/target_mate/raw/main/.github/assets/sponsors_light.svg#gh-light-mode-only'/>    
+<img width="100%" src='https://github.com/BirjuVachhani/target_mate/raw/main/.github/assets/sponsors_dark.svg#gh-dark-mode-only'/>
 
 [toggl]: https://toggl.com/track/
