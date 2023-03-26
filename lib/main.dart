@@ -20,6 +20,7 @@ import 'pages/setup/auth_page.dart';
 import 'resources/colors.dart';
 import 'resources/keys.dart';
 import 'resources/theme.dart';
+import 'utils/app_icon_manager.dart';
 import 'utils/extensions.dart';
 import 'utils/migration/migrations.dart';
 import 'utils/migration/migrator.dart';
@@ -113,6 +114,7 @@ Future<void> initializeData() async {
       dispose: (manager) => manager.dispose());
 
   GetIt.instance.registerSingleton<TogglApiService>(TogglApiService.create());
+  GetIt.instance.registerSingleton<AppIconManager>(AppIconManager());
 
   if (!kIsWeb) {
     log('Hive path: ${await getApplicationDocumentsDirectory()}');

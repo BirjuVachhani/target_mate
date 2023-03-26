@@ -101,6 +101,13 @@ mixin _$HomeStore on _HomeStore, Store {
           Computed<bool>(() => super.isMonthlyTargetAchieved,
               name: '_HomeStore.isMonthlyTargetAchieved'))
       .value;
+  Computed<bool>? _$isTimerRunningComputed;
+
+  @override
+  bool get isTimerRunning =>
+      (_$isTimerRunningComputed ??= Computed<bool>(() => super.isTimerRunning,
+              name: '_HomeStore.isTimerRunning'))
+          .value;
 
   late final _$lastUpdatedAtom =
       Atom(name: '_HomeStore.lastUpdated', context: context);
@@ -234,7 +241,8 @@ todayPercentage: ${todayPercentage},
 isTodayTargetAchieved: ${isTodayTargetAchieved},
 remainingForToday: ${remainingForToday},
 effectiveAverageTarget: ${effectiveAverageTarget},
-isMonthlyTargetAchieved: ${isMonthlyTargetAchieved}
+isMonthlyTargetAchieved: ${isMonthlyTargetAchieved},
+isTimerRunning: ${isTimerRunning}
     ''';
   }
 }

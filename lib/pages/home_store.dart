@@ -17,6 +17,7 @@ import '../model/day_entry.dart';
 import '../model/time_entry.dart';
 import '../model/user.dart';
 import '../resources/keys.dart';
+import '../utils/app_icon_manager.dart';
 import '../utils/extensions.dart';
 import '../utils/system_tray_manager.dart';
 import '../utils/utils.dart';
@@ -31,6 +32,8 @@ abstract class _HomeStore with Store {
   TargetStore targetStore;
   late final SystemTrayManager systemTrayManager =
       GetIt.instance.get<SystemTrayManager>();
+  late final AppIconManager appIconManager =
+      GetIt.instance.get<AppIconManager>();
 
   late final Box secretsBox = getSecretsBox();
   late final Box settingsBox = getAppSettingsBox();
@@ -158,6 +161,9 @@ abstract class _HomeStore with Store {
   bool get isMonthlyTargetAchieved =>
       completed >= targetStore.requiredTargetDuration;
 
+  @computed
+  bool get isTimerRunning => timeEntries?.any((e) => e.isRunning) == true;
+
   late String authKey;
   User? user;
 
@@ -188,6 +194,11 @@ abstract class _HomeStore with Store {
     if (completed && defaultTargetPlatform.isMacOS) {
       systemTrayManager.setIcon('assets/icon_done.png');
     }
+  }
+
+  void updateAppIcon() {
+    log('Updating app icon to ${isTimerRunning ? 'active' : 'inactive'}...');
+    appIconManager.setAppIcon(inactive: !isTimerRunning);
   }
 
   Future<List<TimeEntry>?> fetchData() async {
@@ -237,6 +248,7 @@ abstract class _HomeStore with Store {
       isLoading = false;
       lastUpdated = DateTime.now();
       updateSystemTrayText();
+      updateAppIcon();
 
       showTargetNotificationsIfRequired(
           previousToday: previousToday, previousMonthly: previousMonthly);
