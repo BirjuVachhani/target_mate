@@ -1164,6 +1164,7 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
+                          if(store.isTodayTargetAchieved)
                           const ImageIcon(
                             AssetImage('assets/icon_done.png'),
                             color: Colors.white,
