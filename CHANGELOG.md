@@ -1,4 +1,10 @@
-# 0.4.0
+# 0.4.1 - [Unreleased]
+
+- Dynamic icons for macOS app. Dock icon changes based on whether the timer is running or not like Toggl Track's 
+- desktop app.
+- Fix progressbar showing completed icon when it is not completed.
+
+# 0.4.0 - 24th March, 2023
 
 - Rebranded to "Target Mate".
 - Fix migration detection when the app is run for the first time.
