@@ -31,7 +31,7 @@ See [Installation Guide](#installation-guide) for installing on desktop.
 
 | Android | iOS | macOS | Windows | Linux | Web |
 |---------|-----|-------|---------|-------|-----|
-| ✅       | ✅   | ✅     | ✅       | ✅     | ❌   |
+| ✅       | ✅   | ✅     | ✅       | 🚧     | ❌   |
 
 ### Disclaimer
 
