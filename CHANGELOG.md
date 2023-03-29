@@ -3,6 +3,9 @@
 - Dynamic icons for macOS app. Dock icon changes based on whether the timer is running or not like Toggl Track's 
 - desktop app.
 - Fix progressbar showing completed icon when it is not completed.
+- Show app icon as system tray icon on windows.
+- Use standard system buttons for windows.
+- Fix windows system buttons to be consistent across all screens.
 
 # 0.4.0 - 24th March, 2023
 

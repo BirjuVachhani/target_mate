@@ -9,7 +9,6 @@ import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 
 import '../utils/extensions.dart';
 import 'gradient_background.dart';
-import 'window_border.dart';
 
 class CustomScaffold extends StatelessWidget {
   final Widget body;
@@ -74,13 +73,13 @@ class CustomScaffold extends StatelessWidget {
                             ),
                           ),
                         MoveWindow(),
-                        if (defaultTargetPlatform.isWindows)
-                          const Positioned(
-                            top: 0,
-                            right: 4,
-                            bottom: 0,
-                            child: WindowButtons(),
-                          ),
+                        // moved to material app.
+                        // if (defaultTargetPlatform.isWindows)
+                        //   const Positioned(
+                        //     top: 0,
+                        //     right: 0,
+                        //     child: WindowButtons(),
+                        //   ),
                       ],
                     ),
                   )
@@ -107,6 +106,7 @@ double getToolbarHeight() {
     case TargetPlatform.linux:
       return 0;
     case TargetPlatform.windows:
-      return appWindow.titleBarButtonSize.height + 24;
+      appWindow.titleBarButtonSize;
+      return appWindow.titleBarButtonSize.height + 8;
   }
 }
