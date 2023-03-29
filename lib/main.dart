@@ -20,6 +20,7 @@ import 'pages/setup/auth_page.dart';
 import 'resources/colors.dart';
 import 'resources/keys.dart';
 import 'resources/theme.dart';
+import 'ui/window_border.dart';
 import 'utils/app_icon_manager.dart';
 import 'utils/extensions.dart';
 import 'utils/migration/migrations.dart';
@@ -185,6 +186,20 @@ class _MyAppState extends State<MyApp> {
         navigatorKey: navigatorKey,
         theme: theme,
         darkTheme: darkTheme,
+        builder: (context, child) => Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned.fill(
+              child: child ?? const SizedBox.shrink(),
+            ),
+            if (defaultTargetPlatform.isWindows)
+              const Positioned(
+                top: 0,
+                right: 0,
+                child: WindowButtons(),
+              ),
+          ],
+        ),
         home: requiresMigration
             ? const MigrationPage()
             : isOnboarded
