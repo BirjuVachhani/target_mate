@@ -1,11 +1,15 @@
 # 0.4.1 - [Unreleased]
 
-- Dynamic icons for macOS app. Dock icon changes based on whether the timer is running or not like Toggl Track's 
-- desktop app.
+- Dynamic icons for macOS app. Dock icon changes based on whether the timer is running or not.
 - Fix progressbar showing completed icon when it is not completed.
 - Show app icon as system tray icon on windows.
 - Use standard system buttons for windows.
 - Fix windows system buttons to be consistent across all screens.
+- Fix: Goals showing zero or negative for extra days when monthly goal is achieved.
+- Fix day total duration showing 0 when in seconds only.
+- Show left keyword in labels when show remaining option is enabled.
+- Show overtime hours when goal is achieved and show remaining is true.
+- Update system tray icon on windows.
 
 # 0.4.0 - 24th March, 2023
 
