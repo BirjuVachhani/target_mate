@@ -9,6 +9,11 @@ build:
   dmg:
     - flutter build macos
     - ./installers/dmg/create.sh
+  msix:
+    - dart ./installers/msix/setup_local.dart
+    - flutter pub run msix:create
+    - git restore pubspec.yaml
+  exe: flutter_distributor package --platform windows --targets exe
 bundle:
   dmg: ./installers/dmg/create.sh
   msix:
