@@ -31,9 +31,11 @@ jobs:
         run: powershell -command echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> tag.txt
       - name: Display Tag file
         run: cat tag.txt
+      - name: Print input
+        run: echo ${{ github.event.inputs.tag }}
       - name: Get Tag
         id: GetTag
-        run: $GITHUB_OUTPUT = powershell -command cat tag.txt
+        run: powershell -command cat tag.txt >> $GITHUB_OUTPUT
       - name: Display Tag
         run: echo ${{ steps.GetTag.outputs.tag }}
       - name: Get Pubspec Version
