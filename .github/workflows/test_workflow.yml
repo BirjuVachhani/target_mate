@@ -25,13 +25,13 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
-      - name: Tag script
-        run: dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }}
-#      - name: Get Tag
-#        id: GetTag
-#        run: echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
-#      - name: Display Tag
-#        run: echo ${{ steps.GetTag.outputs.tag }}
+      - name: Tag script command
+        run: powershell -command echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})"
+      - name: Get Tag
+        id: GetTag
+        run: powershell -command echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
+      - name: Display Tag
+        run: echo ${{ steps.GetTag.outputs.tag }}
       - name: Get Pubspec Version
         id: GetPubspecVersion
         run: echo "version=$(dart scripts\pubspec_version.dart)" >> $GITHUB_OUTPUT
