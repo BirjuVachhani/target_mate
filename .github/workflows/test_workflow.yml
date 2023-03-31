@@ -25,6 +25,8 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
+      - name: Tag script
+        run: dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }}
       - name: Get Tag
         id: GetTag
         run: echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
