@@ -1,0 +1,8 @@
+app_id: dev.birju.targetmate
+publisher: Birju Vachhani
+publisher_url: https://github.com/leanflutter/flutter_distributor
+display_name: Target Mate
+create_desktop_icon: true
+install_dir_name: Target Mate
+locales:
+  - en

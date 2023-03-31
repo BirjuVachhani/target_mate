@@ -1,0 +1,65 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Windows Exe Build
+
+on:
+  workflow_dispatch:
+#    inputs:
+#      tag:
+#        description: 'Release Tag'
+#        required: true
+#      upload:
+#        description: 'Upload to release?'
+#        required: true
+#        default: false
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2.8.0
+        with:
+          channel: stable
+          cache: true
+      - name: Flutter version
+        run: flutter --version
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Install Flutter distributor
+        run: flutter pub global activate flutter_distributor
+      - name: Setup Inno
+        run: |
+          .\inno.ps1
+      - name: Build
+        run: flutter_distributor package --platform windows --targets exe
+      - name: Display structure of dist directory
+        run: ls -R dist
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 5
+
+#  upload:
+#    needs: [ build ]
+#    if: ${{ github.event.inputs.upload == true }}
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/download-artifact@v3
+#        with:
+#          path: dist
+#      - name: Display structure of downloaded files
+#        run: ls -R dist
+#      - name: Upload binaries to Release
+#        uses: svenstaro/upload-release-action@v2
+#        with:
+#          repo_token: ${{ secrets.GITHUB_TOKEN }}
+#          file: dist/*
+#          tag: ${{ github.event.inputs.tag }}
+#          file_glob: true
