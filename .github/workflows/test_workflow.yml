@@ -27,9 +27,13 @@ jobs:
         run: flutter pub get
       - name: Tag script command
         run: powershell -command echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})"
+      - name: Tag script command in file
+        run: powershell -command echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> tag.txt
+      - name: Display Tag file
+        run: cat tag.txt
       - name: Get Tag
         id: GetTag
-        run: powershell -command echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
+        run: $GITHUB_OUTPUT = powershell -command cat tag.txt
       - name: Display Tag
         run: echo ${{ steps.GetTag.outputs.tag }}
       - name: Get Pubspec Version
