@@ -21,6 +21,11 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Setup Inno
+        run: |
+          .\inno.ps1
+      - name: Verify Inno installation
+        run: dir "C:\Program Files (x86)\Inno Setup 6\"
       - name: Install Flutter
         uses: subosito/flutter-action@v2.8.0
         with:
@@ -32,9 +37,6 @@ jobs:
         run: flutter pub get
       - name: Install Flutter distributor
         run: flutter pub global activate flutter_distributor
-      - name: Setup Inno
-        run: |
-          .\inno.ps1
       - name: Build
         run: flutter_distributor package --platform windows --targets exe
       - name: Display structure of dist directory
