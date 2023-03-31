@@ -41,7 +41,7 @@ jobs:
       - name: Display Upload
         run: echo ${{ steps.GetUpload.outputs.upload }}
       - name: Check Upload
-        if: ${{ github.event.inputs.upload == true || github.event_name == "release" }}
+        if: ${{ github.event.inputs.upload == true || github.event_name == 'release' }}
         run: echo "Upload is detected"
 
   macos:
@@ -67,9 +67,9 @@ jobs:
         run: echo ${{ steps.GetPubspecVersion.outputs.version }}
       - name: Should upload?
         id: GetUpload
-        run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == "release" }}" >> $GITHUB_OUTPUT
+        run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
       - name: Display Upload
         run: echo ${{ steps.GetUpload.outputs.upload }}GetUpload.outputs.upload }}
       - name: Check Upload
-        if: ${{ github.event.inputs.upload == true || github.event_name == "release" }}
+        if: ${{ github.event.inputs.upload == true || github.event_name == 'release' }}
         run: echo "Upload is detected"
