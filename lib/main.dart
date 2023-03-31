@@ -141,7 +141,7 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
   if (!defaultTargetPlatform.isMacOS) windowManager.setAsFrameless();
 
   doWhenWindowReady(() {
-    appWindow.minSize = const Size(360, 520);
+    appWindow.minSize = const Size(400, 520);
     appWindow.size = initialSize;
     if (position != null) {
       appWindow.position = position;

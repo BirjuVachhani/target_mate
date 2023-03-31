@@ -592,7 +592,7 @@ class PerDayTimeEntryView extends StatelessWidget {
             },
           ),
           const SizedBox(height: 14),
-          if (entry.isWorkingDay) ...[
+          if (entry.isWorkingDay && (entry.target.inMinutes > 0)) ...[
             const Divider(height: 0.5, thickness: 0.5),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -640,6 +640,8 @@ class PerDayTimeEntryView extends StatelessWidget {
 
   // hh h mm min
   String formatTotalDuration(Duration duration) {
+    if (duration.isNegative) return '';
+    if (duration.inMinutes < 1) return '${duration.inSeconds} seconds';
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
     return '$hours h ${minutes.toString().padLeft(2, '0')} min';
@@ -835,70 +837,81 @@ class MonthlyStats extends StatelessObserverWidget {
     final SettingsStore settingsStore = context.read<SettingsStore>();
     final TargetStore targetStore = context.read<TargetStore>();
 
+    final bool showOvertime = settingsStore.showRemaining &&
+        store.remaining <= Duration.zero &&
+        !store.overtime.isNegative;
+
     return Row(
       children: [
         Expanded(
-          child: Observer(
-            builder: (context) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    DateFormat('MMMM yyyy')
-                        .format(DateTime.now())
-                        .toUpperCase(),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 0.2,
-                      color: Colors.white60,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text.rich(
-                    TextSpan(
-                      children: [
-                        if (store.isLoading)
-                          const WidgetSpan(
-                            child: SizedBox(
-                              width: 48,
-                              height: 24,
-                              child: Center(
-                                child: SpinKitThreeBounce(
-                                  size: 16,
-                                  color: Colors.white,
-                                ),
-                              ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                DateFormat('MMMM yyyy').format(DateTime.now()).toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
+                  color: Colors.white60,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    if (store.isLoading)
+                      const WidgetSpan(
+                        child: SizedBox(
+                          width: 48,
+                          height: 24,
+                          child: Center(
+                            child: SpinKitThreeBounce(
+                              size: 16,
+                              color: Colors.white,
                             ),
-                          )
-                        else
-                          TextSpan(
-                            text: settingsStore.showRemaining
-                                ? formatRemainingDuration(store, targetStore)
-                                : formatCompletedDuration(store, targetStore),
-                          ),
-                        TextSpan(
-                          text: formatTotalDuration(store, targetStore),
-                        ),
-                        const TextSpan(
-                          text: ' hours',
-                          style: TextStyle(
-                            color: Colors.white60,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ],
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                      )
+                    else
+                      TextSpan(
+                        text: settingsStore.showRemaining
+                            ? showOvertime
+                                ? formatOvertimeDuration(store, targetStore)
+                                : formatRemainingDuration(store, targetStore)
+                            : formatCompletedDuration(store, targetStore),
                       ),
-                    ),
+                    if (!showOvertime)
+                      TextSpan(
+                        text: formatTotalDuration(store, targetStore),
+                      ),
+                    if (!showOvertime)
+                      const TextSpan(
+                        text: ' hours',
+                        style: TextStyle(
+                          color: Colors.white60,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    if (settingsStore.showRemaining)
+                      TextSpan(
+                        text: showOvertime ? ' overtime' : ' left',
+                        style: const TextStyle(
+                          color: Colors.white60,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                  ],
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              );
-            },
+                ),
+              ),
+            ],
           ),
         ),
         FilledButton.icon(
@@ -946,6 +959,10 @@ class MonthlyStats extends StatelessObserverWidget {
 
   String formatRemainingDuration(HomeStore store, TargetStore targetStore) {
     return '${store.remaining.inHours > 0 ? '${store.remaining.inHours} h ' : ''}${store.remaining.inMinutes.remainder(60)}m ';
+  }
+
+  String formatOvertimeDuration(HomeStore store, TargetStore targetStore) {
+    return '${store.overtime.inHours > 0 ? '${store.overtime.inHours} h ' : ''}${store.overtime.inMinutes.remainder(60)}m ';
   }
 
   String formatTotalDuration(HomeStore store, TargetStore targetStore) {
@@ -1056,9 +1073,9 @@ class DailyStats extends StatelessObserverWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const Text(
-              'Working days',
-              style: TextStyle(
+            Text(
+              'Working days${settingsStore.showRemaining ? ' left' : ''}',
+              style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.2,

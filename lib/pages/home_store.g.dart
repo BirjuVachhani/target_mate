@@ -108,6 +108,12 @@ mixin _$HomeStore on _HomeStore, Store {
       (_$isTimerRunningComputed ??= Computed<bool>(() => super.isTimerRunning,
               name: '_HomeStore.isTimerRunning'))
           .value;
+  Computed<Duration>? _$overtimeComputed;
+
+  @override
+  Duration get overtime => (_$overtimeComputed ??=
+          Computed<Duration>(() => super.overtime, name: '_HomeStore.overtime'))
+      .value;
 
   late final _$lastUpdatedAtom =
       Atom(name: '_HomeStore.lastUpdated', context: context);
@@ -242,7 +248,8 @@ isTodayTargetAchieved: ${isTodayTargetAchieved},
 remainingForToday: ${remainingForToday},
 effectiveAverageTarget: ${effectiveAverageTarget},
 isMonthlyTargetAchieved: ${isMonthlyTargetAchieved},
-isTimerRunning: ${isTimerRunning}
+isTimerRunning: ${isTimerRunning},
+overtime: ${overtime}
     ''';
   }
 }

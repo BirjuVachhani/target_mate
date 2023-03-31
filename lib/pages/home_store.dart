@@ -165,6 +165,9 @@ abstract class _HomeStore with Store {
   @computed
   bool get isTimerRunning => timeEntries?.any((e) => e.isRunning) == true;
 
+  @computed
+  Duration get overtime => completed - targetStore.requiredTargetDuration;
+
   late String authKey;
   User? user;
 
