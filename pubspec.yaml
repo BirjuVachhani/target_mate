@@ -60,7 +60,9 @@ flutter:
 
   assets:
     - assets/
+    - assets/app_icons/
     - assets/fonts/
+    - assets/system_tray_icons/
 
   fonts:
     - family: Inter

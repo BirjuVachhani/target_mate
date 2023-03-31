@@ -7,6 +7,7 @@ import 'package:system_tray/system_tray.dart';
 
 import '../model/user.dart';
 import '../resources/keys.dart';
+import '../resources/resources.dart';
 import 'extensions.dart';
 import 'utils.dart';
 
@@ -61,8 +62,8 @@ class SystemTrayManager {
       final User? user = getUserFromStorage();
 
       String path = defaultTargetPlatform.isWindows
-          ? 'assets/icon_system_tray.ico'
-          : 'assets/icon_system_tray.png';
+          ? SystemTrayIcons.windows
+          : SystemTrayIcons.macos;
 
       // We first init the systray menu
       await systemTray.initSystemTray(

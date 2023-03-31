@@ -15,6 +15,7 @@ import '../model/project.dart';
 import '../model/user.dart';
 import '../model/workspace.dart';
 import '../resources/colors.dart';
+import '../resources/resources.dart';
 import '../resources/theme.dart';
 import '../ui/back_button.dart';
 import '../ui/custom_dropdown.dart';
@@ -86,7 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     Container(
                       alignment: Alignment.center,
                       child: Image.asset(
-                        'assets/logo_trimmed.png',
+                        Images.logoTrimmed,
                         width: 100,
                         color: context.theme.colorScheme.primary,
                       ),
@@ -571,7 +572,7 @@ class ColorButton extends StatelessWidget {
         ),
         child: selected
             ? const ImageIcon(
-                AssetImage('assets/icon_done.png'),
+                AssetImage(SystemTrayIcons.iconDone),
                 size: 20,
                 color: Colors.white,
               )

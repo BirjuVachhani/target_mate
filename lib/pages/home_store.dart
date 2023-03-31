@@ -17,6 +17,7 @@ import '../model/day_entry.dart';
 import '../model/time_entry.dart';
 import '../model/user.dart';
 import '../resources/keys.dart';
+import '../resources/resources.dart';
 import '../utils/app_icon_manager.dart';
 import '../utils/extensions.dart';
 import '../utils/system_tray_manager.dart';
@@ -192,7 +193,7 @@ abstract class _HomeStore with Store {
     systemTrayManager.setTitle(text);
 
     if (completed && defaultTargetPlatform.isMacOS) {
-      systemTrayManager.setIcon('assets/icon_done.png');
+      systemTrayManager.setIcon(SystemTrayIcons.iconDone);
     }
   }
 

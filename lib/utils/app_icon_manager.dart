@@ -3,12 +3,8 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-// import 'package:flutter_dynamic_icon/flutter_dynamic_icon.dart';
-
-import '../resources/colors.dart';
+import '../resources/resources.dart';
 import 'extensions.dart';
-import 'target_mate_app_icon.dart';
-import 'widget_renderer.dart';
 
 class AppIconManager {
   late final MethodChannel? _channel;
@@ -81,16 +77,16 @@ class AppIconManager {
   Future<Uint8List?> getInactiveIcon() async {
     try {
       // Read image from AssetBundle.
-      // final byteData = await rootBundle.load(getInactiveIconAssetPath());
-      // return byteData.buffer.asUint8List();
+      final byteData = await rootBundle.load(getInactiveIconAssetPath());
+      return byteData.buffer.asUint8List();
 
-      TargetMateAppIcon appIcon =
-          TargetMateAppIcon.platform(color: AppColors.inactiveAppIconColor);
+      // TargetMateAppIcon appIcon =
+      //     TargetMateAppIcon.platform(color: AppColors.inactiveAppIconColor);
 
-      return await appIcon.toImage(
-        size: const Size.square(1024),
-        delay: const Duration(milliseconds: 100),
-      );
+      // return await appIcon.toImage(
+      //   size: const Size.square(1024),
+      //   delay: const Duration(milliseconds: 100),
+      // );
     } catch (error, stacktrace) {
       log('Error while getting inactive app icon:');
       log(error.toString());
@@ -102,14 +98,14 @@ class AppIconManager {
   Future<Uint8List?> getDefaultIcon() async {
     try {
       // Read image from AssetBundle.
-      // final byteData = await rootBundle.load(getDefaultIconAssetPath());
-      // return byteData.buffer.asUint8List();
+      final byteData = await rootBundle.load(getDefaultIconAssetPath());
+      return byteData.buffer.asUint8List();
 
-      TargetMateAppIcon appIcon = TargetMateAppIcon.platform();
-      return await appIcon.toImage(
-        size: const Size.square(1024),
-        delay: const Duration(milliseconds: 100),
-      );
+      // TargetMateAppIcon appIcon = TargetMateAppIcon.platform();
+      // return await appIcon.toImage(
+      //   size: const Size.square(1024),
+      //   delay: const Duration(milliseconds: 100),
+      // );
     } catch (error, stacktrace) {
       log('Error while getting default app icon:');
       log(error.toString());
@@ -122,12 +118,13 @@ class AppIconManager {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
       case TargetPlatform.fuchsia:
-      case TargetPlatform.iOS:
       case TargetPlatform.linux:
+      case TargetPlatform.iOS:
+        return AppIcons.ios;
       case TargetPlatform.macOS:
-        return 'assets/app_icon_macos.png';
+        return AppIcons.macos;
       case TargetPlatform.windows:
-        return 'assets/app_icon_ios.png';
+        return AppIcons.windows;
     }
   }
 
@@ -135,12 +132,13 @@ class AppIconManager {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
       case TargetPlatform.fuchsia:
-      case TargetPlatform.iOS:
       case TargetPlatform.linux:
+      case TargetPlatform.iOS:
+        return AppIcons.iosInactive;
       case TargetPlatform.macOS:
-        return 'assets/app_icon_macos_inactive.png';
+        return AppIcons.macosInactive;
       case TargetPlatform.windows:
-        return 'assets/app_icon_ios_inactive.png';
+        return AppIcons.windowsInactive;
     }
   }
 }

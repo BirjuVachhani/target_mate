@@ -21,6 +21,7 @@ import '../../model/project.dart';
 import '../../model/user.dart';
 import '../../model/workspace.dart';
 import '../../resources/keys.dart';
+import '../../resources/resources.dart';
 import '../../ui/custom_scaffold.dart';
 import '../../ui/gesture_detector_with_cursor.dart';
 import '../../ui/widgets.dart';
@@ -96,7 +97,7 @@ class _AuthPageState extends State<AuthPage> {
                     Align(
                       alignment: Alignment.center,
                       child: Image.asset(
-                        'assets/logo_trimmed.png',
+                        Images.logoTrimmed,
                         fit: BoxFit.fitWidth,
                         width: 200,
                         color: context.theme.colorScheme.primary,

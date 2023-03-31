@@ -18,6 +18,7 @@ import 'package:screwdriver/screwdriver.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../model/day_entry.dart';
+import '../resources/resources.dart';
 import '../ui/animated_horizontal_progress_bar.dart';
 import '../ui/custom_scaffold.dart';
 import '../utils/extensions.dart';
@@ -1166,7 +1167,7 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                         children: [
                           if (store.isTodayTargetAchieved)
                             const ImageIcon(
-                              AssetImage('assets/icon_done.png'),
+                              AssetImage(SystemTrayIcons.iconDone),
                               color: Colors.white,
                               size: 16,
                             ),

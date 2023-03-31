@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 
+import '../resources/resources.dart';
 import '../utils/extensions.dart';
 import 'gradient_background.dart';
 
@@ -65,7 +66,7 @@ class CustomScaffold extends StatelessWidget {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 24),
                               child: Image.asset(
-                                'assets/logo_trimmed.png',
+                                Images.logoTrimmed,
                                 fit: BoxFit.fitHeight,
                                 height: 16,
                                 color: context.theme.colorScheme.background,

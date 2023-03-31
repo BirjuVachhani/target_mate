@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../resources/resources.dart';
+
 class TargetMateAppIcon extends StatelessWidget {
   final double size;
   final BorderRadius? borderRadius;
@@ -96,7 +98,7 @@ class TargetMateAppIcon extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: 1,
               child: Image.asset(
-                'assets/app_icon_inner.png',
+                AppIcons.body,
                 fit: BoxFit.fitWidth,
                 color: color,
               ),
