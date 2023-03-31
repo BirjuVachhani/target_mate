@@ -28,6 +28,8 @@ jobs:
         run: flutter pub get
       - name: Install Flutter distributor
         run: flutter pub global activate flutter_distributor
+      - name: Run scripts
+        run: dart scripts/windows/copy_icon.dart
       - name: Build
         run: flutter_distributor package --platform windows --targets exe --artifact-name=TargetMate
       - name: Display structure of dist directory
