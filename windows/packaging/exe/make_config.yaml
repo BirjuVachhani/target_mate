@@ -1,8 +1,12 @@
 app_id: dev.birju.targetmate
 publisher: Birju Vachhani
-publisher_url: https://github.com/leanflutter/flutter_distributor
+publisher_url: https://github.com/BirjuVachhani/target_mate
 display_name: Target Mate
-create_desktop_icon: true
+executable_name: TargetMate.exe
 install_dir_name: Target Mate
+setup_icon_file: assets\app_icons\windows.png
+installDirName: "C:\Program Files (x86)\Target Mate"
+create_desktop_icon: true
+script_template: inno_setup.iss
 locales:
   - en

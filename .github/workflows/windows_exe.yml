@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Setup Inno
         run: |
-          .\inno.ps1
+          .\windows\packaging\exe\inno.ps1
       - name: Verify Inno installation
         run: dir "C:\Program Files (x86)\Inno Setup 6\"
       - name: Install Flutter
