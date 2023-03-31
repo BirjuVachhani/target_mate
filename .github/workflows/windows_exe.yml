@@ -2,10 +2,11 @@ name: Windows Exe Build
 
 on:
   workflow_dispatch:
-     upload:
-       description: 'Upload to release?'
-       required: true
-       default: false
+    inputs:
+      upload:
+        description: 'Upload to release?'
+        required: true
+        default: false
 
 jobs:
   build:
