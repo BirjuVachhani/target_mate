@@ -41,20 +41,20 @@ jobs:
           if-no-files-found: error
           retention-days: 5
 
- upload:
-   needs: [ build ]
-   if: ${{ github.event.inputs.upload == true }}
-   runs-on: ubuntu-latest
-   steps:
-     - uses: actions/download-artifact@v3
-       with:
-         path: dist
-     - name: Display structure of downloaded files
-       run: ls -R dist
-     - name: Upload binaries to Release
-       uses: svenstaro/upload-release-action@v2
-       with:
-         repo_token: ${{ secrets.GITHUB_TOKEN }}
-         file: dist/*
-         tag: ${{ github.event.inputs.tag }}
-         file_glob: true
+  upload:
+    needs: [ build ]
+    if: ${{ github.event.inputs.upload == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: dist
+      - name: Display structure of downloaded files
+        run: ls -R dist
+      - name: Upload binaries to Release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ github.event.inputs.tag }}
+          file_glob: true
