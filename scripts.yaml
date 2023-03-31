@@ -13,7 +13,7 @@ build:
     - dart ./installers/msix/setup_local.dart
     - flutter pub run msix:create
     - git restore pubspec.yaml
-  exe: flutter_distributor package --platform windows --targets exe
+  exe: flutter_distributor package --platform windows --targets exe --artifact-name=TargetMate
 bundle:
   dmg: ./installers/dmg/create.sh
   msix:

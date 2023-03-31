@@ -2,10 +2,8 @@ app_id: dev.birju.targetmate
 publisher: Birju Vachhani
 publisher_url: https://github.com/BirjuVachhani/target_mate
 display_name: Target Mate
-executable_name: TargetMate.exe
 install_dir_name: Target Mate
-setup_icon_file: assets\app_icons\windows.png
-installDirName: "C:\Program Files (x86)\Target Mate"
+setup_icon_file: app_icon.ico
 create_desktop_icon: true
 script_template: inno_setup.iss
 locales:
