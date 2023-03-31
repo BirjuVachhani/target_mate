@@ -1,4 +1,4 @@
-name: Windows Exe Build
+name: Test Workflow
 
 on:
   release:
