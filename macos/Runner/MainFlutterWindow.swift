@@ -36,7 +36,7 @@ class MainFlutterWindow: BitsdojoWindow {
     }
 
     let controller = self.contentViewController as! FlutterViewController
-    let channel = FlutterMethodChannel(name: "target-mate", binaryMessenger: flutterViewController.engine.binaryMessenger)
+    let channel = FlutterMethodChannel(name: "target-mate", binaryMessenger: controller.engine.binaryMessenger)
     channel.setMethodCallHandler(handleMessage)
 
     super.awakeFromNib()
