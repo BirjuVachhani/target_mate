@@ -13,8 +13,8 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       avatarUrl: json['image_url'] as String,
       timezone: json['timezone'] as String,
       defaultWorkspaceId: json['default_workspace_id'] as int?,
-      beginningOfWeek: json['beginning_of_week'] as int,
-      countryId: json['country_id'] as int,
+      beginningOfWeek: json['beginning_of_week'] as int? ?? 1,
+      countryId: json['country_id'] as int? ?? -1,
       oauthProviders: (json['oauth_providers'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??

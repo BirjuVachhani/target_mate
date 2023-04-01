@@ -19,7 +19,7 @@ class User with EquatableMixin {
   @JsonKey(name: 'beginning_of_week')
   final int beginningOfWeek;
   @JsonKey(name: 'country_id')
-  final int countryId;
+  final int? countryId;
   @JsonKey(name: 'oauth_providers')
   final List<String> oauthProviders;
   @JsonKey(name: 'has_password')
@@ -44,8 +44,8 @@ class User with EquatableMixin {
     required this.avatarUrl,
     required this.timezone,
     this.defaultWorkspaceId,
-    required this.beginningOfWeek,
-    required this.countryId,
+    this.beginningOfWeek = 1, // default: monday
+    this.countryId = -1,
     this.oauthProviders = const [],
     this.hasPassword = false,
     this.openidEnabled = false,
