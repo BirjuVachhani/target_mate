@@ -10,6 +10,7 @@
 - Show left keyword in labels when show remaining option is enabled.
 - Show overtime hours when goal is achieved and show remaining is true.
 - Update system tray icon on windows.
+- Fix login issue when profile is missing data.
 
 # 0.4.0 - 24th March, 2023
 
