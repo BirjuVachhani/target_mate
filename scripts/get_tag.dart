@@ -28,6 +28,7 @@ void main(List<String> args) {
         (item) => item
             .replaceAll(RegExp(r'null', caseSensitive: false), '')
             .replaceAll(RegExp(r'undefined', caseSensitive: false), '')
+            .replaceAll('refs/tags/', '')
             .trim(),
       )
       .where((item) => item.isNotEmpty);
