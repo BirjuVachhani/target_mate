@@ -25,33 +25,29 @@ jobs:
           cache: true
       - name: Install dependencies
         run: flutter pub get
-      - name: Tag script command
-        run: powershell -command echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})"
-      - name: Tag script command in file
-        run: powershell -command echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> tag.txt
-      - name: Display Tag file
-        run: cat tag.txt
-      - name: test output
-        id: test
-        run: echo "test=hello" >> $GITHUB_OUTPUT
-      - name: Print test
-        run: echo ${{ steps.GetTag.test.test }}
       - name: Get Tag
         id: GetTag
-        run: powershell -command cat tag.txt >> $GITHUB_OUTPUT
+        shell: bash
+        run: echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
       - name: Display Tag
+        shell: bash
         run: echo ${{ steps.GetTag.outputs.tag }}
       - name: Get Pubspec Version
         id: GetPubspecVersion
+        shell: bash
         run: echo "version=$(dart scripts\pubspec_version.dart)" >> $GITHUB_OUTPUT
       - name: Display Pubspec Version
+        shell: bash
         run: echo ${{ steps.GetPubspecVersion.outputs.version }}
       - name: Should upload?
         id: GetUpload
+        shell: bash
         run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
       - name: Display Upload
+        shell: bash
         run: echo ${{ steps.GetUpload.outputs.upload }}
       - name: Check Upload
+        shell: bash
         if: ${{ github.event.inputs.upload == true || github.event_name == 'release' }}
         run: echo "Upload is detected"
 
