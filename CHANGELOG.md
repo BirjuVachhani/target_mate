@@ -1,4 +1,4 @@
-# 0.4.1 - [Unreleased]
+# 0.5.0 - 2nd April, 2023
 
 - Dynamic icons for macOS app. Dock icon changes based on whether the timer is running or not.
 - Fix progressbar showing completed icon when it is not completed.
