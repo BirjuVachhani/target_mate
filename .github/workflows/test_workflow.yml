@@ -51,32 +51,32 @@ jobs:
         if: ${{ github.event.inputs.upload == true || github.event_name == 'release' }}
         run: echo "Upload is detected"
 
-#  macos:
-#    runs-on: macos-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Install Flutter
-#        uses: subosito/flutter-action@v2.8.0
-#        with:
-#          channel: stable
-#          cache: true
-#      - name: Install dependencies
-#        run: flutter pub get
-#      - name: Get Tag
-#        id: GetTag
-#        run: echo "tag=$(dart scripts/get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
-#      - name: Display Tag
-#        run: echo ${{ steps.GetTag.outputs.tag }}
-#      - name: Get Pubspec Version
-#        id: GetPubspecVersion
-#        run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
-#      - name: Display Pubspec Version
-#        run: echo ${{ steps.GetPubspecVersion.outputs.version }}
-#      - name: Should upload?
-#        id: GetUpload
-#        run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
-#      - name: Display Upload
-#        run: echo ${{ steps.GetUpload.outputs.upload }}
-#      - name: Check Upload
-#        if: ${{ github.event.inputs.upload == true || github.event_name == 'release' }}
-#        run: echo "Upload is detected"
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2.8.0
+        with:
+          channel: stable
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Get Tag
+        id: GetTag
+        run: echo "tag=$(dart scripts/get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
+      - name: Display Tag
+        run: echo ${{ steps.GetTag.outputs.tag }}
+      - name: Get Pubspec Version
+        id: GetPubspecVersion
+        run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
+      - name: Display Pubspec Version
+        run: echo ${{ steps.GetPubspecVersion.outputs.version }}
+      - name: Should upload?
+        id: GetUpload
+        run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
+      - name: Display Upload
+        run: echo ${{ steps.GetUpload.outputs.upload }}
+      - name: Check Upload
+        if: ${{ github.event.inputs.upload == true || github.event_name == 'release' }}
+        run: echo "Upload is detected"
