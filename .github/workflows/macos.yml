@@ -1,6 +1,8 @@
 name: MacOS Build
 
 on:
+  release:
+    types: [ published ]
   workflow_dispatch:
     inputs:
       tag:
@@ -24,42 +26,43 @@ jobs:
         run: flutter --version
       - name: Set Up XCode
         uses: devbotsxyz/xcode-select@v1.1.0
-      - name: Install dependencies
-        run: flutter pub get
-      - name: Build App
-        run: flutter build macos --build-name=${{ github.event.inputs.tag }}
-      - name: Verify Build
-        run: test -d build/macos/Build/Products/Release/TargetMate.app
       - name: Install create-dmg
         run: brew install create-dmg
+      - name: Install dependencies
+        run: flutter pub get
+      # <-------- START: Utility scripts -------->
+      - name: Get Tag
+        id: GetTag
+        run: echo "tag=$(dart scripts/get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
+      - name: Get Pubspec Version
+        id: GetPubspecVersion
+        run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
+      - name: Should upload?
+        id: GetUpload
+        run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
+      # <-------- END: Utility scripts -------->
+      - name: Build App
+        run: flutter build macos
+      - name: Verify Build
+        run: test -d build/macos/Build/Products/Release/TargetMate.app
       - name: Create dmg
         run: |
           ./installers/dmg/create.sh
       - name: list files
         run: ls -la build/macos/Build/Products/Release/
       - name: Rename file
-        run: mv "TargetMate.dmg" "TargetMate-macos-${{ github.event.inputs.tag }}.dmg"
+        run: mv "TargetMate.dmg" "TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg"
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: TargetMate-macos-${{ github.event.inputs.tag }}.dmg
+          path: TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg
           if-no-files-found: error
           retention-days: 5
-
-  upload:
-    needs: [ build ]
-    if: ${{ github.event.inputs.upload == true }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          path: dist
-      - name: Display structure of downloaded files
-        run: ls -R dist
       - name: Upload binaries to Release
+        if: ${{ steps.GetUpload.outputs.upload }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/*
+          file: TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg
           tag: ${{ github.event.inputs.tag }}
           file_glob: true

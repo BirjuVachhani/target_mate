@@ -1,11 +1,17 @@
 name: Android Build
 
 on:
+  release:
+    types: [ published ]
   workflow_dispatch:
     inputs:
       tag:
         description: 'Release Tag'
         required: true
+      upload:
+        description: 'Upload to release?'
+        required: true
+        default: false
 
 jobs:
   android:
@@ -26,6 +32,17 @@ jobs:
         run: flutter --version
       - name: Install dependencies
         run: flutter pub get
+      # <-------- START: Utility scripts -------->
+      - name: Get Tag
+        id: GetTag
+        run: echo "tag=$(dart scripts/get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
+      - name: Get Pubspec Version
+        id: GetPubspecVersion
+        run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
+      - name: Should upload?
+        id: GetUpload
+        run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
+      # <-------- END: Utility scripts -------->
       - name: Create keystore file
         uses: timheuer/base64-to-file@v1
         with:
@@ -38,48 +55,40 @@ jobs:
         run: flutter build apk --release
       - name: Build AAB
         run: flutter build appbundle --release
+      - name: Rename APK
+        run: mv build/app/outputs/flutter-apk/app-release.apk TargetMate-android-${{ steps.GetTag.outputs.tag }}.apk
+      - name: Rename AppBundle
+        run: mv build/app/outputs/bundle/release/app-release.aab TargetMate-android-${{ steps.GetTag.outputs.tag }}.aab
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
-          name: TargetMate.apk
-          path: build/app/outputs/flutter-apk/*
+          path: TargetMate-android-${{ steps.GetTag.outputs.tag }}.apk
           if-no-files-found: error
           retention-days: 5
       - name: Upload AAB
         uses: actions/upload-artifact@v3
         with:
-          name: TargetMate.aab
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: TargetMate-android-${{ steps.GetTag.outputs.tag }}.aab
           if-no-files-found: error
           retention-days: 5
+      - name: Upload APK to release
+        if: ${{ steps.GetUpload.outputs.upload }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: TargetMate-android-${{ steps.GetTag.outputs.tag }}.apk
+          tag: ${{ steps.GetTag.outputs.tag }}
+          file_glob: true
+      - name: Upload AppBundle to release
+        if: ${{ steps.GetUpload.outputs.upload }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: TargetMate-android-${{ steps.GetTag.outputs.tag }}.aab
+          tag: ${{ steps.GetTag.outputs.tag }}
+          file_glob: true
       - name: Clean up keystore and keystore.properties
         if: ${{ always() }}
         run: |
           rm android/keystore.properties
           rm android/keystore/release.jks
-
-  upload:
-    needs: [ android ]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          path: dist
-      - name: Display structure of downloaded files
-        run: ls -R dist
-      - name: Upload binaries (for Workflow dispatch)
-        if: ${{ github.event.inputs.tag != null }}
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/*
-          tag: ${{ github.event.inputs.tag }}
-          file_glob: true
-      - name: Upload binaries (for release)
-        if: ${{ github.event.inputs.tag == null }}
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/*
-          tag: ${{ github.ref }}
-          file_glob: true

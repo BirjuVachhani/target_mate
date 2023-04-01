@@ -1,8 +1,13 @@
 name: Windows Exe Build
 
 on:
+  release:
+    types: [ published ]
   workflow_dispatch:
     inputs:
+      tag:
+        description: 'Release Tag'
+        required: true
       upload:
         description: 'Upload to release?'
         required: true
@@ -13,11 +18,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Inno
-        run: |
-          .\windows\packaging\exe\inno.ps1
-      - name: Verify Inno installation
-        run: dir "C:\Program Files (x86)\Inno Setup 6\"
       - name: Install Flutter
         uses: subosito/flutter-action@v2.8.0
         with:
@@ -27,35 +27,43 @@ jobs:
         run: flutter --version
       - name: Install dependencies
         run: flutter pub get
+      # <-------- START: Utility scripts -------->
+      - name: Get Tag
+        id: GetTag
+        shell: bash
+        run: echo "tag=$(dart scripts/get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
+      - name: Get Pubspec Version
+        id: GetPubspecVersion
+        shell: bash
+        run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
+      - name: Should upload?
+        id: GetUpload
+        shell: bash
+        run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
+      # <-------- END: Utility scripts -------->
       - name: Install Flutter distributor
         run: flutter pub global activate flutter_distributor
-      - name: Run scripts
+      - name: Setup Inno Installer
+        run: |
+          .\windows\packaging\exe\inno.ps1
+      - name: Setup icon for Installer
         run: dart scripts/windows/copy_icon.dart
-      - name: Build
-        run: flutter_distributor package --platform windows --targets exe --artifact-name=TargetMate
+      - name: Build & Pack
+        shell: bash
+        run: flutter_distributor package --platform windows --targets exe --artifact-name=TargetMate-windows-${{ steps.GetTag.outputs.tag }}.exe
       - name: Display structure of dist directory
         run: ls -R dist
-      - name: Upload Artifacts
+      - name: Upload Workflow Artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: dist/**/*.exe
+          path: dist/${{ steps.GetPubspecVersion.outputs.version }}/TargetMate-windows-${{ steps.GetTag.outputs.tag }}.exe
           if-no-files-found: error
           retention-days: 5
-
-  upload:
-    needs: [ build ]
-    if: ${{ github.event.inputs.upload == true }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          path: dist
-      - name: Display structure of downloaded files
-        run: ls -R dist
-      - name: Upload binaries to Release
+      - name: Upload to Release
+        if: ${{ steps.GetUpload.outputs.upload }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/*
-          tag: ${{ github.event.inputs.tag }}
+          file: dist/${{ steps.GetPubspecVersion.outputs.version }}/TargetMate-windows-${{ steps.GetTag.outputs.tag }}.exe
+          tag: ${{ steps.GetTag.outputs.tag }}
           file_glob: true
