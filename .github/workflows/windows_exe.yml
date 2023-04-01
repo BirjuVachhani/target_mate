@@ -49,7 +49,6 @@ jobs:
       - name: Setup icon for Installer
         run: dart scripts/windows/copy_icon.dart
       - name: Build & Pack
-        shell: bash
         run: flutter_distributor package --platform windows --targets exe --artifact-name=TargetMate-windows-${{ steps.GetTag.outputs.tag }}.exe
       - name: Display structure of dist directory
         run: ls -R dist
