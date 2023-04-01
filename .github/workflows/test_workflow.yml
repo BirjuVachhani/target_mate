@@ -28,14 +28,14 @@ jobs:
       - name: Get Tag
         id: GetTag
         shell: bash
-        run: echo "tag=$(dart scripts\get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
+        run: echo "tag=$(dart scripts/get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
       - name: Display Tag
         shell: bash
         run: echo ${{ steps.GetTag.outputs.tag }}
       - name: Get Pubspec Version
         id: GetPubspecVersion
         shell: bash
-        run: echo "version=$(dart scripts\pubspec_version.dart)" >> $GITHUB_OUTPUT
+        run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
       - name: Display Pubspec Version
         shell: bash
         run: echo ${{ steps.GetPubspecVersion.outputs.version }}
