@@ -2,6 +2,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="Target Mate"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
