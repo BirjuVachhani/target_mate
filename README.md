@@ -10,9 +10,9 @@ A companion app for [Toggl track][toggl] to track & manage your working hours to
 
 <a href="https://play.google.com/store/apps/details?id=dev.birju.targetmate"><img src="https://user-images.githubusercontent.com/20423471/229056442-d94a33d5-a9a0-494a-a765-698122db83f4.png" height="70px" /></a>
 &nbsp; <a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.4.0/TargetMate-macos-0.4.0.dmg"><img src=".github/assets/macos.png" height="70px" /></a> &nbsp; 
-<a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.4.0/TargetMate-windows-0.4.0.msix"><img src=".github/assets/windows.png" height="70px" /></a>
+<a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.5.0/TargetMate-windows-0.5.0.msix"><img src=".github/assets/windows.png" height="70px" /></a>
 &nbsp;
-<a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.4.0/TargetMate-android-0.4.0.apk"><img src=".github/assets/android.png" height="70px" /></a> 
+<a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.5.0/TargetMate-android-0.5.0.apk"><img src=".github/assets/android.png" height="70px" /></a> 
 
 See [Installation Guide](#installation-guide) for installing on desktop.
 
