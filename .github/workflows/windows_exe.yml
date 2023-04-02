@@ -64,5 +64,5 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/${{ steps.GetPubspecVersion.outputs.version }}/TargetMate-windows-${{ steps.GetTag.outputs.tag }}.exe
-          tag: ${{ steps.GetTag.outputs.tag }}
+          tag: refs/tags/${{ steps.GetTag.outputs.tag }}
           file_glob: true

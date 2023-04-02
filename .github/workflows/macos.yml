@@ -64,5 +64,5 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg
-          tag: ${{ github.event.inputs.tag }}
+          tag: refs/tags/${{ github.event.inputs.tag }}
           file_glob: true
