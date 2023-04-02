@@ -1,3 +1,8 @@
+# 0.5.1 - [Unreleased]
+
+- Disable auto backup for Android.
+- Fix system tray icon not changing properly.
+
 # 0.5.0 - 2nd April, 2023
 
 - Dynamic icons for macOS app. Dock icon changes based on whether the timer is running or not.
