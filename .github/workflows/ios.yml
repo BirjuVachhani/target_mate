@@ -30,18 +30,9 @@ jobs:
         with:
           p12-file-base64: ${{ secrets.IOS_CERT }}
           p12-password: ${{ secrets.IOS_CERT_PASSWORD }}
-      - name: Decode Provisioning Profile
-        run: base64 -Dd ${{ secrets.IOS_PROVISION }} -o profile.mobileprovision
-      - name: Decode Provisioning Profile
-        run: |
-          echo ${{ secrets.IOS_PROVISION }} > profile-base64.txt
-          base64 --decode -i profile-base64.txt -o profile.mobileprovision
-      - name: Install Provisioning Profile
-        run: |
-          mkdir -p "~/Library/MobileDevice/Provisioning Profiles/"
-          mv profile.mobileprovision "~/Library/MobileDevice/Provisioning Profiles/profile.mobileprovision"
-#          security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision > /tmp/profile.plist
-#          security import /tmp/profile.plist -k ~/Library/Keychains/login.keychain -P $PROVISIONING_PROFILE_PASSWORD -A
+      - uses: akiojin/install-provisioning-profile-github-action@v1.0
+        with:
+          base64: ${{ secrets.IOS_PROVISION }}
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
