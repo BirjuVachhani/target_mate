@@ -1,0 +1,84 @@
+name: iOS Build
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release Tag'
+        required: true
+      upload:
+        description: 'Upload to release?'
+        required: true
+        default: true
+
+env:
+  IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
+  IOS_CERT: ${{ secrets.IOS_CERT }}
+  IOS_PROVISION: ${{ secrets.IOS_PROVISION }}
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set Up XCode
+        uses: devbotsxyz/xcode-select@v1.1.0
+      - name: Decode Certificate
+        run: echo ${{ secrets.IOS_CERT }} | base64 --decode > cert.p12
+      - name: Install Certificate
+        run: |
+          security create-keychain -p ${{ secrets.IOS_CERT_PASSWORD }} mykeychain
+          security import $CERT_FILE -k ~/Library/Keychains/mykeychain -P $CERT_PASSWORD -T /usr/bin/codesign
+          security list-keychains -s ~/Library/Keychains/mykeychain
+          security unlock-keychain -p ${{ secrets.IOS_CERT_PASSWORD }} ~/Library/Keychains/mykeychain
+      - name: Install Provisioning Profile
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles/
+          echo ${{ secrets.IOS_PROVISION }} | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+#          security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision > /tmp/profile.plist
+#          security import /tmp/profile.plist -k ~/Library/Keychains/login.keychain -P $PROVISIONING_PROFILE_PASSWORD -A
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Flutter version
+        run: flutter --version
+      - name: Install dependencies
+        run: flutter pub get
+      # <-------- START: Utility scripts -------->
+      - name: Get Tag
+        id: GetTag
+        run: echo "tag=$(dart scripts/get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
+      - name: Get Pubspec Version
+        id: GetPubspecVersion
+        run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
+      - name: Should upload?
+        id: GetUpload
+        run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
+      # <-------- END: Utility scripts -------->
+      - name: Build IPA
+        run: flutter build ipa --export-method app-store
+      - name: Output archive
+        run: ls -la build/ios/archive
+      - name: Output IPA Build
+        run: ls -la build/ios/ipa
+      - name: Verify Build
+        run: test -d build/ios/ipa/target_mate.ipa
+      - name: Rename and copy IPA to root
+        run: ditto "build/ios/ipa/target_mate.ipa" "TargetMate-iOS-${{ steps.GetTag.outputs.tag }}.ipa"
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: TargetMate-iOS-${{ steps.GetTag.outputs.tag }}.ipa
+          if-no-files-found: error
+          retention-days: 5
+      - name: Upload binaries to Release
+        if: ${{ steps.GetUpload.outputs.upload }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: TargetMate-iOS-${{ steps.GetTag.outputs.tag }}.ipa
+          tag: refs/tags/${{ github.event.inputs.tag }}
+          file_glob: true
