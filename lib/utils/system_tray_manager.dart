@@ -70,6 +70,7 @@ class SystemTrayManager {
         title: 'Target Mate',
         toolTip: 'Target Mate',
         iconPath: defaultPlatformAppIconPath,
+        isTemplate: true,
       );
 
       // create context menu
@@ -174,20 +175,20 @@ class SystemTrayManager {
   /// Sets the system tray icon to the given [path].
   Future<void> setIcon(String path) async {
     if (isNotSupported) return;
-    await systemTray.setImage(path);
+    await systemTray.setImage(path, isTemplate: true);
   }
 
   /// Sets the default app icon for the system tray.
   Future<void> setDefaultAppIcon() async {
     if (isNotSupported) return;
-    await systemTray.setImage(defaultPlatformAppIconPath);
+    await systemTray.setImage(defaultPlatformAppIconPath, isTemplate: true);
   }
 
   /// Sets the system tray icon to [SystemTrayIcons.iconDone] that indicates
   /// that today's target has been completed.
   Future<void> setCompletedAppIcon() async {
     if (isNotSupported) return;
-    await systemTray.setImage(SystemTrayIcons.iconDone);
+    await systemTray.setImage(SystemTrayIcons.iconDone, isTemplate: true);
   }
 
   /// Sets the system tray menu's "Sync Interval" option to reflect the

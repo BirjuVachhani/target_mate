@@ -32,7 +32,10 @@ dependencies:
   equatable: ^2.0.5
   adaptive_theme: ^3.2.0
   window_manager: ^0.3.1
-  system_tray: ^2.0.2
+  system_tray:
+    git:
+      url: https://github.com/hyper-designed/system_tray.git
+      ref: template-icon-support
   package_info_plus: ^3.0.3
   flutter_local_notifications: ^13.0.0
   bitsdojo_window: ^0.1.5

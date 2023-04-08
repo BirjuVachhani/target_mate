@@ -2,6 +2,7 @@
 
 - Disable auto backup for Android.
 - Fix system tray icon not changing properly.
+- Fix system tray icon not adapting to status bar color on macOS.
 
 # 0.5.0 - 2nd April, 2023
 
