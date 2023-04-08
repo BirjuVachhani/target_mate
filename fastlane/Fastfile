@@ -1,0 +1,103 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# Fixes issue: https://github.com/fastlane/fastlane/issues/21125
+require 'spaceship'
+Spaceship::ConnectAPI::App.const_set('ESSENTIAL_INCLUDES', 'appStoreVersions')
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Publishes a new version to the App Store"
+    lane :release do
+      # Create certificate file
+      if ENV.key?('IOS_CERT')
+        File.write('../ios-build.p12', Base64.decode64(ENV['IOS_CERT']))
+
+        # Create keychain for storing certificates
+        keychain_password = SecureRandom.uuid
+        create_keychain(
+          name: 'ios-build.keychain',
+          password: keychain_password,
+          default_keychain: true,
+          unlock: true,
+          timeout: 3600
+        )
+
+        # Import certificate into keychain
+        import_certificate(
+          certificate_path: 'ios-build.p12',
+          certificate_password: ENV['IOS_CERT_PASSWORD'],
+          keychain_name: 'ios-build.keychain',
+          keychain_password: keychain_password,
+          log_output: true
+        )
+      end
+
+      # Create provisioning profiles
+      if ENV.key?('IOS_PROVISION')
+        File.write('../ios-build.mobileprovision', Base64.decode64(ENV['IOS_PROVISION']))
+
+        # Import provisioning profile
+        install_provisioning_profile(path: 'ios-build.mobileprovision')
+      end
+
+      build_app(
+        workspace: 'ios/Runner.xcworkspace',
+        export_method: "app-store",
+        export_options: {
+          provisioningProfiles: {
+            "dev.birju.targetmate" => "Target Mate iOS Distribution",
+          }
+        }
+      )
+
+      upload_to_app_store(
+        api_key: ENV['FASTLANE_API_KEY'],
+        submit_for_review: false,
+        ipa: 'Runner.ipa',
+        platform: 'ios',
+        skip_metadata: true,
+        skip_screenshots: true,
+        force: true,
+        precheck_include_in_app_purchases: false,
+      )
+    end
+
+    desc "Upload ipa to App Store Connect"
+    lane :upload_ipa do
+      upload_to_app_store(
+        api_key: ENV['FASTLANE_API_KEY'],
+        submit_for_review: false,
+        ipa: 'Runner.ipa',
+        platform: 'ios',
+        skip_metadata: true,
+        skip_screenshots: true,
+        force: true,
+        precheck_include_in_app_purchases: false,
+      )
+    end
+end
+
+def pod_install
+  Dir.chdir '../ios' do
+    sh 'pod install' do |error|
+      unless error.exitstatus.eql? 0
+        UI.message error
+        UI.user_error! 'Unable to run pod install command'
+      end
+    end
+  end
+end
