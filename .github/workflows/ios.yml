@@ -25,22 +25,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: Set Up XCode
         uses: devbotsxyz/xcode-select@v1.1.0
-      - name: Decode Certificate
-        run: |
-          echo ${{ secrets.IOS_CERT }} > cert.base64
-          base64 -D -i cert.base64 -o cert.p12
-      - name: Install Certificate
-        run: |
-          echo "Creating keychain"
-          security create-keychain -p "mypassword" mykeychain
-          echo "Converting certificate"
-          openssl pkcs12 -in cert.p12 -out cert.pem -nodes
-          echo "Importing certificate"
-          security import cert.pem -k ~/Library/Keychains/mykeychain -P "${{ secrets.IOS_CERT_PASSWORD }}" -T /usr/bin/codesign
-          echo "List keychains"
-          security list-keychains -s ~/Library/Keychains/mykeychain
-          echo "Unlock keychain"
-          security unlock-keychain -p "mypassword" ~/Library/Keychains/mykeychain
+      - name: "Import Certificate"
+        uses: apple-actions/import-codesign-certs@v2
+        with:
+          p12-file-base64: ${{ secrets.IOS_CERT }}
+          p12-password: ${{ secrets.IOS_CERT_PASSWORD }}
       - name: Decode Provisioning Profile
         run: base64 -Dd ${{ secrets.IOS_PROVISION }} -o profile.mobileprovision
       - name: Decode Provisioning Profile
