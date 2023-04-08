@@ -1212,35 +1212,45 @@ class TodayProgressIndicator extends StatelessObserverWidget {
             if (!store.isWorkingExtra) return const SizedBox.shrink();
             return Padding(
               padding: const EdgeInsets.only(top: 8),
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: Tooltip(
-                  message: 'Today is not your working day!',
-                  waitDuration: const Duration(milliseconds: 500),
-                  textAlign: TextAlign.end,
-                  preferBelow: true,
-                  verticalOffset: 14,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Working extra!',
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                          fontSize: 12,
-                          letterSpacing: 0.2,
-                          color: Colors.white60,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.error_outline_rounded,
-                        size: 16,
-                        color: context.theme.colorScheme.primary,
-                      ),
-                    ],
+              child: Row(
+                children: [
+                  Text(
+                    formatDailyOvertimeDuration(store),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      letterSpacing: 0.2,
+                      color: Colors.white60,
+                    ),
                   ),
-                ),
+                  const Spacer(),
+                  Tooltip(
+                    message: 'Today is not your working day!',
+                    waitDuration: const Duration(milliseconds: 500),
+                    textAlign: TextAlign.end,
+                    preferBelow: true,
+                    verticalOffset: 14,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'Working extra!',
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                            fontSize: 12,
+                            letterSpacing: 0.2,
+                            color: Colors.white60,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.error_outline_rounded,
+                          size: 16,
+                          color: context.theme.colorScheme.primary,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             );
           },
@@ -1248,6 +1258,28 @@ class TodayProgressIndicator extends StatelessObserverWidget {
         const SizedBox(height: 8),
       ],
     );
+  }
+
+  String formatDailyOvertimeDuration(HomeStore store) {
+    final Duration duration =
+        store.todayDuration - store.dailyAverageTargetTillToday;
+    final int hours = duration.inHours;
+    final int minutes = duration.inMinutes.remainder(60);
+    String time = '';
+    if (hours > 0) {
+      time = '$hours h${minutes > 0 ? ' $minutes m' : ''}';
+    } else if (minutes > 0) {
+      time = '$minutes m';
+    }
+
+    if (time.isNotEmpty) {
+      final percentage =
+          (duration.inMinutes / store.dailyAverageTargetTillToday.inMinutes) *
+              100;
+      return 'Overtime: $time ${percentage.toInt() > 0 ? '(${percentage.toFormattedStringAsFixed(0)}%)' : ''}';
+    }
+
+    return '';
   }
 
   String formatTodayProgressPercentage(HomeStore store) {

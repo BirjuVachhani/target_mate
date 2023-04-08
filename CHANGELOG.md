@@ -3,6 +3,7 @@
 - Disable auto backup for Android.
 - Fix system tray icon not changing properly.
 - Fix system tray icon not adapting to status bar color on macOS.
+- Show overtime info for daily goals.
 
 # 0.5.0 - 2nd April, 2023
 

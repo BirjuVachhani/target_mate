@@ -99,10 +99,14 @@ abstract class _HomeStore with Store {
     if (isLoading && !isLoadingWithData) {
       return false;
     }
-    if (targetStore.isTodayWorkingDay || todayDuration == Duration.zero) {
-      return false;
+    if (!targetStore.isTodayWorkingDay && todayDuration > Duration.zero) {
+      return true;
     }
-    return true;
+    if (targetStore.isTodayWorkingDay &&
+        todayDuration > dailyAverageTargetTillToday) {
+      return true;
+    }
+    return false;
   }
 
   @observable
