@@ -32,9 +32,9 @@ jobs:
       - name: Install Certificate
         run: |
           security create-keychain -p ${{ secrets.IOS_CERT_PASSWORD }} mykeychain
-          security import cert.p12 -k ~/Library/Keychains/mykeychain -P ${{ secrets.IOS_CERT_PASSWORD }} -T /usr/bin/codesign
           security list-keychains -s ~/Library/Keychains/mykeychain
           security unlock-keychain -p ${{ secrets.IOS_CERT_PASSWORD }} ~/Library/Keychains/mykeychain
+          security import cert.p12 -k ~/Library/Keychains/mykeychain -P ${{ secrets.IOS_CERT_PASSWORD }} -T /usr/bin/codesign
       - name: Decode Provisioning Profile
         run: base64 -Dd ${{ secrets.IOS_PROVISION }} -o profile.mobileprovision
       - name: Install Provisioning Profile
