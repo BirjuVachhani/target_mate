@@ -33,8 +33,10 @@ jobs:
         run: |
           echo "Creating keychain"
           security create-keychain -p "mypassword" mykeychain
+          echo "Converting certificate"
+          openssl pkcs12 -in cert.p12 -out cert.pem -nodes
           echo "Importing certificate"
-          security import cert.p12 -k ~/Library/Keychains/mykeychain -P "mypassword" -T /usr/bin/codesign
+          security import cert.pem -k ~/Library/Keychains/mykeychain -P "${{ secrets.IOS_CERT_PASSWORD }}" -T /usr/bin/codesign
           echo "List keychains"
           security list-keychains -s ~/Library/Keychains/mykeychain
           echo "Unlock keychain"
