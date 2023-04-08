@@ -26,17 +26,19 @@ jobs:
       - name: Set Up XCode
         uses: devbotsxyz/xcode-select@v1.1.0
       - name: Decode Certificate
-        run: echo ${{ secrets.IOS_CERT }} | base64 --decode > cert.p12
+        run: base64 -Dd ${{ secrets.IOS_CERT }} -o cert.p12
       - name: Install Certificate
         run: |
           security create-keychain -p ${{ secrets.IOS_CERT_PASSWORD }} mykeychain
           security import $CERT_FILE -k ~/Library/Keychains/mykeychain -P $CERT_PASSWORD -T /usr/bin/codesign
           security list-keychains -s ~/Library/Keychains/mykeychain
           security unlock-keychain -p ${{ secrets.IOS_CERT_PASSWORD }} ~/Library/Keychains/mykeychain
+      - name: Decode Provisioning Profile
+        run: base64 -Dd ${{ secrets.IOS_PROVISION }} -o profile.mobileprovision
       - name: Install Provisioning Profile
         run: |
-          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles/
-          echo ${{ secrets.IOS_PROVISION }} | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+          mkdir -p "~/Library/MobileDevice/Provisioning Profiles/"
+          mv profile.mobileprovision "~/Library/MobileDevice/Provisioning Profiles/profile.mobileprovision"
 #          security cms -D -i ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision > /tmp/profile.plist
 #          security import /tmp/profile.plist -k ~/Library/Keychains/login.keychain -P $PROVISIONING_PROFILE_PASSWORD -A
       - uses: subosito/flutter-action@v2
