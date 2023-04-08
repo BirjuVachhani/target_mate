@@ -46,6 +46,7 @@ dependencies:
   path_provider: ^2.0.14
   flutter_animate: ^4.1.1+1
   image: ^4.0.15
+  upgrader: ^6.2.0
 #  flutter_dynamic_icon: ^2.1.0
 
 dev_dependencies:

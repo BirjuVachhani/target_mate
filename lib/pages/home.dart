@@ -238,6 +238,9 @@ class _HomePageState extends State<HomePage> {
   void onDidReceiveNotificationResponse(NotificationResponse details) {}
 
   Future<void> checkForUpdates() async {
+    /// Only check for updates on desktop platforms.
+    if(!defaultTargetPlatform.isDesktop) return;
+
     final Version? latestVersion = await store.getLatestRelease();
 
     if (latestVersion == null) return;
@@ -687,7 +690,7 @@ class StatsHeader extends StatelessWidget {
   }
 }
 
-class HomeAppBar extends StatelessObserverWidget {
+class HomeAppBar extends StatelessWidget {
   const HomeAppBar({super.key});
 
   @override

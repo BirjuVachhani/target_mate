@@ -11,6 +11,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:upgrader/upgrader.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'api/toggl_api_service.dart';
@@ -203,7 +204,17 @@ class _MyAppState extends State<MyApp> {
         home: requiresMigration
             ? const MigrationPage()
             : isOnboarded
-                ? const HomePageWrapper()
+                ? UpgradeAlert(
+                    upgrader: Upgrader(
+                      shouldPopScope: () => true,
+                      canDismissDialog: true,
+                      showIgnore: false,
+                      dialogStyle: defaultTargetPlatform.isIOS
+                          ? UpgradeDialogStyle.cupertino
+                          : UpgradeDialogStyle.material,
+                    ),
+                    child: const HomePageWrapper(),
+                  )
                 : const AuthPageWrapper(),
       ),
     );
