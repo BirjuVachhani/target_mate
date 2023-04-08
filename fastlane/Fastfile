@@ -22,6 +22,15 @@ default_platform(:ios)
 platform :ios do
   desc "Publishes a new version to the App Store"
     lane :release do
+
+      api_key = app_store_connect_api_key(
+        key_id: ENV['APP_STORE_KEY_ID'],
+        issuer_id: ENV['APP_STORE_ISSUE_ID'],
+        key_content: ENV['APP_STORE_API_KEY_P8'],
+        duration: 1200, # optional (maximum 1200)
+        in_house: false # optional but may be required if using match/sigh
+      )
+
       # Create certificate file
       if ENV.key?('IOS_CERT')
         File.write('../ios-build.p12', Base64.decode64(ENV['IOS_CERT']))
@@ -65,7 +74,7 @@ platform :ios do
       )
 
       upload_to_app_store(
-        api_key: ENV['FASTLANE_API_KEY'],
+        api_key: api_key,
         submit_for_review: false,
         ipa: 'Runner.ipa',
         platform: 'ios',
@@ -78,8 +87,16 @@ platform :ios do
 
     desc "Upload ipa to App Store Connect"
     lane :upload_ipa do
+      api_key = app_store_connect_api_key(
+        key_id: ENV['APP_STORE_KEY_ID'],
+        issuer_id: ENV['APP_STORE_ISSUE_ID'],
+        key_content: ENV['APP_STORE_API_KEY_P8'],
+        duration: 1200, # optional (maximum 1200)
+        in_house: false # optional but may be required if using match/sigh
+      )
+
       upload_to_app_store(
-        api_key: ENV['FASTLANE_API_KEY'],
+        api_key: api_key,
         submit_for_review: false,
         ipa: 'Runner.ipa',
         platform: 'ios',

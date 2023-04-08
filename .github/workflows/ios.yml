@@ -1,28 +1,20 @@
-name: iOS Build
+name: iOS Release
 
 on:
   release:
     types: [ published ]
   workflow_dispatch:
-#    inputs:
-#      tag:
-#        description: 'Release Tag'
-#        required: true
-#      upload:
-#        description: 'Upload to release?'
-#        required: true
-#        default: true
 
 env:
   IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
   IOS_CERT: ${{ secrets.IOS_CERT }}
   IOS_PROVISION: ${{ secrets.IOS_PROVISION }}
-#  FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.APP_SPECIFIC_PASSWORD }}
-#  FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
-  FASTLANE_API_KEY: ${{ secrets.FASTLANE_API_KEY_JSON }}
+  APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+  APP_STORE_ISSUE_ID: ${{ secrets.APP_STORE_ISSUE_ID }}
+  APP_STORE_API_KEY_P8: ${{ secrets.APP_STORE_API_KEY_P8 }}
 
 jobs:
-  build:
+  release:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
@@ -34,17 +26,6 @@ jobs:
           cache: true
       - name: Flutter version
         run: flutter --version
-      # <-------- START: Utility scripts -------->
-      - name: Get Tag
-        id: GetTag
-        run: echo "tag=$(dart scripts/get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
-      - name: Get Pubspec Version
-        id: GetPubspecVersion
-        run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
-      - name: Should upload?
-        id: GetUpload
-        run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
-      # <-------- END: Utility scripts -------->
       - name: Install fastlane
         run: brew install fastlane
       - name: Fastlane version
@@ -57,23 +38,11 @@ jobs:
         run: flutter clean && flutter pub get
       - name: Pod install
         run: cd ios && pod install
-#      - name: Fix pods
-#        run: dart scripts/pods_fix.dart
       - name: Run fastlane
         run: fastlane ios release
-      - name: Rename and copy IPA to root
-        run: ditto "Runner.ipa" "TargetMate-iOS-${{ steps.GetTag.outputs.tag }}.ipa"
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          path: TargetMate-iOS-${{ steps.GetTag.outputs.tag }}.ipa
+          path: Runner.ipa
           if-no-files-found: error
           retention-days: 5
-#      - name: Upload binaries to Release
-#        if: ${{ steps.GetUpload.outputs.upload }}
-#        uses: svenstaro/upload-release-action@v2
-#        with:
-#          repo_token: ${{ secrets.GITHUB_TOKEN }}
-#          file: TargetMate-iOS-${{ steps.GetTag.outputs.tag }}.ipa
-#          tag: refs/tags/${{ github.event.inputs.tag }}
-#          file_glob: true
