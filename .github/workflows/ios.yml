@@ -26,11 +26,13 @@ jobs:
       - name: Set Up XCode
         uses: devbotsxyz/xcode-select@v1.1.0
       - name: Decode Certificate
-        run: base64 -Dd ${{ secrets.IOS_CERT }} -o cert.p12
+        run: |
+          echo ${{ secrets.IOS_CERT }} > cert-base64.txt
+          base64 --decode -i cert-base64.txt -o cert.p12
       - name: Install Certificate
         run: |
           security create-keychain -p ${{ secrets.IOS_CERT_PASSWORD }} mykeychain
-          security import $CERT_FILE -k ~/Library/Keychains/mykeychain -P $CERT_PASSWORD -T /usr/bin/codesign
+          security import cert.p12 -k ~/Library/Keychains/mykeychain -P ${{ secrets.IOS_CERT_PASSWORD }} -T /usr/bin/codesign
           security list-keychains -s ~/Library/Keychains/mykeychain
           security unlock-keychain -p ${{ secrets.IOS_CERT_PASSWORD }} ~/Library/Keychains/mykeychain
       - name: Decode Provisioning Profile
