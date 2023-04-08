@@ -31,10 +31,14 @@ jobs:
           base64 --decode -i cert-base64.txt -o cert.p12
       - name: Install Certificate
         run: |
-          security create-keychain -p "${{ secrets.IOS_CERT_PASSWORD }}" mykeychain
+          echo "Creating keychain"
+          security create-keychain -p "mypassword" mykeychain
+          echo "Importing certificate"
           security import cert.p12 -k ~/Library/Keychains/mykeychain -P "${{ secrets.IOS_CERT_PASSWORD }}" -T /usr/bin/codesign
+          echo "List keychains"
           security list-keychains -s ~/Library/Keychains/mykeychain
-          security unlock-keychain -p "${{ secrets.IOS_CERT_PASSWORD }}" ~/Library/Keychains/mykeychain
+          echo "Unlock keychain"
+          security unlock-keychain -p "mypassword" ~/Library/Keychains/mykeychain
       - name: Decode Provisioning Profile
         run: base64 -Dd ${{ secrets.IOS_PROVISION }} -o profile.mobileprovision
       - name: Decode Provisioning Profile
