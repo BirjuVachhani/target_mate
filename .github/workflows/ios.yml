@@ -27,8 +27,8 @@ jobs:
         uses: devbotsxyz/xcode-select@v1.1.0
       - name: Decode Certificate
         run: |
-          echo ${{ secrets.IOS_CERT }} > cert-base64.txt
-          base64 --decode -i cert-base64.txt -o cert.p12
+          echo ${{ secrets.IOS_CERT }} > cert.base64
+          base64 -D -i cert.base64 -o cert.p12
       - name: Install Certificate
         run: |
           echo "Creating keychain"
