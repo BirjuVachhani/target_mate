@@ -40,6 +40,8 @@ jobs:
         run: flutter clean && flutter pub get
       - name: Pod install
         run: cd macos && pod install
+      - name: Build macOS with Flutter
+        run: flutter build macos --release
       - name: Run fastlane
         run: fastlane macos release
       - name: Upload Artifacts
