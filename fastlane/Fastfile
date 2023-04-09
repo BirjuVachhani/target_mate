@@ -21,95 +21,202 @@ default_platform(:ios)
 
 platform :ios do
   desc "Publishes a new version to the App Store"
-    lane :release do
+  lane :release do
 
-      api_key = app_store_connect_api_key(
-        key_id: ENV['APP_STORE_KEY_ID'],
-        issuer_id: ENV['APP_STORE_ISSUE_ID'],
-        key_content: ENV['APP_STORE_API_KEY_P8'],
-        duration: 1200, # optional (maximum 1200)
-        in_house: false # optional but may be required if using match/sigh
+    api_key = app_store_connect_api_key(
+      key_id: ENV['APP_STORE_KEY_ID'],
+      issuer_id: ENV['APP_STORE_ISSUE_ID'],
+      key_content: ENV['APP_STORE_API_KEY_P8'],
+      duration: 1200, # optional (maximum 1200)
+      in_house: false # optional but may be required if using match/sigh
+    )
+
+    # Create certificate file
+    if ENV.key?('IOS_CERT')
+      File.write('../ios-build.p12', Base64.decode64(ENV['IOS_CERT']))
+
+      # Create keychain for storing certificates
+      keychain_password = SecureRandom.uuid
+      create_keychain(
+        name: 'ios-build.keychain',
+        password: keychain_password,
+        default_keychain: true,
+        unlock: true,
+        timeout: 3600
       )
 
-      # Create certificate file
-      if ENV.key?('IOS_CERT')
-        File.write('../ios-build.p12', Base64.decode64(ENV['IOS_CERT']))
+      # Import certificate into keychain
+      import_certificate(
+        certificate_path: 'ios-build.p12',
+        certificate_password: ENV['IOS_CERT_PASSWORD'],
+        keychain_name: 'ios-build.keychain',
+        keychain_password: keychain_password,
+        log_output: true
+      )
+    end
 
-        # Create keychain for storing certificates
-        keychain_password = SecureRandom.uuid
-        create_keychain(
-          name: 'ios-build.keychain',
-          password: keychain_password,
-          default_keychain: true,
-          unlock: true,
-          timeout: 3600
-        )
+    # Create provisioning profiles
+    if ENV.key?('IOS_PROVISION')
+      File.write('../ios-build.mobileprovision', Base64.decode64(ENV['IOS_PROVISION']))
 
-        # Import certificate into keychain
-        import_certificate(
-          certificate_path: 'ios-build.p12',
-          certificate_password: ENV['IOS_CERT_PASSWORD'],
-          keychain_name: 'ios-build.keychain',
-          keychain_password: keychain_password,
-          log_output: true
-        )
-      end
+      # Import provisioning profile
+      install_provisioning_profile(path: 'ios-build.mobileprovision')
+    end
 
-      # Create provisioning profiles
-      if ENV.key?('IOS_PROVISION')
-        File.write('../ios-build.mobileprovision', Base64.decode64(ENV['IOS_PROVISION']))
-
-        # Import provisioning profile
-        install_provisioning_profile(path: 'ios-build.mobileprovision')
-      end
-
-      build_app(
-        workspace: 'ios/Runner.xcworkspace',
-        export_method: "app-store",
-        export_options: {
-          provisioningProfiles: {
-            "dev.birju.targetmate" => "Target Mate iOS Distribution",
-          }
+    build_app(
+      workspace: 'ios/Runner.xcworkspace',
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "dev.birju.targetmate" => "Target Mate iOS Distribution",
         }
+      }
+    )
+
+    upload_to_app_store(
+      api_key: api_key,
+      submit_for_review: false,
+      ipa: 'Runner.ipa',
+      platform: 'ios',
+      skip_metadata: true,
+      skip_screenshots: true,
+      force: true,
+      precheck_include_in_app_purchases: false,
+    )
+  end
+
+  desc "Upload ipa to App Store Connect"
+  lane :upload_ipa do
+    api_key = app_store_connect_api_key(
+      key_id: ENV['APP_STORE_KEY_ID'],
+      issuer_id: ENV['APP_STORE_ISSUE_ID'],
+      key_content: ENV['APP_STORE_API_KEY_P8'],
+      duration: 1200, # optional (maximum 1200)
+      in_house: false # optional but may be required if using match/sigh
+    )
+
+    upload_to_app_store(
+      api_key: api_key,
+      submit_for_review: false,
+      ipa: 'Runner.ipa',
+      platform: 'ios',
+      skip_metadata: true,
+      skip_screenshots: true,
+      force: true,
+      precheck_include_in_app_purchases: false,
+    )
+  end
+end
+
+platform :macos do
+  desc "Publishes a new version to the App Store"
+  lane :release do
+
+    api_key = app_store_connect_api_key(
+      key_id: ENV['APP_STORE_KEY_ID'],
+      issuer_id: ENV['APP_STORE_ISSUE_ID'],
+      key_content: ENV['APP_STORE_API_KEY_P8'],
+      duration: 1200, # optional (maximum 1200)
+      in_house: false # optional but may be required if using match/sigh
+    )
+
+    # Create certificate file
+    if ENV.key?('MACOS_APP_STORE_CERT')
+      File.write('../macos-app-store.p12', Base64.decode64(ENV['MACOS_APP_STORE_CERT']))
+      File.write('../macos-installer.p12', Base64.decode64(ENV['MACOS_INSTALLER_CERT']))
+
+      # Create keychain for storing certificates
+      keychain_password = SecureRandom.uuid
+      create_keychain(
+        name: 'macos.keychain',
+        password: keychain_password,
+        default_keychain: true,
+        unlock: true,
+        timeout: 3600
       )
 
-      upload_to_app_store(
-        api_key: api_key,
-        submit_for_review: false,
-        ipa: 'Runner.ipa',
-        platform: 'ios',
-        skip_metadata: true,
-        skip_screenshots: true,
-        force: true,
-        precheck_include_in_app_purchases: false,
+      # Import certificate into keychain
+      import_certificate(
+        certificate_path: 'macos-app-store.p12',
+        certificate_password: ENV['MACOS_CERT_PASSWORD'],
+        keychain_name: 'macos.keychain',
+        keychain_password: keychain_password,
+        log_output: true
+      )
+
+      # Import installer certificate into keychain
+      import_certificate(
+        certificate_path: 'macos-installer.p12',
+        certificate_password: ENV['MACOS_INSTALLER_CERT_PASSWORD'],
+        keychain_name: 'macos.keychain',
+        keychain_password: keychain_password,
+        log_output: true
       )
     end
 
-    desc "Upload ipa to App Store Connect"
-    lane :upload_ipa do
-      api_key = app_store_connect_api_key(
-        key_id: ENV['APP_STORE_KEY_ID'],
-        issuer_id: ENV['APP_STORE_ISSUE_ID'],
-        key_content: ENV['APP_STORE_API_KEY_P8'],
-        duration: 1200, # optional (maximum 1200)
-        in_house: false # optional but may be required if using match/sigh
-      )
+    # Create provisioning profiles
+    if ENV.key?('MACOS_APP_STORE_PROVISION')
+      File.write('../macos-app-store.mobileprovision', Base64.decode64(ENV['MACOS_APP_STORE_PROVISION']))
 
-      upload_to_app_store(
-        api_key: api_key,
-        submit_for_review: false,
-        ipa: 'Runner.ipa',
-        platform: 'ios',
-        skip_metadata: true,
-        skip_screenshots: true,
-        force: true,
-        precheck_include_in_app_purchases: false,
-      )
+      # Import provisioning profile
+      install_provisioning_profile(path: 'macos-app-store.mobileprovision')
     end
+
+    build_mac_app(
+      workspace: 'macos/Runner.xcworkspace',
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "dev.birju.targetmate" => "Target Mate Mac Distribution",
+        }
+      }
+    )
+
+    upload_to_app_store(
+      api_key: api_key,
+      submit_for_review: false,
+      pkg: 'TargetMate.pkg',
+      platform: 'macos',
+      skip_metadata: true,
+      skip_screenshots: true,
+      force: true,
+      precheck_include_in_app_purchases: false,
+    )
+  end
+
+  desc "Upload pkg to App Store Connect"
+  lane :upload_pkg do
+    api_key = app_store_connect_api_key(
+      key_id: ENV['APP_STORE_KEY_ID'],
+      issuer_id: ENV['APP_STORE_ISSUE_ID'],
+      key_content: ENV['APP_STORE_API_KEY_P8'],
+      duration: 1200, # optional (maximum 1200)
+      in_house: false # optional but may be required if using match/sigh
+    )
+
+    upload_to_app_store(
+      api_key: api_key,
+      submit_for_review: false,
+      pkg: 'TargetMate.pkg',
+      # platform: 'macos',
+      skip_metadata: true,
+      skip_screenshots: true,
+      force: true,
+      precheck_include_in_app_purchases: false,
+    )
+  end
 end
 
 def pod_install
   Dir.chdir '../ios' do
+    sh 'pod install' do |error|
+      unless error.exitstatus.eql? 0
+        UI.message error
+        UI.user_error! 'Unable to run pod install command'
+      end
+    end
+  end
+  Dir.chdir '../macos' do
     sh 'pod install' do |error|
       unless error.exitstatus.eql? 0
         UI.message error

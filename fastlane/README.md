@@ -15,21 +15,13 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 ## iOS
 
-### ios publish
+### ios release
 
 ```sh
-[bundle exec] fastlane ios publish
+[bundle exec] fastlane ios release
 ```
 
-Description of what the lane does
-
-### ios build
-
-```sh
-[bundle exec] fastlane ios build
-```
-
-Description of what the lane does
+Publishes a new version to the App Store
 
 ### ios upload_ipa
 
@@ -38,6 +30,27 @@ Description of what the lane does
 ```
 
 Upload ipa to App Store Connect
+
+----
+
+
+## macos
+
+### macos release
+
+```sh
+[bundle exec] fastlane macos release
+```
+
+Publishes a new version to the App Store
+
+### macos upload_pkg
+
+```sh
+[bundle exec] fastlane macos upload_pkg
+```
+
+Upload pkg to App Store Connect
 
 ----
 

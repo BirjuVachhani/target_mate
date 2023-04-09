@@ -1,0 +1,50 @@
+name: macOS Release
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+env:
+  MACOS_APP_STORE_CERT: ${{ secrets.MACOS_APP_STORE_CERT }}
+  MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+  MACOS_INSTALLER_CERT: ${{ secrets.MACOS_INSTALLER_CERT }}
+  MACOS_INSTALLER_CERT_PASSWORD: ${{ secrets.MACOS_INSTALLER_CERT_PASSWORD }}
+  MACOS_APP_STORE_PROVISION: ${{ secrets.MACOS_APP_STORE_PROVISION }}
+  APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+  APP_STORE_ISSUE_ID: ${{ secrets.APP_STORE_ISSUE_ID }}
+  APP_STORE_API_KEY_P8: ${{ secrets.APP_STORE_API_KEY_P8 }}
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set Up XCode
+        uses: devbotsxyz/xcode-select@v1.1.0
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Flutter version
+        run: flutter --version
+      - name: Install fastlane
+        run: brew install fastlane
+      - name: Fastlane version
+        run: fastlane --version
+      - name: Install Bundler
+        run: gem install bundler
+      - name: Get gem dependencies.
+        run: bundle install
+      - name: Install project dependencies
+        run: flutter clean && flutter pub get
+      - name: Pod install
+        run: cd macos && pod install
+      - name: Run fastlane
+        run: fastlane macos release
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: Runner.app
+          if-no-files-found: error
+          retention-days: 5

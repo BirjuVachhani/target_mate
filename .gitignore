@@ -53,7 +53,8 @@ app.*.map.json
 .env
 
 dist/
-
 **/*.ipa
+**/*.app
+**/*.pkg
 
 fastlane/report.xml
