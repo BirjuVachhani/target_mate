@@ -34,7 +34,7 @@ jobs:
       - name: Get gem dependencies.
         run: bundle install
       - name: Run fastlane
-        run: fastlane macos release
+        run: fastlane mac release
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
