@@ -1,4 +1,4 @@
-git_url("git@github.com:BirjuVachhani/target_mate_secrets.git")
+git_url("https://github.com/BirjuVachhani/target_mate_secrets.git")
 git_branch("main")
 clone_branch_directly(true)
 # additional_cert_types(["mac_installer_distribution", "developer_id_installer"])
