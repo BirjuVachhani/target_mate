@@ -129,6 +129,14 @@ platform :mac do
       platform: "macos",
     )
 
+    match(
+      type: "mac_installer_distribution",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: true,
+      platform: "macos",
+      skip_provisioning_profiles: true,
+    )
+
     Dir.chdir '..' do
       sh 'flutter clean && flutter pub get' do |error|
         unless error.exitstatus.eql? 0
@@ -158,6 +166,7 @@ platform :mac do
       workspace: 'macos/Runner.xcworkspace',
       export_method: "app-store",
       clean: false,
+      installer_cert_name: "3rd Party Mac Developer Installer: Birju Vachhani (TQ37FM6DBD)",
     )
 
     app_store_connect_api_key(
