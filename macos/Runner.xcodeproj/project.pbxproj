@@ -437,7 +437,7 @@
 				PRODUCT_MODULE_NAME = TargetMate;
 				PRODUCT_NAME = TargetMate;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Target Mate Mac Development";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match Development dev.birju.targetmate macos";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profile;
@@ -574,7 +574,7 @@
 				PRODUCT_MODULE_NAME = TargetMate;
 				PRODUCT_NAME = TargetMate;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Target Mate Mac Development";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match Development dev.birju.targetmate macos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -593,7 +593,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = TQ37FM6DBD;
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Target Mate";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -605,7 +605,7 @@
 				PRODUCT_MODULE_NAME = TargetMate;
 				PRODUCT_NAME = TargetMate;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "Target Mate Mac Distribution";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match AppStore dev.birju.targetmate macos";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

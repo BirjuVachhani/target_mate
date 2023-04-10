@@ -23,34 +23,50 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Publishes a new version to the App Store
 
-### ios upload_ipa
+### ios certificates
 
 ```sh
-[bundle exec] fastlane ios upload_ipa
+[bundle exec] fastlane ios certificates
 ```
 
-Upload ipa to App Store Connect
+Get certificates for local machine
+
+### ios generate_new_certificates
+
+```sh
+[bundle exec] fastlane ios generate_new_certificates
+```
+
+Generate new certificates
 
 ----
 
 
-## macos
+## Mac
 
-### macos release
+### mac release
 
 ```sh
-[bundle exec] fastlane macos release
+[bundle exec] fastlane mac release
 ```
 
 Publishes a new version to the App Store
 
-### macos upload_pkg
+### mac certificates
 
 ```sh
-[bundle exec] fastlane macos upload_pkg
+[bundle exec] fastlane mac certificates
 ```
 
-Upload pkg to App Store Connect
+Get certificates for local machine
+
+### mac generate_new_certificates
+
+```sh
+[bundle exec] fastlane mac generate_new_certificates
+```
+
+Generate new certificates
 
 ----
 

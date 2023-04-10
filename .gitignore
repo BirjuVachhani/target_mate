@@ -58,3 +58,4 @@ dist/
 **/*.pkg
 
 fastlane/report.xml
+fastlane/.env.default

@@ -6,12 +6,11 @@ on:
   workflow_dispatch:
 
 env:
-  IOS_CERT_PASSWORD: ${{ secrets.IOS_CERT_PASSWORD }}
-  IOS_CERT: ${{ secrets.IOS_CERT }}
-  IOS_PROVISION: ${{ secrets.IOS_PROVISION }}
-  APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
-  APP_STORE_ISSUE_ID: ${{ secrets.APP_STORE_ISSUE_ID }}
-  APP_STORE_API_KEY_P8: ${{ secrets.APP_STORE_API_KEY_P8 }}
+  MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+  MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+  APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+  APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_ISSUE_ID }}
+  APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_API_KEY_P8 }}
 
 jobs:
   release:
@@ -34,10 +33,6 @@ jobs:
         run: gem install bundler
       - name: Get gem dependencies.
         run: bundle install
-      - name: Install project dependencies
-        run: flutter clean && flutter pub get
-      - name: Pod install
-        run: cd ios && pod install
       - name: Run fastlane
         run: fastlane ios release
       - name: Upload Artifacts

@@ -17,192 +17,211 @@
 require 'spaceship'
 Spaceship::ConnectAPI::App.const_set('ESSENTIAL_INCLUDES', 'appStoreVersions')
 
+DEFAULT_APP_IDENTIFIER = 'dev.birju.targetmate'
+
 default_platform(:ios)
 
 platform :ios do
   desc "Publishes a new version to the App Store"
   lane :release do
+    setup_ci if ENV['CI']
 
-    api_key = app_store_connect_api_key(
-      key_id: ENV['APP_STORE_KEY_ID'],
-      issuer_id: ENV['APP_STORE_ISSUE_ID'],
-      key_content: ENV['APP_STORE_API_KEY_P8'],
-      duration: 1200, # optional (maximum 1200)
-      in_house: false # optional but may be required if using match/sigh
+    match(
+      type: "appstore",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: true,
     )
 
-    # Create certificate file
-    if ENV.key?('IOS_CERT')
-      File.write('../ios-build.p12', Base64.decode64(ENV['IOS_CERT']))
-
-      # Create keychain for storing certificates
-      keychain_password = SecureRandom.uuid
-      create_keychain(
-        name: 'ios-build.keychain',
-        password: keychain_password,
-        default_keychain: true,
-        unlock: true,
-        timeout: 3600
-      )
-
-      # Import certificate into keychain
-      import_certificate(
-        certificate_path: 'ios-build.p12',
-        certificate_password: ENV['IOS_CERT_PASSWORD'],
-        keychain_name: 'ios-build.keychain',
-        keychain_password: keychain_password,
-        log_output: true
-      )
+    Dir.chdir '..' do
+      sh 'flutter clean && flutter pub get' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to run flutter build command'
+        end
+      end
     end
 
-    # Create provisioning profiles
-    if ENV.key?('IOS_PROVISION')
-      File.write('../ios-build.mobileprovision', Base64.decode64(ENV['IOS_PROVISION']))
+    # Pod install
+    cocoapods(
+      clean_install: true,
+      podfile: "ios/Podfile",
+      use_bundle_exec: false,
+    )
 
-      # Import provisioning profile
-      install_provisioning_profile(path: 'ios-build.mobileprovision')
+    Dir.chdir '..' do
+      sh 'flutter build ipa --release --export-method app-store' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to run flutter build command'
+        end
+      end
     end
 
-    build_app(
+    build_ios_app(
       workspace: 'ios/Runner.xcworkspace',
       export_method: "app-store",
-      export_options: {
-        provisioningProfiles: {
-          "dev.birju.targetmate" => "Target Mate iOS Distribution",
-        }
-      }
+      clean: false,
+      skip_build_archive: true,
+      archive_path: "build/ios/archive/Runner.xcarchive",
+    )
+
+    app_store_connect_api_key(
+      is_key_content_base64: true,
+      in_house: false, # if it is enterprise or not
     )
 
     upload_to_app_store(
-      api_key: api_key,
+      force: true,
+      run_precheck_before_submit: false,
       submit_for_review: false,
-      ipa: 'Runner.ipa',
-      platform: 'ios',
+      ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
       skip_metadata: true,
       skip_screenshots: true,
-      force: true,
-      precheck_include_in_app_purchases: false,
     )
   end
 
-  desc "Upload ipa to App Store Connect"
-  lane :upload_ipa do
-    api_key = app_store_connect_api_key(
-      key_id: ENV['APP_STORE_KEY_ID'],
-      issuer_id: ENV['APP_STORE_ISSUE_ID'],
-      key_content: ENV['APP_STORE_API_KEY_P8'],
-      duration: 1200, # optional (maximum 1200)
-      in_house: false # optional but may be required if using match/sigh
+  desc "Get certificates for local machine"
+  lane :certificates do
+    match(
+      type: "development",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      force_for_new_devices: true,
+      readonly: true,
+      platform: "ios",
     )
 
-    upload_to_app_store(
-      api_key: api_key,
-      submit_for_review: false,
-      ipa: 'Runner.ipa',
-      platform: 'ios',
-      skip_metadata: true,
-      skip_screenshots: true,
-      force: true,
-      precheck_include_in_app_purchases: false,
+    match(
+      type: "appstore",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: true,
+      platform: "ios",
+    )
+  end
+
+  desc "Generate new certificates"
+  lane :generate_new_certificates do
+    match(
+      type: "development",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      force_for_new_devices: true,
+      readonly: false,
+      platform: "ios",
+    )
+
+    match(
+      type: "appstore",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: false,
+      platform: "ios",
     )
   end
 end
 
-platform :macos do
+platform :mac do
   desc "Publishes a new version to the App Store"
   lane :release do
+    setup_ci if ENV['CI']
 
-    api_key = app_store_connect_api_key(
-      key_id: ENV['APP_STORE_KEY_ID'],
-      issuer_id: ENV['APP_STORE_ISSUE_ID'],
-      key_content: ENV['APP_STORE_API_KEY_P8'],
-      duration: 1200, # optional (maximum 1200)
-      in_house: false # optional but may be required if using match/sigh
+    match(
+      type: "appstore",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: true,
+      platform: "macos",
     )
 
-    # Create certificate file
-    if ENV.key?('MACOS_APP_STORE_CERT')
-      File.write('../macos-app-store.p12', Base64.decode64(ENV['MACOS_APP_STORE_CERT']))
-      File.write('../macos-installer.p12', Base64.decode64(ENV['MACOS_INSTALLER_CERT']))
-
-      # Create keychain for storing certificates
-      keychain_password = SecureRandom.uuid
-      create_keychain(
-        name: 'macos.keychain',
-        password: keychain_password,
-        default_keychain: true,
-        unlock: true,
-        timeout: 3600
-      )
-
-      # Import certificate into keychain
-      import_certificate(
-        certificate_path: 'macos-app-store.p12',
-        certificate_password: ENV['MACOS_CERT_PASSWORD'],
-        keychain_name: 'macos.keychain',
-        keychain_password: keychain_password,
-        log_output: true
-      )
-
-      # Import installer certificate into keychain
-      import_certificate(
-        certificate_path: 'macos-installer.p12',
-        certificate_password: ENV['MACOS_INSTALLER_CERT_PASSWORD'],
-        keychain_name: 'macos.keychain',
-        keychain_password: keychain_password,
-        log_output: true
-      )
+    Dir.chdir '..' do
+      sh 'flutter clean && flutter pub get' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to run flutter build command'
+        end
+      end
     end
 
-    # Create provisioning profiles
-    if ENV.key?('MACOS_APP_STORE_PROVISION')
-      File.write('../macos-app-store.mobileprovision', Base64.decode64(ENV['MACOS_APP_STORE_PROVISION']))
+    # Pod install
+    cocoapods(
+      clean_install: true,
+      podfile: "macos/Podfile",
+      use_bundle_exec: false,
+    )
 
-      # Import provisioning profile
-      install_provisioning_profile(path: 'macos-app-store.mobileprovision')
+    Dir.chdir '..' do
+      sh 'flutter build macos --release' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to run flutter build command'
+        end
+      end
     end
 
     build_mac_app(
       workspace: 'macos/Runner.xcworkspace',
       export_method: "app-store",
-      export_options: {
-        provisioningProfiles: {
-          "dev.birju.targetmate" => "Target Mate Mac Distribution",
-        }
-      }
+      clean: false,
+    )
+
+    app_store_connect_api_key(
+      is_key_content_base64: true,
+      in_house: false, # if it is enterprise or not
     )
 
     upload_to_app_store(
-      api_key: api_key,
+      force: true,
+      run_precheck_before_submit: false,
       submit_for_review: false,
-      pkg: 'TargetMate.pkg',
-      platform: 'macos',
+      ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
       skip_metadata: true,
       skip_screenshots: true,
-      force: true,
-      precheck_include_in_app_purchases: false,
     )
   end
 
-  desc "Upload pkg to App Store Connect"
-  lane :upload_pkg do
-    api_key = app_store_connect_api_key(
-      key_id: ENV['APP_STORE_KEY_ID'],
-      issuer_id: ENV['APP_STORE_ISSUE_ID'],
-      key_content: ENV['APP_STORE_API_KEY_P8'],
-      duration: 1200, # optional (maximum 1200)
-      in_house: false # optional but may be required if using match/sigh
+  desc "Get certificates for local machine"
+  lane :certificates do
+    match(
+      type: "development",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      force_for_new_devices: true,
+      readonly: true,
+      platform: "macos",
     )
 
-    upload_to_app_store(
-      api_key: api_key,
-      submit_for_review: false,
-      pkg: 'TargetMate.pkg',
-      # platform: 'macos',
-      skip_metadata: true,
-      skip_screenshots: true,
-      force: true,
-      precheck_include_in_app_purchases: false,
+    match(
+      type: "appstore",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: true,
+      platform: "macos",
+    )
+
+    match(
+      type: "mac_installer_distribution",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: true,
+      platform: "macos",
+    )
+  end
+
+  desc "Generate new certificates"
+  lane :generate_new_certificates do
+    match(
+      type: "development",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      # force_for_new_devices: true,
+      readonly: false,
+      platform: "macos",
+    )
+
+    match(
+      type: "appstore",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: false,
+      platform: "macos",
+    )
+
+    match(
+      type: "mac_installer_distribution",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: false,
+      platform: "macos",
     )
   end
 end

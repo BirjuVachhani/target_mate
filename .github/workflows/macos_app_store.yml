@@ -6,14 +6,11 @@ on:
   workflow_dispatch:
 
 env:
-  MACOS_APP_STORE_CERT: ${{ secrets.MACOS_APP_STORE_CERT }}
-  MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
-  MACOS_INSTALLER_CERT: ${{ secrets.MACOS_INSTALLER_CERT }}
-  MACOS_INSTALLER_CERT_PASSWORD: ${{ secrets.MACOS_INSTALLER_CERT_PASSWORD }}
-  MACOS_APP_STORE_PROVISION: ${{ secrets.MACOS_APP_STORE_PROVISION }}
-  APP_STORE_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
-  APP_STORE_ISSUE_ID: ${{ secrets.APP_STORE_ISSUE_ID }}
-  APP_STORE_API_KEY_P8: ${{ secrets.APP_STORE_API_KEY_P8 }}
+  MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+  MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+  APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+  APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_ISSUE_ID }}
+  APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_API_KEY_P8 }}
 
 jobs:
   release:
@@ -36,12 +33,6 @@ jobs:
         run: gem install bundler
       - name: Get gem dependencies.
         run: bundle install
-      - name: Install project dependencies
-        run: flutter clean && flutter pub get
-      - name: Pod install
-        run: cd macos && pod install
-      - name: Build macOS with Flutter
-        run: flutter build macos --release
       - name: Run fastlane
         run: fastlane macos release
       - name: Upload Artifacts
