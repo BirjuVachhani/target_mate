@@ -1,4 +1,4 @@
-name: MacOS Build
+name: macOS Release
 
 on:
   release:
@@ -14,23 +14,26 @@ on:
         required: true
         default: true
 
+env:
+  MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+  MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+  APP_STORE_CONNECT_API_KEY_KEY_ID: ${{ secrets.APP_STORE_KEY_ID }}
+  APP_STORE_CONNECT_API_KEY_ISSUER_ID: ${{ secrets.APP_STORE_ISSUE_ID }}
+  APP_STORE_CONNECT_API_KEY_KEY: ${{ secrets.APP_STORE_API_KEY_P8 }}
+
 jobs:
-  build:
+  release:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Set Up XCode
+        uses: devbotsxyz/xcode-select@v1.1.0
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
       - name: Flutter version
         run: flutter --version
-      - name: Set Up XCode
-        uses: devbotsxyz/xcode-select@v1.1.0
-      - name: Install create-dmg
-        run: brew install create-dmg
-      - name: Install dependencies
-        run: flutter pub get
       # <-------- START: Utility scripts -------->
       - name: Get Tag
         id: GetTag
@@ -42,15 +45,16 @@ jobs:
         id: GetUpload
         run: echo "upload=${{ github.event.inputs.upload == true || github.event_name == 'release' }}" >> $GITHUB_OUTPUT
       # <-------- END: Utility scripts -------->
-      - name: Build App
-        run: flutter build macos
-      - name: Verify Build
-        run: test -d build/macos/Build/Products/Release/TargetMate.app
-      - name: Create dmg
-        run: |
-          ./installers/dmg/create.sh
-      - name: list files
-        run: ls -la build/macos/Build/Products/Release/
+      - name: Install fastlane
+        run: brew install fastlane
+      - name: Fastlane version
+        run: fastlane --version
+      - name: Install Bundler
+        run: gem install bundler
+      - name: Get gem dependencies.
+        run: bundle install
+      - name: Run fastlane
+        run: fastlane mac release_dev_id
       - name: Rename file
         run: mv "TargetMate.dmg" "TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg"
       - name: Upload Artifacts

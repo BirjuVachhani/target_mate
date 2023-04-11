@@ -25,6 +25,13 @@ platform :android do
   desc "Publishes a new version to the Play store"
   lane :release do
     setup_ci if ENV['CI']
+    build
+    upload
+  end
+
+  desc "Build Android apk and app bundle"
+  lane :build do
+    setup_ci if ENV['CI']
 
     Dir.chdir '..' do
       sh 'flutter clean && flutter pub get' do |error|
@@ -46,17 +53,25 @@ platform :android do
         end
       end
     end
-
-    upload
   end
 
-  desc "Get certificates for local machine"
-  lane :upload do
+  desc 'Upload built app bundle to play store'
+  desc 'Params'
+  desc ''
+  desc '  path:       Path of the App bundle file to upload. [OPTIONAL]'
+  desc '              Defaults to "build/app/outputs/bundle/release/app-release.aab"'
+  desc ''
+  desc 'Example'
+  desc '  fastlane upload path:app-release.aab'
+  lane :upload do |options|
     setup_ci if ENV['CI']
+
+    aab_path = options[:path] || 'build/app/outputs/bundle/release/app-release.aab'
+
     supply(
       release_status: "draft",
       json_key_data: ENV['GOOGLE_SERVICE_ACCOUNT_JSON'],
-      aab: "build/app/outputs/bundle/release/app-release.aab",
+      aab: aab_path,
       skip_upload_metadata: true,
       skip_upload_changelogs: true,
       skip_upload_images: true,
@@ -68,6 +83,13 @@ end
 platform :ios do
   desc "Publishes a new version to the App Store"
   lane :release do
+    setup_ci if ENV['CI']
+    build
+    upload(ipa: lane_context[SharedValues::IPA_OUTPUT_PATH])
+  end
+
+  desc "Builds iOS app"
+  lane :build do
     setup_ci if ENV['CI']
 
     match(
@@ -108,17 +130,31 @@ platform :ios do
       skip_build_archive: true,
       archive_path: "build/ios/archive/Runner.xcarchive",
     )
+  end
+
+  desc 'Uploads built IPA to App Store'
+  desc 'Params'
+  desc ''
+  desc '  path:        Path of the IPA file to upload. [OPTIONAL]'
+  desc '              Defaults to Runner.ipa'
+  desc ''
+  desc 'Example'
+  desc '  fastlane upload path:Runner.ipa'
+  lane :upload do |options|
+    setup_ci if ENV['CI']
 
     app_store_connect_api_key(
       is_key_content_base64: true,
       in_house: false, # if it is enterprise or not
     )
 
+    ipa_path = options[:path] || 'Runner.ipa'
+
     upload_to_app_store(
       force: true,
       run_precheck_before_submit: false,
       submit_for_review: false,
-      ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
+      ipa: ipa_path,
       skip_metadata: true,
       skip_screenshots: true,
     )
@@ -164,6 +200,21 @@ end
 platform :mac do
   desc "Publishes a new version to the App Store"
   lane :release do
+    setup_ci if ENV['CI']
+    build_app_store
+    upload(path: 'TargetMate.pkg')
+  end
+
+  desc "Release a new notarized DevID build"
+  lane :release_dev_id do
+    setup_ci if ENV['CI']
+    build_dev_id
+    notarize_app
+    dmg
+  end
+
+  desc "Builds macOS app"
+  lane :build_app_store do
     setup_ci if ENV['CI']
 
     match(
@@ -212,17 +263,129 @@ platform :mac do
       clean: false,
       installer_cert_name: "3rd Party Mac Developer Installer: Birju Vachhani (TQ37FM6DBD)",
     )
+  end
 
+  desc "Builds macOS app"
+  lane :build_dev_id do
+    setup_ci if ENV['CI']
+
+    match(
+      type: "developer_id",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: true,
+      platform: "macos",
+    )
+
+    # match(
+    #   type: "mac_installer_distribution",
+    #   app_identifier: DEFAULT_APP_IDENTIFIER,
+    #   readonly: true,
+    #   platform: "macos",
+    #   skip_provisioning_profiles: true,
+    # )
+
+    Dir.chdir '..' do
+      sh 'flutter clean && flutter pub get' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to run flutter build command'
+        end
+      end
+    end
+
+    # Pod install
+    cocoapods(
+      clean_install: true,
+      podfile: "macos/Podfile",
+      use_bundle_exec: false,
+    )
+
+    Dir.chdir '..' do
+      sh 'flutter build macos --release' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to run flutter build command'
+        end
+      end
+    end
+
+    build_mac_app(
+      workspace: 'macos/Runner.xcworkspace',
+      export_method: "developer-id",
+      clean: false,
+      installer_cert_name: "3rd Party Mac Developer Installer: Birju Vachhani (TQ37FM6DBD)",
+    )
+  end
+
+  desc 'Create dmg'
+  desc 'Params'
+  desc ''
+  desc '  path:        Path of the app file to upload. [OPTIONAL]'
+  desc '               Defaults to TargetMate.app'
+  desc ''
+  desc 'Example'
+  desc '  fastlane dmg path:TargetMate.app'
+  lane :dmg do |options|
+    setup_ci if ENV['CI']
+
+    app_path = options[:path] || 'TargetMate.app'
+
+    Dir.chdir '..' do
+      sh './installers/dmg/create.sh #{app_path}' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to create dmg'
+        end
+      end
+    end
+  end
+
+  desc 'Notarize app'
+  desc 'Params'
+  desc ''
+  desc '  path:        Path of the app file to upload. [OPTIONAL]'
+  desc '               Defaults to TargetMate.app'
+  desc ''
+  desc 'Example'
+  desc '  fastlane notarize_app path:TargetMate.app'
+  lane :notarize_app do |options|
+    setup_ci if ENV['CI']
+
+    app_path = options[:path] || 'TargetMate.app'
+
+    api_key = app_store_connect_api_key(
+      is_key_content_base64: true,
+      in_house: false, # if it is enterprise or not
+    )
+
+    notarize(
+      package: app_path,
+      bundle_id: DEFAULT_APP_IDENTIFIER,
+      api_key: api_key,
+    )
+  end
+
+  desc 'Upload built pkg to App Store'
+  desc 'Params'
+  desc ''
+  desc '  path:        Path of the pkg file to upload. [OPTIONAL]'
+  desc '               Defaults to TargetMate.pkg'
+  desc ''
+  desc 'Example'
+  desc '  fastlane upload path:TargetMate.pkg'
+  lane :upload do |options|
     app_store_connect_api_key(
       is_key_content_base64: true,
       in_house: false, # if it is enterprise or not
     )
 
+    pkg_path = options[:path] || 'TargetMate.pkg'
+
     upload_to_app_store(
       force: true,
       run_precheck_before_submit: false,
       submit_for_review: false,
-      ipa: lane_context[SharedValues::IPA_OUTPUT_PATH],
+      ipa: pkg_path,
       skip_metadata: true,
       skip_screenshots: true,
     )

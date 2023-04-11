@@ -23,13 +23,35 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Publishes a new version to the Play store
 
-### android certificates
+### android build
 
 ```sh
-[bundle exec] fastlane android certificates
+[bundle exec] fastlane android build
 ```
 
-Get certificates for local machine
+Build Android apk and app bundle
+
+### android upload
+
+```sh
+[bundle exec] fastlane android upload
+```
+
+Upload built app bundle to play store
+
+Params
+
+
+
+  path:       Path of the App bundle file to upload. [OPTIONAL]
+
+              Defaults to "build/app/outputs/bundle/release/app-release.aab"
+
+
+
+Example
+
+  fastlane upload path:app-release.aab
 
 ----
 
@@ -43,6 +65,36 @@ Get certificates for local machine
 ```
 
 Publishes a new version to the App Store
+
+### ios build
+
+```sh
+[bundle exec] fastlane ios build
+```
+
+Builds iOS app
+
+### ios upload
+
+```sh
+[bundle exec] fastlane ios upload
+```
+
+Uploads built IPA to App Store
+
+Params
+
+
+
+  path:        Path of the IPA file to upload. [OPTIONAL]
+
+              Defaults to Runner.ipa
+
+
+
+Example
+
+  fastlane upload path:Runner.ipa
 
 ### ios certificates
 
@@ -72,6 +124,110 @@ Generate new certificates
 ```
 
 Publishes a new version to the App Store
+
+### mac build_app_store
+
+```sh
+[bundle exec] fastlane mac build_app_store
+```
+
+Builds macOS app
+
+### mac build_dev_id
+
+```sh
+[bundle exec] fastlane mac build_dev_id
+```
+
+Builds macOS app
+
+### mac dmg
+
+```sh
+[bundle exec] fastlane mac dmg
+```
+
+Create dmg
+
+Params
+
+
+
+  path:        Path of the app file to upload. [OPTIONAL]
+
+               Defaults to TargetMate.app
+
+
+
+Example
+
+  fastlane dmg path:TargetMate.app
+
+### mac notarize_app
+
+```sh
+[bundle exec] fastlane mac notarize_app
+```
+
+Notarize dmg
+
+Params
+
+
+
+  path:        Path of the app file to upload. [OPTIONAL]
+
+               Defaults to TargetMate.app
+
+
+
+Example
+
+  fastlane notarize_app path:TargetMate.app
+
+### mac notarize_dmg
+
+```sh
+[bundle exec] fastlane mac notarize_dmg
+```
+
+Notarize dmg
+
+Params
+
+
+
+  path:        Path of the dmg file to upload. [OPTIONAL]
+
+               Defaults to TargetMate.dmg
+
+
+
+Example
+
+  fastlane notarize_dmg path:TargetMate.dmg
+
+### mac upload
+
+```sh
+[bundle exec] fastlane mac upload
+```
+
+Upload built pkg to App Store
+
+Params
+
+
+
+  path:        Path of the pkg file to upload. [OPTIONAL]
+
+               Defaults to TargetMate.pkg
+
+
+
+Example
+
+  fastlane upload path:TargetMate.pkg
 
 ### mac certificates
 
