@@ -338,7 +338,7 @@ platform :mac do
     app_path = options[:path] || 'TargetMate.app'
 
     Dir.chdir '..' do
-      sh './installers/dmg/create.sh #{app_path}' do |error|
+      sh("./installers/dmg/create.sh", app_path) do |error|
         unless error.exitstatus.eql? 0
           UI.message error
           UI.user_error! 'Unable to create dmg'
