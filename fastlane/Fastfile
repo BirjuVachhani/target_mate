@@ -270,6 +270,13 @@ platform :mac do
     setup_ci if ENV['CI']
 
     match(
+      type: "appstore",
+      app_identifier: DEFAULT_APP_IDENTIFIER,
+      readonly: true,
+      platform: "macos",
+    )
+
+    match(
       type: "developer_id",
       app_identifier: DEFAULT_APP_IDENTIFIER,
       readonly: true,
