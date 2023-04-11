@@ -55,6 +55,8 @@ jobs:
         run: bundle install
       - name: Run fastlane
         run: fastlane mac release_dev_id
+      - name: Validate notarization
+        run: spctl -a -vvv -t install TargetMate.app
       - name: Rename file
         run: mv "TargetMate.dmg" "TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg"
       - name: Upload Artifacts

@@ -33,3 +33,5 @@ pod:
   - cd ios && pod install
   - dart scripts/pods_fix.dart
 genicons: flutter pub run flutter_launcher_icons
+
+check-notarized: spctl -a -vvv -t install TargetMate.app
