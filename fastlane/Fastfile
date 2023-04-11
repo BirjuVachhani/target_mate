@@ -21,6 +21,50 @@ DEFAULT_APP_IDENTIFIER = 'dev.birju.targetmate'
 
 default_platform(:ios)
 
+platform :android do
+  desc "Publishes a new version to the Play store"
+  lane :release do
+    setup_ci if ENV['CI']
+
+    Dir.chdir '..' do
+      sh 'flutter clean && flutter pub get' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to run flutter build command'
+        end
+      end
+      sh 'flutter build appbundle --release' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to run flutter build command'
+        end
+      end
+      sh 'flutter build apk --release' do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to run flutter build command'
+        end
+      end
+    end
+
+    upload
+  end
+
+  desc "Get certificates for local machine"
+  lane :upload do
+    setup_ci if ENV['CI']
+    supply(
+      release_status: "draft",
+      json_key_data: ENV['GOOGLE_SERVICE_ACCOUNT_JSON'],
+      aab: "build/app/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+end
+
 platform :ios do
   desc "Publishes a new version to the App Store"
   lane :release do

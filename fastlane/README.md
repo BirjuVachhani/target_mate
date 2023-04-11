@@ -13,6 +13,27 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+## Android
+
+### android release
+
+```sh
+[bundle exec] fastlane android release
+```
+
+Publishes a new version to the Play store
+
+### android certificates
+
+```sh
+[bundle exec] fastlane android certificates
+```
+
+Get certificates for local machine
+
+----
+
+
 ## iOS
 
 ### ios release

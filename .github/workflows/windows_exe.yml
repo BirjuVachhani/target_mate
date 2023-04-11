@@ -10,6 +10,7 @@ on:
         required: true
       upload:
         description: 'Upload to release?'
+        type: boolean
         required: true
         default: false
 
@@ -65,4 +66,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/${{ steps.GetPubspecVersion.outputs.version }}/TargetMate-windows-${{ steps.GetTag.outputs.tag }}.exe
           tag: refs/tags/${{ steps.GetTag.outputs.tag }}
+          overwrite: true
           file_glob: true

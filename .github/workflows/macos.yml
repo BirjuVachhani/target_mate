@@ -10,6 +10,7 @@ on:
         required: true
       upload:
         description: 'Upload to release?'
+        type: boolean
         required: true
         default: true
 
@@ -65,4 +66,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg
           tag: refs/tags/${{ github.event.inputs.tag }}
+          overwrite: true
           file_glob: true
