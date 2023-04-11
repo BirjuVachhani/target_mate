@@ -1,4 +1,4 @@
-name: Windows Exe Build
+name: Windows Exe Release
 
 on:
   release:

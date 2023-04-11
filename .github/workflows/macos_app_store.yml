@@ -1,4 +1,4 @@
-name: macOS Release
+name: MacOS App Store
 
 on:
   release:

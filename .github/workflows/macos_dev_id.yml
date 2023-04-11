@@ -1,4 +1,4 @@
-name: macOS Release
+name: MacOS Dev ID
 
 on:
   release:
