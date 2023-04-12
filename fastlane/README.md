@@ -125,6 +125,14 @@ Generate new certificates
 
 Publishes a new version to the App Store
 
+### mac release_dev_id
+
+```sh
+[bundle exec] fastlane mac release_dev_id
+```
+
+Release a new notarized DevID build
+
 ### mac build_app_store
 
 ```sh
@@ -169,7 +177,7 @@ Example
 [bundle exec] fastlane mac notarize_app
 ```
 
-Notarize dmg
+Notarize app
 
 Params
 
@@ -184,28 +192,6 @@ Params
 Example
 
   fastlane notarize_app path:TargetMate.app
-
-### mac notarize_dmg
-
-```sh
-[bundle exec] fastlane mac notarize_dmg
-```
-
-Notarize dmg
-
-Params
-
-
-
-  path:        Path of the dmg file to upload. [OPTIONAL]
-
-               Defaults to TargetMate.dmg
-
-
-
-Example
-
-  fastlane notarize_dmg path:TargetMate.dmg
 
 ### mac upload
 

@@ -31,7 +31,7 @@ jobs:
         run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
       # <-------- END: Utility scripts -------->
       - name: Update README.md
-        run: dart scripts/update_readme.dart ${{ steps.GetTag.outputs.tag }}
+        run: dart scripts/update_download_links.dart ${{ steps.GetTag.outputs.tag }}
       - name: Commit & push changes
         uses: EndBug/add-and-commit@v9
         env:
