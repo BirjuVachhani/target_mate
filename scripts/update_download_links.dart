@@ -21,7 +21,7 @@ const String template = '''<!---- DOWNLOAD LINKS START --->
 ///
 /// Usage: dart scripts/update_download_links.dart 1.0.0
 void main(List<String> args) {
-  if (args.length == 1) {
+  if (args.isEmpty) {
     stderr.writeln('Please provide a tag as an argument');
     exit(1);
   }
