@@ -8,13 +8,17 @@
 
 A companion app for [Toggl track][toggl] to track & manage your working hours to achieve your monthly goals. If you're using [Toggl Track][toggl] to track your time then, this app can help you manage your monthly working hours.
 
-<a href="https://play.google.com/store/apps/details?id=dev.birju.targetmate"><img src="https://user-images.githubusercontent.com/20423471/229056442-d94a33d5-a9a0-494a-a765-698122db83f4.png" height="70px" /></a>
-&nbsp; <a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.5.0/TargetMate-macos-0.5.0.dmg"><img src=".github/assets/macos.png" height="70px" /></a> &nbsp; 
-<a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.5.0/TargetMate-windows-0.5.0.msix"><img src=".github/assets/windows.png" height="70px" /></a>
-&nbsp;
-<a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.5.0/TargetMate-android-0.5.0.apk"><img src=".github/assets/android.png" height="70px" /></a> 
+<!---- DOWNLOAD LINKS START --->
 
-See [Installation Guide](#installation-guide) for installing on desktop.
+| Platform | Available on Stores                                                                                                                        | Direct Download                                                                                                                                                        |
+|----------|--------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Android  | <a href="https://play.google.com/store/apps/details?id=dev.birju.targetmate"><img src=".github/assets/playstore.png" height="70px" /></a>  | <a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.5.0/TargetMate-android-0.5.0.apk"><img src=".github/assets/android.png" height="70px" /></a> |
+| iOS      | <a href="https://apps.apple.com/in/app/target-mate/id6447091819"><img src=".github/assets/appstore.png" height="70px" /></a>               | ❌ &nbsp; Not Available                                                                                                                                                |
+| macOS    | <a href="https://apps.apple.com/in/app/target-mate/id6447091819"><img src=".github/assets/appstore.png" height="70px" /></a>               | <a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.5.0/TargetMate-macos-0.5.0.dmg"><img src=".github/assets/macos.png" height="70px" /></a>     |
+| Windows  | ❌ &nbsp; Not Available                                                                                                                    | <a href="https://github.com/BirjuVachhani/target_mate/releases/download/0.5.0/TargetMate-windows-0.5.0.exe"><img src=".github/assets/windows.png" height="70px" /></a> |
+| Linux    | ❌ &nbsp; Not Available                                                                                                                    |  ❌ &nbsp; Not Available                                                                                                                                               |
+
+<!---- DOWNLOAD LINKS END --->
 
 # Features
 
@@ -34,45 +38,11 @@ See [Installation Guide](#installation-guide) for installing on desktop.
 
 | Android | iOS | macOS | Windows | Linux | Web |
 |---------|-----|-------|---------|-------|-----|
-| ✅       | 🚧   | ✅     | ✅       | 🚧     | ❌   |
+| ✅       | ✅   | ✅     | ✅       | 🚧     | ❌   |
 
 ### Disclaimer
 
 > This is not an independent timer tracking app. It does not have ability to record your time. You have to use [Toggl Track][toggl] to track your time. This is a companion app to help you track your goals for achieving daily/monthly goals. It also allows you to set a max limit for monthly goal.
-
-## Installation Guide
-
-### MacOS
-In order to install Target Mate on MacOS, download the file named `TargetMate-macos-x.x.x.dmg`.
-
-#### Installing with DMG (Recommended)
-To install Target Mate in your Mac simply open `TargetMate.dmg` and drag the Toogl Target app to the `Applications` folder next to it. If you are updating the app you'll need to click `Replace`.
-
-1. Open `TargetMate-macos-x.x.x.dmg` and drag the Target Mate app to the `Applications` folder next to it. If you are updating the app you'll need to click `Replace`.
-2. Target Mate should now appear in your Laucnhpad. However, if you try to open it you might get a message saying that `"Target Mate" can't be opened because Apple cannot check it for malicious software.`
-3. To fix this, open `System Preferences` and click on `Security and Privacy`.
-4. you'll see a message saying `"Target Mate" was blocked from use because it is not from an identified developer`.
-5. Click on `Open Anyway` and then `Open` in the popup.
-6. Done! You should now be able to use Target Mate normally!
-
-### Windows
-
-#### Installing with MSIX (Recommended)
-
-Download the `TargetMate-windows-x.x.x.msix`.
-
-Unfortunately, it isn't as easy as opening the file and installing it as I do not have a signed certificate.
-
-To install Target Mate, 
-
-1. Make sure the installer is not running. 
-2. Right-click on the `msix` file and click on Properties.
-3. Navigate to `Digital Signatures`. You will see only one signature called 'Birju Vachhani`.
-4. Double click on the signature and then click on `View Certificate`.
-5. Click on `Install Certificate`.
-6. Select `Local System` and click on `Browse` button.
-7. Select `Trusted Root Certification Authorities` and click ok.
-8. Done! Close any open window by clicking on `ok`. Now you should be able to install `Target Mate` by just double-clicking `msix` file.
 
 ## Motivation
 
