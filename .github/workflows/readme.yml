@@ -1,0 +1,42 @@
+name: Update README
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release Tag'
+        required: true
+
+jobs:
+  readme:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+      - name: Flutter version
+        run: flutter --version
+      - name: Install dependencies
+        run: flutter pub get
+      # <-------- START: Utility scripts -------->
+      - name: Get Tag
+        id: GetTag
+        run: echo "tag=$(dart scripts/get_tag.dart ${{ github.event.inputs.tag }} ${{ github.ref }})" >> $GITHUB_OUTPUT
+      - name: Get Pubspec Version
+        id: GetPubspecVersion
+        run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
+      # <-------- END: Utility scripts -------->
+      - name: Update README.md
+        run: dart scripts/update_readme.dart ${{ steps.GetTag.outputs.tag }}
+      - name: Commit & push changes
+        uses: EndBug/add-and-commit@v9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          add: 'README.md'
+          message: ":memo: [CI] Update Download links in README.md"
+          signoff: true
