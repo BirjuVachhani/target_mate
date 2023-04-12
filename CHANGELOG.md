@@ -1,4 +1,4 @@
-# 0.5.1 - [Unreleased]
+# 0.5.1 - 12th April, 2023
 
 - Disable auto backup for Android.
 - Fix system tray icon not changing properly.
