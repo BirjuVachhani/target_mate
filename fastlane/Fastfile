@@ -222,15 +222,8 @@ platform :mac do
       app_identifier: DEFAULT_APP_IDENTIFIER,
       readonly: true,
       platform: "macos",
+      additional_cert_types: ["mac_installer_distribution"],
     )
-
-    # match(
-    #   type: "mac_installer_distribution",
-    #   app_identifier: DEFAULT_APP_IDENTIFIER,
-    #   readonly: true,
-    #   platform: "macos",
-    #   skip_provisioning_profiles: true,
-    # )
 
     Dir.chdir '..' do
       sh 'flutter clean && flutter pub get' do |error|
@@ -281,15 +274,8 @@ platform :mac do
       app_identifier: DEFAULT_APP_IDENTIFIER,
       readonly: true,
       platform: "macos",
+      additional_cert_types: ["developer_id_installer"],
     )
-
-    # match(
-    #   type: "mac_installer_distribution",
-    #   app_identifier: DEFAULT_APP_IDENTIFIER,
-    #   readonly: true,
-    #   platform: "macos",
-    #   skip_provisioning_profiles: true,
-    # )
 
     Dir.chdir '..' do
       sh 'flutter clean && flutter pub get' do |error|
