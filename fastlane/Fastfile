@@ -345,7 +345,7 @@ platform :mac do
   lane :notarize_app do |options|
     setup_ci if ENV['CI']
 
-    app_path = options[:path] || "ARTIFACT_NAME.app"
+    app_path = options[:path] || "#{ARTIFACT_NAME}.app"
 
     api_key = app_store_connect_api_key(
       is_key_content_base64: true,
