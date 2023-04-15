@@ -34,10 +34,16 @@ jobs:
       - name: Get gem dependencies.
         run: bundle install
       - name: Run fastlane
-        run: fastlane mac build_app_store
-      - name: Upload Artifacts
+        run: fastlane mac release
+      - name: Upload .App Artifact
         uses: actions/upload-artifact@v3
         with:
-          path: Runner.app
+          path: TargetMate.app
+          if-no-files-found: error
+          retention-days: 5
+      - name: Upload .pkg Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          path: TargetMate.pkg
           if-no-files-found: error
           retention-days: 5
