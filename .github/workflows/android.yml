@@ -62,7 +62,7 @@ jobs:
       - name: Build AAB
         run: flutter build appbundle --release
       - name: Upload
-        if: ${{ github.event.inputs.upload_to_play_store || github.event_name == 'release' }}
+        if: ${{ inputs.upload_to_play_store || github.event_name == 'release' }}
         run: |
           gem install fastlane
           bundle install
@@ -84,7 +84,7 @@ jobs:
           if-no-files-found: error
           retention-days: 5
       - name: Upload APK to release
-        if: ${{ github.event.inputs.upload_to_release == true || github.event_name == 'release' }}
+        if: ${{ inputs.upload_to_release || github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
@@ -93,7 +93,7 @@ jobs:
           overwrite: true
           file_glob: true
       - name: Upload AppBundle to release
-        if: ${{ github.event.inputs.upload_to_release == true || github.event_name == 'release' }}
+        if: ${{ inputs.upload_to_release || github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

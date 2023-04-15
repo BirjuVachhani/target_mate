@@ -58,14 +58,20 @@ jobs:
         run: spctl -a -vvv -t install TargetMate.app
       - name: Rename file
         run: mv "TargetMate.dmg" "TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg"
-      - name: Upload Artifacts
+      - name: Upload dmg Artifact
         uses: actions/upload-artifact@v3
         with:
           path: TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg
           if-no-files-found: error
           retention-days: 5
+      - name: Upload .pkg Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          path: TargetMate.pkg
+          if-no-files-found: error
+          retention-days: 5
       - name: Upload binaries to Release
-        if: ${{ github.event.inputs.upload == true || github.event_name == 'release' }}
+        if: ${{ inputs.upload || github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

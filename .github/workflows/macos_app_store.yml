@@ -4,6 +4,12 @@ on:
   release:
     types: [ published ]
   workflow_dispatch:
+    workflow_dispatch:
+      upload:
+        description: 'Upload to App Store?'
+        type: boolean
+        required: true
+        default: true
 
 env:
   MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
@@ -33,8 +39,11 @@ jobs:
         run: gem install bundler
       - name: Get gem dependencies.
         run: bundle install
-      - name: Run fastlane
-        run: fastlane mac release
+      - name: Run Fastlane Build
+        run: fastlane mac build_app_store
+      - name: Upload to App Store
+        if: ${{ inputs.upload || github.event_name == 'release' }}
+        run: fastlane mac upload
       - name: Upload .App Artifact
         uses: actions/upload-artifact@v3
         with:

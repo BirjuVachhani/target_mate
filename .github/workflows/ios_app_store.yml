@@ -4,6 +4,11 @@ on:
   release:
     types: [ published ]
   workflow_dispatch:
+    upload:
+      description: 'Upload to App Store?'
+      type: boolean
+      required: true
+      default: true
 
 env:
   MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
@@ -33,11 +38,20 @@ jobs:
         run: gem install bundler
       - name: Get gem dependencies.
         run: bundle install
-      - name: Run fastlane
-        run: fastlane ios release
-      - name: Upload Artifacts
+      - name: Run Fastlane Build
+        run: fastlane ios build
+      - name: Upload to App Store
+        if: ${{ inputs.upload || github.event_name == 'release' }}
+        run: fastlane ios upload
+      - name: Upload .ipa Artifact
         uses: actions/upload-artifact@v3
         with:
           path: Runner.ipa
+          if-no-files-found: error
+          retention-days: 5
+      - name: Upload archive Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          path: build/ios/archive/Runner.xcarchive
           if-no-files-found: error
           retention-days: 5

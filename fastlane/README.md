@@ -104,6 +104,20 @@ Example
 
 Get certificates for local machine
 
+Params
+
+
+
+  generate:   Whether to generate new certificates if required. [OPTIONAL]
+
+              Defaults to false
+
+
+
+Example
+
+  fastlane certificates generate:true
+
 ### ios generate_new_certificates
 
 ```sh
@@ -163,13 +177,13 @@ Params
 
   path:        Path of the app file to upload. [OPTIONAL]
 
-               Defaults to TargetMate.app
+               Defaults to ARTIFACT_NAME.app
 
 
 
 Example
 
-  fastlane dmg path:TargetMate.app
+  fastlane dmg path:ARTIFACT_NAME.app
 
 ### mac notarize_app
 
@@ -185,13 +199,13 @@ Params
 
   path:        Path of the app file to upload. [OPTIONAL]
 
-               Defaults to TargetMate.app
+               Defaults to ARTIFACT_NAME.app
 
 
 
 Example
 
-  fastlane notarize_app path:TargetMate.app
+  fastlane notarize_app path:ARTIFACT_NAME.app
 
 ### mac upload
 
@@ -207,13 +221,13 @@ Params
 
   path:        Path of the pkg file to upload. [OPTIONAL]
 
-               Defaults to TargetMate.pkg
+               Defaults to ARTIFACT_NAME.pkg
 
 
 
 Example
 
-  fastlane upload path:TargetMate.pkg
+  fastlane upload path:ARTIFACT_NAME.pkg
 
 ### mac certificates
 
@@ -222,6 +236,20 @@ Example
 ```
 
 Get certificates for local machine
+
+Params
+
+
+
+  generate:   Whether to generate new certificates if required. [OPTIONAL]
+
+              Defaults to false
+
+
+
+Example
+
+  fastlane certificates generate:true
 
 ### mac generate_new_certificates
 

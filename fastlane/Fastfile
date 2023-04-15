@@ -18,6 +18,7 @@ require 'spaceship'
 Spaceship::ConnectAPI::App.const_set('ESSENTIAL_INCLUDES', 'appStoreVersions')
 
 DEFAULT_APP_IDENTIFIER = 'dev.birju.targetmate'
+ARTIFACT_NAME = 'TargetMate'
 
 default_platform(:ios)
 
@@ -161,39 +162,39 @@ platform :ios do
   end
 
   desc "Get certificates for local machine"
-  lane :certificates do
+  desc 'Params'
+  desc ''
+  desc '  generate:   Whether to generate new certificates if required. [OPTIONAL]'
+  desc '              Defaults to false'
+  desc ''
+  desc 'Example'
+  desc '  fastlane certificates generate:true'
+  lane :certificates do |options|
+    generate = false
+
+    unless options[:generate].nil?
+      generate = options[:generate]
+    end
+
     match(
       type: "development",
       app_identifier: DEFAULT_APP_IDENTIFIER,
       force_for_new_devices: true,
-      readonly: true,
+      readonly: !generate,
       platform: "ios",
     )
 
     match(
       type: "appstore",
       app_identifier: DEFAULT_APP_IDENTIFIER,
-      readonly: true,
+      readonly: !generate,
       platform: "ios",
     )
   end
 
   desc "Generate new certificates"
   lane :generate_new_certificates do
-    match(
-      type: "development",
-      app_identifier: DEFAULT_APP_IDENTIFIER,
-      force_for_new_devices: true,
-      readonly: false,
-      platform: "ios",
-    )
-
-    match(
-      type: "appstore",
-      app_identifier: DEFAULT_APP_IDENTIFIER,
-      readonly: false,
-      platform: "ios",
-    )
+    certificates(generate: true)
   end
 end
 
@@ -202,7 +203,7 @@ platform :mac do
   lane :release do
     setup_ci if ENV['CI']
     build_app_store
-    upload(path: 'TargetMate.pkg')
+    upload(path: "#{ARTIFACT_NAME}.pkg")
   end
 
   desc "Release a new notarized DevID build"
@@ -314,14 +315,14 @@ platform :mac do
   desc 'Params'
   desc ''
   desc '  path:        Path of the app file to upload. [OPTIONAL]'
-  desc '               Defaults to TargetMate.app'
+  desc '               Defaults to ARTIFACT_NAME.app'
   desc ''
   desc 'Example'
-  desc '  fastlane dmg path:TargetMate.app'
+  desc '  fastlane dmg path:ARTIFACT_NAME.app'
   lane :dmg do |options|
     setup_ci if ENV['CI']
 
-    app_path = options[:path] || 'TargetMate.app'
+    app_path = options[:path] || "#{ARTIFACT_NAME}.app"
 
     Dir.chdir '..' do
       sh("./installers/dmg/create.sh", app_path) do |error|
@@ -337,14 +338,14 @@ platform :mac do
   desc 'Params'
   desc ''
   desc '  path:        Path of the app file to upload. [OPTIONAL]'
-  desc '               Defaults to TargetMate.app'
+  desc '               Defaults to ARTIFACT_NAME.app'
   desc ''
   desc 'Example'
-  desc '  fastlane notarize_app path:TargetMate.app'
+  desc '  fastlane notarize_app path:ARTIFACT_NAME.app'
   lane :notarize_app do |options|
     setup_ci if ENV['CI']
 
-    app_path = options[:path] || 'TargetMate.app'
+    app_path = options[:path] || "ARTIFACT_NAME.app"
 
     api_key = app_store_connect_api_key(
       is_key_content_base64: true,
@@ -362,17 +363,17 @@ platform :mac do
   desc 'Params'
   desc ''
   desc '  path:        Path of the pkg file to upload. [OPTIONAL]'
-  desc '               Defaults to TargetMate.pkg'
+  desc '               Defaults to ARTIFACT_NAME.pkg'
   desc ''
   desc 'Example'
-  desc '  fastlane upload path:TargetMate.pkg'
+  desc '  fastlane upload path:ARTIFACT_NAME.pkg'
   lane :upload do |options|
     app_store_connect_api_key(
       is_key_content_base64: true,
       in_house: false, # if it is enterprise or not
     )
 
-    pkg_path = options[:path] || 'TargetMate.pkg'
+    pkg_path = options[:path] || "ARTIFACT_NAME.pkg"
 
     upload_to_app_store(
       force: true,
@@ -385,53 +386,49 @@ platform :mac do
   end
 
   desc "Get certificates for local machine"
-  lane :certificates do
+  desc 'Params'
+  desc ''
+  desc '  generate:   Whether to generate new certificates if required. [OPTIONAL]'
+  desc '              Defaults to false'
+  desc ''
+  desc 'Example'
+  desc '  fastlane certificates generate:true'
+  lane :certificates do |options|
+
+    generate = false
+
+    unless options[:generate].nil?
+      generate = options[:generate]
+    end
+
     match(
       type: "development",
       app_identifier: DEFAULT_APP_IDENTIFIER,
       force_for_new_devices: true,
-      readonly: true,
+      readonly: !generate,
       platform: "macos",
     )
 
     match(
       type: "appstore",
       app_identifier: DEFAULT_APP_IDENTIFIER,
-      readonly: true,
+      readonly: !generate,
       platform: "macos",
+      additional_cert_types: ["mac_installer_distribution"],
     )
 
     match(
-      type: "mac_installer_distribution",
+      type: "developer_id",
       app_identifier: DEFAULT_APP_IDENTIFIER,
-      readonly: true,
+      readonly: !generate,
       platform: "macos",
+      additional_cert_types: ["developer_id_installer"],
     )
   end
 
   desc "Generate new certificates"
   lane :generate_new_certificates do
-    match(
-      type: "development",
-      app_identifier: DEFAULT_APP_IDENTIFIER,
-      # force_for_new_devices: true,
-      readonly: false,
-      platform: "macos",
-    )
-
-    match(
-      type: "appstore",
-      app_identifier: DEFAULT_APP_IDENTIFIER,
-      readonly: false,
-      platform: "macos",
-    )
-
-    match(
-      type: "mac_installer_distribution",
-      app_identifier: DEFAULT_APP_IDENTIFIER,
-      readonly: false,
-      platform: "macos",
-    )
+    certificates(generate: true)
   end
 end
 
