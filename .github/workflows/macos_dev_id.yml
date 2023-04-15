@@ -64,12 +64,6 @@ jobs:
           path: TargetMate-macos-${{ steps.GetTag.outputs.tag }}.dmg
           if-no-files-found: error
           retention-days: 5
-      - name: Upload .pkg Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          path: TargetMate.pkg
-          if-no-files-found: error
-          retention-days: 5
       - name: Upload binaries to Release
         if: ${{ inputs.upload || github.event_name == 'release' }}
         uses: svenstaro/upload-release-action@v2
