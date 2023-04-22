@@ -155,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                         SpinKitPouringHourGlassRefined(
                           size: 64,
                           color: context.theme.colorScheme.primary
-                              .withOpacity(0.25),
+                              .withOpacity(0.5),
                           duration: const Duration(milliseconds: 2000),
                         ),
                         const SizedBox(height: 16),
@@ -212,7 +212,8 @@ class _HomePageState extends State<HomePage> {
                   child: ListView.separated(
                     itemCount: store.dayEntries.length,
                     primary: false,
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                    padding: const EdgeInsets.fromLTRB(
+                        kSidePadding, 8, kSidePadding, 16),
                     physics: const BouncingScrollPhysics(),
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 16),
@@ -672,7 +673,7 @@ class StatsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: kSidePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,

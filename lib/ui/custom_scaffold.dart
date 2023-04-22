@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +17,7 @@ class CustomScaffold extends StatelessWidget {
   final bool? resizeToAvoidBottomInset;
   final Color? backgroundColor;
   final bool gradientBackground;
+  final PreferredSizeWidget? appBar;
 
   const CustomScaffold({
     super.key,
@@ -27,6 +27,7 @@ class CustomScaffold extends StatelessWidget {
     this.resizeToAvoidBottomInset,
     this.backgroundColor,
     this.gradientBackground = false,
+    this.appBar,
   });
 
   @override
@@ -90,7 +91,7 @@ class CustomScaffold extends StatelessWidget {
                         ],
                       ),
                     )
-                  : null,
+                  : appBar,
               body: GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),
                 behavior: HitTestBehavior.opaque,

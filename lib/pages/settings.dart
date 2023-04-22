@@ -65,7 +65,8 @@ class _SettingsPageState extends State<SettingsPage> {
             scrollDirection: Axis.vertical,
             primary: true,
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+            padding:
+                const EdgeInsets.fromLTRB(kSidePadding, 8, kSidePadding, 24),
             child: Center(
               child: SizedBox(
                 width: 400,
@@ -148,7 +149,7 @@ class AppearanceSettings extends StatelessObserverWidget {
                 children: [
                   const SettingItemTitle('Theme'),
                   Text(
-                    'Customize your app theme',
+                    'Customize your theme',
                     style: subtitleTextStyle(context),
                   ),
                 ],
@@ -160,7 +161,7 @@ class AppearanceSettings extends StatelessObserverWidget {
                 return ToggleButtons(
                   borderRadius: BorderRadius.circular(6),
                   constraints:
-                      const BoxConstraints(minWidth: 40, minHeight: 40),
+                      const BoxConstraints(minWidth: 48, minHeight: 40),
                   onPressed: (index) {
                     final mode = AdaptiveThemeMode.values[index];
                     manager.setThemeMode(mode);
@@ -389,11 +390,11 @@ class _AccountSettingsState extends State<AccountSettings> {
             onPressed: logout,
             style: TextButton.styleFrom(
               foregroundColor: store.useMaterial3
-                  ? context.theme.colorScheme.onTertiary
-                  : context.theme.colorScheme.onPrimary,
+                  ? context.theme.colorScheme.onError
+                  : Colors.white,
               backgroundColor: store.useMaterial3
-                  ? context.theme.colorScheme.tertiary
-                  : context.theme.colorScheme.primary,
+                  ? context.theme.colorScheme.error
+                  : context.theme.colorScheme.error,
             ),
             icon: const Icon(Icons.logout_rounded),
             label: const Text('Logout'),

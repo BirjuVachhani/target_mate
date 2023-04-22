@@ -66,7 +66,7 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
     return CustomScaffold(
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(kSidePadding),
           child: SizedBox(
             width: 400,
             child: Column(

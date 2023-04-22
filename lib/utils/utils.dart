@@ -219,3 +219,5 @@ final Project emptyProject = Project(
   isDeleted: false,
   currency: 'USD',
 );
+
+const double kSidePadding = 16;

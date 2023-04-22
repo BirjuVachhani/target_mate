@@ -74,7 +74,7 @@ class _AuthPageState extends State<AuthPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(kSidePadding),
             child: SizedBox(
               width: 400,
               child: AnimatedSize(

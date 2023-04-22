@@ -68,7 +68,7 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
         child: Center(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: const EdgeInsets.symmetric(horizontal: kSidePadding),
             child: Center(
               child: SizedBox(
                 width: 400,
