@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
@@ -41,7 +42,7 @@ class MonthlyStats extends StatelessObserverWidget {
               Text(
                 DateFormat('MMMM yyyy').format(DateTime.now()).toUpperCase(),
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontVariations: FontVariations.w600,
                     color: context.theme.textColor.withOpacity(0.6)),
               ),
@@ -203,7 +204,7 @@ class DailyStats extends StatelessObserverWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Daily average to maintain',
+                  'Average to maintain',
                   style: TextStyle(
                     fontSize: 14,
                     fontVariations: FontVariations.w600,
@@ -334,7 +335,7 @@ class TodayProgressIndicator extends StatelessObserverWidget {
         ),
         const SizedBox(height: 6),
         SizedBox(
-          height: 24,
+          height: 26,
           child: Stack(
             children: [
               Positioned.fill(
@@ -413,6 +414,9 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                     textAlign: TextAlign.end,
                     preferBelow: true,
                     verticalOffset: 14,
+                    triggerMode: defaultTargetPlatform.isMobile
+                        ? TooltipTriggerMode.tap
+                        : null,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
