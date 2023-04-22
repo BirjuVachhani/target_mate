@@ -98,7 +98,7 @@ class SystemTrayManager {
     }
   }
 
-  List<MenuItem> _buildMenu({
+  List<MenuItemBase> _buildMenu({
     required VoidCallback refreshCallback,
   }) {
     final User? user = getUserFromStorage();
@@ -198,7 +198,7 @@ class SystemTrayManager {
     String label = 'Sync',
   }) async {
     if (isNotSupported) return;
-    final item = menu.findItemByName<MenuItem>('sync');
+    final item = menu.findItemByName<MenuItemBase>('sync');
     if (item == null) return;
 
     await item.setEnable(enabled);
