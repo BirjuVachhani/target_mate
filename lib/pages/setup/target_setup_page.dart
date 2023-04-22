@@ -21,6 +21,7 @@ import '../../ui/custom_scaffold.dart';
 import '../../ui/custom_switch.dart';
 import '../../ui/gesture_detector_with_cursor.dart';
 import '../../ui/widgets.dart';
+import '../../utils/extensions.dart';
 import '../../utils/font_variations.dart';
 import '../../utils/utils.dart';
 import '../home.dart';
@@ -83,7 +84,7 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
                     Text(
                       'This will be used to automatically select your working days for a month.',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
+                        color: context.theme.textColor.withOpacity(0.5),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -152,14 +153,15 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
                                   TextSpan(
                                     text: '(Optional)',
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.25),
+                                      color: context.theme.textColor
+                                          .withOpacity(0.25),
                                       fontStyle: FontStyle.italic,
                                     ),
                                   ),
                                 ],
                               ),
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.5),
+                                color: context.theme.textColor.withOpacity(0.5),
                               ),
                             ),
                           ),
@@ -369,7 +371,7 @@ class WeekDaysSelection extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? context.theme.colorScheme.primary
-                            : Colors.white.withOpacity(0.1),
+                            : context.theme.textColor.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
@@ -378,7 +380,7 @@ class WeekDaysSelection extends StatelessWidget {
                           style: TextStyle(
                             color: isSelected
                                 ? context.theme.colorScheme.onPrimary
-                                : Colors.white,
+                                : context.theme.textColor,
                             fontSize: 16,
                             fontVariations: FontVariations.w600,
                           ),
@@ -413,7 +415,7 @@ class CalenderSelection2 extends StatelessWidget {
       height: 340,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: context.theme.textColor.withOpacity(0.05),
           borderRadius: BorderRadius.circular(8),
         ),
         child: PagedVerticalCalendar(
@@ -434,8 +436,8 @@ class CalenderSelection2 extends StatelessWidget {
               padding: const EdgeInsets.only(top: 16),
               child: Text(
                 DateFormat('MMMM yyyy').format(DateTime(year, month)),
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.theme.textColor,
                   fontVariations: FontVariations.w600,
                 ),
               ),
@@ -482,7 +484,7 @@ class CalenderSelection extends StatelessWidget {
         Container(
           padding: const EdgeInsets.fromLTRB(8, 12, 8, 10),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: context.theme.textColor.withOpacity(0.05),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
@@ -490,8 +492,8 @@ class CalenderSelection extends StatelessWidget {
             children: [
               Text(
                 DateFormat('MMMM yyyy').format(month).toUpperCase(),
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.theme.textColor,
                   letterSpacing: 1.2,
                   fontVariations: FontVariations.w500,
                 ),

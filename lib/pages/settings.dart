@@ -26,6 +26,7 @@ import '../ui/dropdown_button3.dart';
 import '../ui/gesture_detector_with_cursor.dart';
 import '../ui/widgets.dart';
 import '../utils/extensions.dart';
+import '../utils/font_variations.dart';
 import '../utils/system_tray_manager.dart';
 import '../utils/utils.dart';
 import 'home_store.dart';
@@ -77,11 +78,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: SetupTitle('App Settings'),
                     ),
                     const AppearanceSettings(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
                     const SyncSettings(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
                     const ProjectSettings(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
                     const AccountSettings(),
                     const SizedBox(height: 40),
                     Container(
@@ -110,8 +111,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           return Text(
                             'v${data.version}$buildNumber$suffix',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Colors.white60,
+                            style: TextStyle(
+                              color: context.theme.textColor.withOpacity(0.6),
                               fontSize: 12,
                               letterSpacing: 0.8,
                             ),
@@ -139,7 +140,62 @@ class AppearanceSettings extends StatelessObserverWidget {
     return SettingsSection(
       title: 'Appearance',
       children: [
-        const Text('Theme'),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SettingItemTitle('Theme'),
+                  Text(
+                    'Customize your app theme',
+                    style: subtitleTextStyle(context),
+                  ),
+                ],
+              ),
+            ),
+            Builder(
+              builder: (context) {
+                final manager = AdaptiveTheme.of(context);
+                return ToggleButtons(
+                  borderRadius: BorderRadius.circular(6),
+                  constraints:
+                      const BoxConstraints(minWidth: 40, minHeight: 40),
+                  onPressed: (index) {
+                    final mode = AdaptiveThemeMode.values[index];
+                    manager.setThemeMode(mode);
+                  },
+                  isSelected: [
+                    manager.mode == AdaptiveThemeMode.light,
+                    manager.mode == AdaptiveThemeMode.dark,
+                    manager.mode == AdaptiveThemeMode.system,
+                  ],
+                  children: const [
+                    Tooltip(
+                      message: 'Light Mode',
+                      waitDuration: Duration(milliseconds: 500),
+                      child: Center(child: Icon(Icons.sunny, size: 18)),
+                    ),
+                    Tooltip(
+                      message: 'Dark Mode',
+                      waitDuration: Duration(milliseconds: 500),
+                      child: Center(child: Icon(Icons.nightlight, size: 18)),
+                    ),
+                    Tooltip(
+                      message: 'Same as System',
+                      waitDuration: Duration(milliseconds: 500),
+                      child: Center(
+                          child:
+                              Icon(Icons.brightness_auto_outlined, size: 18)),
+                    )
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        const SettingItemTitle('Colors'),
         const SizedBox(height: 8),
         ColorsView(
           current: store.themeColor,
@@ -163,13 +219,11 @@ class AppearanceSettings extends StatelessObserverWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Use faded colors'),
+                  const SettingItemTitle('Use faded colors'),
                   const SizedBox(height: 4),
                   Text(
                     'Use Material 3 like desaturated version of the colors.',
-                    style: subtitleTextStyle.copyWith(
-                      fontSize: 13,
-                    ),
+                    style: subtitleTextStyle(context),
                   ),
                 ],
               ),
@@ -207,14 +261,12 @@ class SyncSettings extends StatelessObserverWidget {
     return SettingsSection(
       title: 'Sync & Info',
       children: [
-        const Text('Refresh frequency'),
+        const SettingItemTitle('Refresh frequency'),
         FractionallySizedBox(
           widthFactor: 0.9,
           child: Text(
             'How often should the app sync with Toggl?',
-            style: subtitleTextStyle.copyWith(
-              fontSize: 13,
-            ),
+            style: subtitleTextStyle(context),
           ),
         ),
         const SizedBox(height: 12),
@@ -264,13 +316,11 @@ class SyncSettings extends StatelessObserverWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Show remaining'),
+                  const SettingItemTitle('Show remaining'),
                   const SizedBox(height: 4),
                   Text(
                     'Show remaining total hours and working days instead of completed.',
-                    style: subtitleTextStyle.copyWith(
-                      fontSize: 13,
-                    ),
+                    style: subtitleTextStyle(context),
                   ),
                 ],
               ),
@@ -327,12 +377,12 @@ class _AccountSettingsState extends State<AccountSettings> {
         title: 'Account',
         children: [
           // const Text('Log out of your Toggl account?'),
-          Text(user.fullName),
+          SettingItemTitle(user.fullName),
           // const SizedBox(height: 4),
           Text(
             user.email,
             // 'Logging out will remove all your data from this device.',
-            style: subtitleTextStyle,
+            style: subtitleTextStyle(context),
           ),
           const SizedBox(height: 12),
           ElevatedButton.icon(
@@ -366,7 +416,7 @@ class ProjectSettings extends StatelessObserverWidget {
         SettingsSection(
           title: 'Workspace & Project',
           children: [
-            const Text('Workspace'),
+            const SettingItemTitle('Workspace'),
             const SizedBox(height: 8),
             CustomDropdown<Workspace>(
               value: store.selectedWorkspace,
@@ -383,7 +433,7 @@ class ProjectSettings extends StatelessObserverWidget {
               items: store.workspaces,
             ),
             const SizedBox(height: 16),
-            const Text('Project'),
+            const SettingItemTitle('Project'),
             const SizedBox(height: 8),
             CustomDropdown<Project>(
               value: store.selectedProject,
@@ -400,7 +450,7 @@ class ProjectSettings extends StatelessObserverWidget {
                     item.name.isNotEmpty ? item.name : 'Untitled',
                     style: TextStyle(
                       color: item.name.isEmpty
-                          ? context.theme.colorScheme.onSurface.withOpacity(0.5)
+                          ? context.theme.textColor.withOpacity(0.5)
                           : null,
                       fontStyle: item.name.isNotEmpty ? null : FontStyle.italic,
                       fontSize: 14,
@@ -416,8 +466,8 @@ class ProjectSettings extends StatelessObserverWidget {
           ],
         ),
         Positioned(
-          top: 34,
-          right: 16,
+          top: 30,
+          right: 10,
           child: Tooltip(
             message: 'Refresh',
             waitDuration: const Duration(milliseconds: 700),
@@ -470,13 +520,13 @@ class SettingsSection extends StatelessWidget {
             child: Text(
               title!.toUpperCase(),
               style: context.theme.textTheme.titleMedium!.copyWith(
-                color: context.theme.colorScheme.primary,
-                fontSize: 10,
-                letterSpacing: 1,
-              ),
+                  color: context.theme.colorScheme.primary,
+                  fontSize: 12,
+                  letterSpacing: 1,
+                  fontVariations: FontVariations.semiBold),
             ),
           ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Container(
           padding: padding ?? const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -554,30 +604,56 @@ class ColorButton extends StatelessWidget {
         width: 34,
         height: 34,
         alignment: Alignment.center,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: LinearGradient(
             colors: [
               color,
-              color.darken(90),
+              context.theme.brightness.isLight
+                  ? color.shade(5)
+                  : color.darken(95),
             ],
             stops: const [0.48, 0.48],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           border: Border.all(
-            color: selected ? Colors.white : color,
+            color: selected ? context.theme.textColor : color,
             width: selected ? 1.5 : 1.5,
           ),
         ),
         child: selected
-            ? const ImageIcon(
-                AssetImage(SystemTrayIcons.iconDone),
+            ? ImageIcon(
+                const AssetImage(SystemTrayIcons.iconDone),
                 size: 20,
-                color: Colors.white,
+                color: context.theme.textColor,
               )
             : null,
       ),
+    );
+  }
+}
+
+class SettingItemTitle extends StatelessWidget {
+  final String label;
+  final TextStyle? style;
+
+  const SettingItemTitle(
+    this.label, {
+    super.key,
+    this.style,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      style: style ??
+          context.theme.textTheme.titleMedium!.copyWith(
+            fontSize: 14,
+            fontVariations: FontVariations.semiBold,
+          ),
     );
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 
+import '../utils/extensions.dart';
 import '../utils/font_variations.dart';
 
 class FieldLabel extends StatelessWidget {
@@ -14,7 +16,7 @@ class FieldLabel extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          color: Colors.white.withOpacity(0.5),
+          color: context.theme.textColor.withOpacity(0.5),
         ),
       ),
     );
@@ -41,11 +43,11 @@ class SetupTitle extends StatelessWidget {
   }
 }
 
-final TextStyle subtitleTextStyle = TextStyle(
-  fontSize: 13,
-  height: 1.4,
-  color: Colors.white.withOpacity(0.5),
-);
+TextStyle subtitleTextStyle(BuildContext context) => TextStyle(
+      fontSize: 13,
+      height: 1.4,
+      color: context.theme.textColor.withOpacity(0.5),
+    );
 
 class SetupSubtitle extends StatelessWidget {
   final String subtitle;
@@ -58,7 +60,7 @@ class SetupSubtitle extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 24),
       child: Text(
         subtitle,
-        style: subtitleTextStyle,
+        style: subtitleTextStyle(context),
       ),
     );
   }

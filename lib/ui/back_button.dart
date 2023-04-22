@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 
+import '../utils/extensions.dart';
 import 'gesture_detector_with_cursor.dart';
 
 class CustomBackButton extends StatelessWidget {
@@ -40,8 +41,8 @@ class CustomBackButton extends StatelessWidget {
                   color: hovering
                       ? usePrimaryColor
                           ? context.theme.colorScheme.primary
-                          : context.theme.colorScheme.onSurface
-                      : Colors.white.withOpacity(0.3),
+                          : context.theme.textColor
+                      : context.theme.textColor.withOpacity(0.5),
                 ),
               ),
               const SizedBox(width: 8),
@@ -51,8 +52,8 @@ class CustomBackButton extends StatelessWidget {
                   color: hovering && !disabled
                       ? usePrimaryColor
                           ? context.theme.colorScheme.primary
-                          : context.theme.colorScheme.onSurface
-                      : Colors.white.withOpacity(0.3),
+                          : context.theme.textColor
+                      : context.theme.textColor.withOpacity(0.5),
                   height: 1.2,
                 ),
               ),

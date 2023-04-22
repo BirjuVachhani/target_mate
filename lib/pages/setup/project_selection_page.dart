@@ -21,6 +21,7 @@ import '../../ui/custom_dropdown.dart';
 import '../../ui/custom_scaffold.dart';
 import '../../ui/dropdown_button3.dart';
 import '../../ui/widgets.dart';
+import '../../utils/extensions.dart';
 import '../../utils/utils.dart';
 import 'target_setup_page.dart';
 
@@ -111,8 +112,7 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
                             item.name.isNotEmpty ? item.name : 'Untitled',
                             style: TextStyle(
                               color: item.name.isEmpty
-                                  ? context.theme.colorScheme.onSurface
-                                      .withOpacity(0.5)
+                                  ? context.theme.textColor.withOpacity(0.5)
                                   : null,
                               fontStyle: item.name.isNotEmpty
                                   ? null

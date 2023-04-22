@@ -25,6 +25,7 @@ import '../../resources/resources.dart';
 import '../../ui/custom_scaffold.dart';
 import '../../ui/gesture_detector_with_cursor.dart';
 import '../../ui/widgets.dart';
+import '../../utils/extensions.dart';
 import '../../utils/font_variations.dart';
 import '../../utils/utils.dart';
 import 'project_selection_page.dart';
@@ -85,13 +86,13 @@ class _AuthPageState extends State<AuthPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
+                    Text(
                       'Welcome to',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
                         fontVariations: FontVariations.w500,
-                        color: Colors.white70,
+                        color: context.theme.textColor.withOpacity(0.7),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -120,10 +121,10 @@ class _AuthPageState extends State<AuthPage> {
                         ],
                       ),
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontVariations: FontVariations.w500,
-                        color: Colors.white70,
+                        color: context.theme.textColor.withOpacity(0.7),
                       ),
                     ),
                     const SizedBox(height: 48),
@@ -210,7 +211,7 @@ class _ApiKeyUIState extends State<ApiKeyUI> {
               ),
             ],
           ),
-          style: subtitleTextStyle,
+          style: subtitleTextStyle(context),
         ),
         const SizedBox(height: 16),
         Observer(
@@ -274,7 +275,7 @@ class _ApiKeyUIState extends State<ApiKeyUI> {
         Center(
           child: Text(
             'OR',
-            style: subtitleTextStyle,
+            style: subtitleTextStyle(context),
           ),
         ),
         const SizedBox(height: 12),
@@ -338,7 +339,7 @@ class _BasicAuthUIState extends State<BasicAuthUI> {
               ),
             ],
           ),
-          style: subtitleTextStyle,
+          style: subtitleTextStyle(context),
         ),
         const SizedBox(height: 16),
         Observer(
@@ -425,7 +426,7 @@ class _BasicAuthUIState extends State<BasicAuthUI> {
         Center(
           child: Text(
             'OR',
-            style: subtitleTextStyle,
+            style: subtitleTextStyle(context),
           ),
         ),
         const SizedBox(height: 12),

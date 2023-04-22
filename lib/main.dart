@@ -21,6 +21,7 @@ import 'pages/setup/auth_page.dart';
 import 'resources/colors.dart';
 import 'resources/keys.dart';
 import 'resources/theme.dart';
+import 'ui/debug_floating_theme_buttons.dart';
 import 'ui/window_border.dart';
 import 'utils/app_icon_manager.dart';
 import 'utils/extensions.dart';
@@ -191,7 +192,9 @@ class _MyAppState extends State<MyApp> {
           fit: StackFit.expand,
           children: [
             Positioned.fill(
-              child: child ?? const SizedBox.shrink(),
+              child: DebugFloatingThemeButton(
+                child: child ?? const SizedBox.shrink(),
+              ),
             ),
             if (defaultTargetPlatform.isWindows)
               const Positioned(

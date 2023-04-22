@@ -12,6 +12,7 @@ import 'package:hive/hive.dart';
 import '../main.dart';
 import '../resources/keys.dart';
 import '../ui/custom_scaffold.dart';
+import '../utils/extensions.dart';
 import '../utils/migration/migrator.dart';
 import '../utils/utils.dart';
 import 'home.dart';
@@ -72,8 +73,7 @@ class _MigrationPageState extends State<MigrationPage> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
-                        color: context.theme.colorScheme.onSurface
-                            .withOpacity(0.5),
+                        color: context.theme.textColor.withOpacity(0.5),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -120,8 +120,7 @@ class _MigrationPageState extends State<MigrationPage> {
                   Text(
                     'Hold on, migrating your app...',
                     style: TextStyle(
-                      color:
-                          context.theme.colorScheme.onSurface.withOpacity(0.5),
+                      color: context.theme.textColor.withOpacity(0.5),
                       fontSize: 14,
                     ),
                   ),

@@ -31,64 +31,71 @@ class CustomScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mode = AdaptiveTheme.of(context).mode;
+    final brightness = context.theme.brightness;
     return AnnotatedRegion(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness:
-            mode.isDark ? Brightness.light : Brightness.dark,
-        statusBarBrightness: mode.isDark ? Brightness.dark : Brightness.light,
+            brightness.isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness:
+            brightness.isDark ? Brightness.dark : Brightness.light,
         systemNavigationBarColor:
             systemNavigationBarColor ?? context.theme.scaffoldBackgroundColor,
         systemNavigationBarIconBrightness:
-            mode.isDark ? Brightness.dark : Brightness.light,
+            brightness.isDark ? Brightness.dark : Brightness.light,
         systemNavigationBarDividerColor: Colors.transparent,
       ),
       child: WillPopScope(
         onWillPop: onWillPop ?? () async => true,
-        child: GradientBackground(
-          child: Scaffold(
-            backgroundColor:
-                gradientBackground ? Colors.transparent : backgroundColor,
-            resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-            appBar: defaultTargetPlatform.isDesktop
-                ? PreferredSize(
-                    preferredSize: Size.fromHeight(getToolbarHeight()),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        if (gradientBackground)
-                          Align(
-                            alignment: defaultTargetPlatform.isWindows
-                                ? Alignment.centerLeft
-                                : Alignment.center,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
-                              child: Image.asset(
-                                Images.logoTrimmed,
-                                fit: BoxFit.fitHeight,
-                                height: 16,
-                                color: context.theme.colorScheme.background,
+        child: ColoredBox(
+          color: context.theme.scaffoldBackgroundColor,
+          child: GradientBackground(
+            child: Scaffold(
+              backgroundColor: gradientBackground
+                  ? context.theme.scaffoldBackgroundColor.withOpacity(0)
+                  : backgroundColor,
+              resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+              appBar: defaultTargetPlatform.isDesktop
+                  ? PreferredSize(
+                      preferredSize: Size.fromHeight(getToolbarHeight()),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          if (gradientBackground)
+                            Align(
+                              alignment: defaultTargetPlatform.isWindows
+                                  ? Alignment.centerLeft
+                                  : Alignment.center,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
+                                child: Image.asset(
+                                  Images.logoTrimmed,
+                                  fit: BoxFit.fitHeight,
+                                  height: 16,
+                                  color: context.theme.brightness.isDark
+                                      ? context.theme.colorScheme.background
+                                      : context.theme.textColor,
+                                ),
                               ),
                             ),
-                          ),
-                        MoveWindow(),
-                        // moved to material app.
-                        // if (defaultTargetPlatform.isWindows)
-                        //   const Positioned(
-                        //     top: 0,
-                        //     right: 0,
-                        //     child: WindowButtons(),
-                        //   ),
-                      ],
-                    ),
-                  )
-                : null,
-            body: GestureDetector(
-              onTap: () => FocusScope.of(context).unfocus(),
-              behavior: HitTestBehavior.opaque,
-              child: body,
+                          MoveWindow(),
+                          // moved to material app.
+                          // if (defaultTargetPlatform.isWindows)
+                          //   const Positioned(
+                          //     top: 0,
+                          //     right: 0,
+                          //     child: WindowButtons(),
+                          //   ),
+                        ],
+                      ),
+                    )
+                  : null,
+              body: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                behavior: HitTestBehavior.opaque,
+                child: body,
+              ),
             ),
           ),
         ),

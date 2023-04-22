@@ -143,7 +143,8 @@ class CustomDropdown<T> extends StatelessWidget {
             dropdownMaxHeight: dropdownMaxHeight,
             scrollbarThickness: 4,
             dropdownElevation: 2,
-            selectedItemHighlightColor: Theme.of(context).primaryColor,
+            selectedItemHighlightColor: context.theme.colorScheme.primary,
+            selectedItemTextColor: context.theme.colorScheme.onPrimary,
             dropdownPadding: EdgeInsets.zero,
             // searchInnerWidget: searchable
             //     ? SearchBar(controller: searchController)
@@ -167,7 +168,9 @@ class CustomDropdown<T> extends StatelessWidget {
             ),
             dropdownDecoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
-              color: context.theme.colorScheme.primary.darken(80),
+              color: context.theme.brightness.isDark
+                  ? context.theme.colorScheme.primary.darken(80)
+                  : Colors.white,
             ),
             icon: const Icon(
               Icons.keyboard_arrow_down_rounded,

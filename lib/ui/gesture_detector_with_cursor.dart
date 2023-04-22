@@ -10,6 +10,9 @@ class GestureDetectorWithCursor extends StatelessWidget {
   final MouseCursor cursor;
   final Duration? tooltipWaitDuration;
   final HitTestBehavior behavior;
+  final GestureDragStartCallback? onPanStart;
+  final GestureDragUpdateCallback? onPanUpdate;
+  final GestureDragEndCallback? onPanEnd;
 
   const GestureDetectorWithCursor({
     super.key,
@@ -21,6 +24,9 @@ class GestureDetectorWithCursor extends StatelessWidget {
     this.cursor = SystemMouseCursors.click,
     this.tooltipWaitDuration,
     this.behavior = HitTestBehavior.opaque,
+    this.onPanStart,
+    this.onPanUpdate,
+    this.onPanEnd,
   });
 
   @override
@@ -28,6 +34,9 @@ class GestureDetectorWithCursor extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
+      onPanStart: onPanStart,
+      onPanUpdate: onPanUpdate,
+      onPanEnd: onPanEnd,
       child: MouseRegion(
         cursor: cursor,
         onEnter: onEnter,

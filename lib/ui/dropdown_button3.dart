@@ -223,7 +223,14 @@ class _DropdownMenuItemButtonState<T>
         child: Container(
           color:
               isSelectedItem ? widget.route.selectedItemHighlightColor : null,
-          child: child,
+          child: DefaultTextStyle(
+            style: DefaultTextStyle.of(context).style.copyWith(
+                  color: isSelectedItem
+                      ? widget.route.selectedItemTextColor
+                      : null,
+                ),
+            child: child,
+          ),
         ),
       );
     }
@@ -597,6 +604,7 @@ class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
     required this.selectedIndex,
     required this.isNoSelectedItem,
     this.selectedItemHighlightColor,
+    this.selectedItemTextColor,
     this.elevation = 8,
     required this.capturedThemes,
     required this.style,
@@ -631,6 +639,7 @@ class _DropdownRoute<T> extends PopupRoute<_DropdownRouteResult<T>> {
   final int selectedIndex;
   final bool isNoSelectedItem;
   final Color? selectedItemHighlightColor;
+  final Color? selectedItemTextColor;
   final int elevation;
   final CapturedThemes capturedThemes;
   final TextStyle style;
@@ -1124,6 +1133,7 @@ class CustomDropdownButton<T> extends StatefulWidget {
     this.dropdownDecoration,
     this.dropdownDirection = DropdownDirection.textDirection,
     this.selectedItemHighlightColor,
+    this.selectedItemTextColor,
     this.scrollbarRadius,
     this.scrollbarThickness,
     this.scrollbarAlwaysShow,
@@ -1194,6 +1204,7 @@ class CustomDropdownButton<T> extends StatefulWidget {
     this.dropdownDecoration,
     this.dropdownDirection = DropdownDirection.textDirection,
     this.selectedItemHighlightColor,
+    this.selectedItemTextColor,
     this.scrollbarRadius,
     this.scrollbarThickness,
     this.scrollbarAlwaysShow,
@@ -1266,6 +1277,8 @@ class CustomDropdownButton<T> extends StatefulWidget {
 
   /// The highlight color of the current selected item
   final Color? selectedItemHighlightColor;
+
+  final Color? selectedItemTextColor;
 
   /// The radius of the scrollbar's corners
   final Radius? scrollbarRadius;
@@ -1683,6 +1696,7 @@ class CustomDropdownButtonState<T> extends State<CustomDropdownButton<T>>
       selectedIndex: _selectedIndex ?? 0,
       isNoSelectedItem: _selectedIndex == null,
       selectedItemHighlightColor: widget.selectedItemHighlightColor,
+      selectedItemTextColor: widget.selectedItemTextColor,
       elevation: widget.dropdownElevation,
       capturedThemes:
           InheritedTheme.capture(from: context, to: navigator.context),
@@ -2023,6 +2037,7 @@ class CustomDropdownButtonFormField<T> extends FormField<T> {
     BoxDecoration? dropdownDecoration,
     DropdownDirection dropdownDirection = DropdownDirection.textDirection,
     Color? selectedItemHighlightColor,
+    Color? selectedItemTextColor,
     Radius? scrollbarRadius,
     double? scrollbarThickness,
     bool? scrollbarAlwaysShow,
@@ -2125,6 +2140,7 @@ class CustomDropdownButtonFormField<T> extends FormField<T> {
                         dropdownDecoration: dropdownDecoration,
                         dropdownDirection: dropdownDirection,
                         selectedItemHighlightColor: selectedItemHighlightColor,
+                        selectedItemTextColor: selectedItemTextColor,
                         scrollbarRadius: scrollbarRadius,
                         scrollbarThickness: scrollbarThickness,
                         scrollbarAlwaysShow: scrollbarAlwaysShow,

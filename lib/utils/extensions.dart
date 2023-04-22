@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:material_color_utilities/palettes/core_palette.dart';
 import 'package:screwdriver/screwdriver.dart';
 
@@ -65,4 +65,8 @@ extension DateTimeListExt on Iterable<DateTime> {
 
   /// Returns true if the list contains a date that is equal to the given [day].
   bool containsDay(int day) => any((item) => item.day == day);
+}
+
+extension ThemeExt on ThemeData {
+  Color get textColor => textTheme.titleLarge!.color!;
 }

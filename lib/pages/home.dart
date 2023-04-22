@@ -159,10 +159,10 @@ class _HomePageState extends State<HomePage> {
                           duration: const Duration(milliseconds: 2000),
                         ),
                         const SizedBox(height: 16),
-                        const Text(
+                        Text(
                           'Hold on, loading your entries...',
                           style: TextStyle(
-                            color: Colors.white54,
+                            color: context.theme.textColor.withOpacity(0.5),
                             fontSize: 14,
                           ),
                         ),
@@ -341,7 +341,9 @@ class _BottomBarState extends State<BottomBar>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: context.theme.colorScheme.primary.darken(85),
+        color: context.theme.brightness.isDark
+            ? context.theme.colorScheme.primary.darken(85)
+            : context.theme.colorScheme.primary.shade(1).shade(1),
         border: Border(
           top: BorderSide(
             color: Colors.white.withOpacity(0.1),
@@ -371,8 +373,7 @@ class _BottomBarState extends State<BottomBar>
                     'Syncing...',
                     style: TextStyle(
                       fontSize: 12,
-                      fontVariations: FontVariations.w300,
-                      color: Colors.white.withOpacity(0.7),
+                      color: context.theme.textColor.withOpacity(0.7),
                     ),
                   ),
                 )
@@ -382,7 +383,7 @@ class _BottomBarState extends State<BottomBar>
                   padding: const EdgeInsets.only(right: 4),
                   child: Icon(
                     Icons.sync,
-                    color: Colors.white.withOpacity(0.7),
+                    color: context.theme.textColor.withOpacity(0.7),
                     size: 14,
                   ),
                 ),
@@ -393,14 +394,13 @@ class _BottomBarState extends State<BottomBar>
                         DateTime.now().difference(store.lastUpdated!)),
                     style: TextStyle(
                       fontSize: 12,
-                      fontVariations: FontVariations.w300,
-                      color: Colors.white.withOpacity(0.7),
+                      color: context.theme.textColor.withOpacity(0.7),
                     ),
                   ),
                 ),
               Icon(
                 Icons.schedule_rounded,
-                color: Colors.white.withOpacity(0.7),
+                color: context.theme.textColor.withOpacity(0.7),
                 size: 14,
               ),
               const SizedBox(width: 4),
@@ -408,8 +408,7 @@ class _BottomBarState extends State<BottomBar>
                 'Every ${formatFrequency(settingsStore.refreshFrequency)}',
                 style: TextStyle(
                   fontSize: 12,
-                  fontVariations: FontVariations.w300,
-                  color: Colors.white.withOpacity(0.7),
+                  color: context.theme.textColor.withOpacity(0.7),
                 ),
               ),
             ],
@@ -489,9 +488,10 @@ class PerDayTimeEntryView extends StatelessWidget {
                 Expanded(
                   child: Text(
                     formatDate(date),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       fontVariations: FontVariations.w600,
+                      color: context.theme.textColor,
                     ),
                   ),
                 ),
@@ -555,8 +555,9 @@ class PerDayTimeEntryView extends StatelessWidget {
                                   fontSize: 13,
                                   fontVariations: FontVariations.w500,
                                   color: item.description == null
-                                      ? Colors.white.withOpacity(0.4)
-                                      : Colors.white70,
+                                      ? context.theme.textColor.withOpacity(0.4)
+                                      : context.theme.textColor
+                                          .withOpacity(0.7),
                                 ),
                               ),
                             ],
@@ -574,20 +575,20 @@ class PerDayTimeEntryView extends StatelessWidget {
                           fontSize: 13,
                           fontVariations: FontVariations.w300,
                           color: item.description == null
-                              ? Colors.white.withOpacity(0.4)
-                              : Colors.white70,
+                              ? context.theme.textColor.withOpacity(0.4)
+                              : context.theme.textColor.withOpacity(0.7),
                         ),
                       ),
                     ),
                   const SizedBox(width: 14),
                   Text(
                     formatDuration(item.duration),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontVariations: FontVariations.w300,
                       letterSpacing: 0.4,
-                      color: Colors.white70,
-                      fontFeatures: [FontFeature.tabularFigures()],
+                      color: context.theme.textColor.withOpacity(0.7),
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                 ],
@@ -621,7 +622,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontVariations: FontVariations.w600,
-                      color: Colors.white.withOpacity(0.8),
+                      color: context.theme.textColor.withOpacity(0.8),
                       // color: Colors.grey,
                     ),
                   ),
@@ -629,7 +630,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                     '${((entry.duration.inMinutes / entry.target.inMinutes) * 100).clamp(0, 100).floor()}% Achieved',
                     style: TextStyle(
                       fontSize: 13,
-                      color: Colors.white.withOpacity(0.8),
+                      color: context.theme.textColor.withOpacity(0.8),
                     ),
                   ),
                 ],
@@ -721,14 +722,15 @@ class HomeAppBar extends StatelessWidget {
                       'Welcome back,',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white.withOpacity(0.8),
+                        color: context.theme.textColor.withOpacity(0.8),
                       ),
                     ),
                     Text(
                       store.user?.fullName ?? '',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontVariations: FontVariations.bold,
+                        color: context.theme.textColor,
                       ),
                     ),
                     // Text(
@@ -757,17 +759,18 @@ class HomeAppBar extends StatelessWidget {
                     return TextButton(
                       onPressed: store.isLoading ? null : store.refreshData,
                       style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.white.withOpacity(0.1),
+                        foregroundColor: context.theme.textColor,
+                        backgroundColor:
+                            context.theme.textColor.withOpacity(0.1),
                       ),
                       child: store.isLoading
-                          ? const SizedBox.square(
+                          ? SizedBox.square(
                               dimension: 20,
                               child: Center(
                                 child: SizedBox.square(
                                   dimension: 14,
                                   child: CircularProgressIndicator(
-                                    color: Colors.white,
+                                    color: context.theme.textColor,
                                     strokeWidth: 2,
                                   ),
                                 ),
@@ -784,17 +787,17 @@ class HomeAppBar extends StatelessWidget {
                   return FilledButton.icon(
                     onPressed: store.isLoading ? null : store.refreshData,
                     style: TextButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.white.withOpacity(0.1),
+                      foregroundColor: context.theme.textColor,
+                      backgroundColor: context.theme.textColor.withOpacity(0.1),
                     ),
                     icon: store.isLoading
-                        ? const SizedBox.square(
+                        ? SizedBox.square(
                             dimension: 20,
                             child: Center(
                               child: SizedBox.square(
                                 dimension: 14,
                                 child: CircularProgressIndicator(
-                                  color: Colors.white,
+                                  color: context.theme.textColor,
                                   strokeWidth: 2,
                                 ),
                               ),
@@ -814,8 +817,8 @@ class HomeAppBar extends StatelessWidget {
                 child: FilledButton(
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.white.withOpacity(0.1),
+                    foregroundColor: context.theme.textColor,
+                    backgroundColor: context.theme.textColor.withOpacity(0.1),
                   ),
                   onPressed: () => openSettings(context),
                   child: const Icon(Icons.settings, size: 20),
@@ -853,25 +856,24 @@ class MonthlyStats extends StatelessObserverWidget {
             children: [
               Text(
                 DateFormat('MMMM yyyy').format(DateTime.now()).toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontVariations: FontVariations.w600,
-                  color: Colors.white60,
-                ),
+                style: TextStyle(
+                    fontSize: 12,
+                    fontVariations: FontVariations.w600,
+                    color: context.theme.textColor.withOpacity(0.6)),
               ),
               const SizedBox(height: 4),
               Text.rich(
                 TextSpan(
                   children: [
                     if (store.isLoading)
-                      const WidgetSpan(
+                      WidgetSpan(
                         child: SizedBox(
                           width: 48,
                           height: 24,
                           child: Center(
                             child: SpinKitThreeBounce(
                               size: 16,
-                              color: Colors.white,
+                              color: context.theme.textColor,
                             ),
                           ),
                         ),
@@ -889,10 +891,10 @@ class MonthlyStats extends StatelessObserverWidget {
                         text: formatTotalDuration(store, targetStore),
                       ),
                     if (!showOvertime)
-                      const TextSpan(
+                      TextSpan(
                         text: ' hours',
                         style: TextStyle(
-                          color: Colors.white60,
+                          color: context.theme.textColor.withOpacity(0.6),
                           fontSize: 16,
                           fontVariations: FontVariations.w600,
                         ),
@@ -900,16 +902,17 @@ class MonthlyStats extends StatelessObserverWidget {
                     if (settingsStore.showRemaining)
                       TextSpan(
                         text: showOvertime ? ' overtime' : ' left',
-                        style: const TextStyle(
-                          color: Colors.white60,
+                        style: TextStyle(
+                          color: context.theme.textColor.withOpacity(0.6),
                           fontSize: 16,
                           fontVariations: FontVariations.w600,
                         ),
                       ),
                   ],
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontVariations: FontVariations.bold,
+                    color: context.theme.textColor,
                   ),
                 ),
               ),
@@ -919,8 +922,8 @@ class MonthlyStats extends StatelessObserverWidget {
         FilledButton.icon(
           onPressed: () => onEdit(context),
           style: TextButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.white.withOpacity(0.1),
+            foregroundColor: context.theme.textColor,
+            backgroundColor: context.theme.textColor.withOpacity(0.1),
             textStyle: const TextStyle(
               fontSize: 13,
               fontVariations: FontVariations.w600,
@@ -993,7 +996,7 @@ class DailyStats extends StatelessObserverWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (store.isMonthlyTargetAchieved)
-          const Expanded(
+          Expanded(
             child: SizedBox(
               height: 50,
               child: Align(
@@ -1003,6 +1006,7 @@ class DailyStats extends StatelessObserverWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontVariations: FontVariations.w600,
+                    color: context.theme.textColor,
                   ),
                 ),
               ),
@@ -1014,12 +1018,12 @@ class DailyStats extends StatelessObserverWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
+                Text(
                   'Daily average to achieve goal',
                   style: TextStyle(
                     fontSize: 14,
                     fontVariations: FontVariations.w600,
-                    color: Colors.white60,
+                    color: context.theme.textColor.withOpacity(0.6),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -1027,14 +1031,14 @@ class DailyStats extends StatelessObserverWidget {
                   TextSpan(
                     children: [
                       if (store.isLoading)
-                        const WidgetSpan(
+                        WidgetSpan(
                           child: SizedBox(
                             width: 48,
                             height: 24,
                             child: Center(
                               child: SpinKitThreeBounce(
                                 size: 16,
-                                color: Colors.white,
+                                color: context.theme.textColor,
                               ),
                             ),
                           ),
@@ -1044,17 +1048,17 @@ class DailyStats extends StatelessObserverWidget {
                           text: formatDailyTargetDuration(
                               store.effectiveAverageTarget),
                         ),
-                      const TextSpan(
+                      TextSpan(
                         text: ' / day',
                         style: TextStyle(
-                          color: Colors.white60,
+                          color: context.theme.textColor.withOpacity(0.6),
                           fontSize: 20,
                         ),
                       ),
-                      const TextSpan(
+                      TextSpan(
                         text: ' ',
                         style: TextStyle(
-                          color: Colors.white60,
+                          color: context.theme.textColor.withOpacity(0.6),
                           fontSize: 24,
                         ),
                       ),
@@ -1074,21 +1078,21 @@ class DailyStats extends StatelessObserverWidget {
           children: [
             Text(
               'Working days${settingsStore.showRemaining ? ' left' : ''}',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontVariations: FontVariations.w600,
-                color: Colors.white60,
+                color: context.theme.textColor.withOpacity(0.6),
               ),
             ),
             const SizedBox(height: 4),
             Text.rich(
               TextSpan(
                 text: '$days/${targetStore.effectiveDays.length}',
-                children: const [
+                children: [
                   TextSpan(
                     text: ' days',
                     style: TextStyle(
-                      color: Colors.white60,
+                      color: context.theme.textColor.withOpacity(0.6),
                       fontSize: 14,
                     ),
                   ),
@@ -1122,22 +1126,23 @@ class TodayProgressIndicator extends StatelessObserverWidget {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
                 "Today's Progress",
                 style: TextStyle(
                   fontSize: 14,
                   fontVariations: FontVariations.w600,
-                  color: Colors.white60,
+                  color: context.theme.textColor.withOpacity(0.6),
                 ),
               ),
             ),
             if (!store.isLoading || store.isLoadingWithData)
               Text(
                 formatTodayProgressPercentage(store),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontVariations: FontVariations.w600,
+                  color: context.theme.textColor,
                 ),
               ),
             const SizedBox(width: 2),
@@ -1153,7 +1158,7 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                   borderRadius: BorderRadius.circular(4),
                   child: AnimatedHorizontalProgressBar(
                     value: store.todayPercentage,
-                    backgroundColor: Colors.white.withOpacity(0.15),
+                    backgroundColor: context.theme.textColor.withOpacity(0.15),
                     duration: 1.seconds,
                     curve: Curves.fastOutSlowIn,
                     valueColor: AlwaysStoppedAnimation(
@@ -1179,9 +1184,9 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           if (store.isTodayTargetAchieved)
-                            const ImageIcon(
-                              AssetImage(SystemTrayIcons.iconDone),
-                              color: Colors.white,
+                            ImageIcon(
+                              const AssetImage(SystemTrayIcons.iconDone),
+                              color: context.theme.textColor,
                               size: 16,
                             ),
                           const SizedBox(width: 2),
@@ -1189,9 +1194,10 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                             store.todayPercentage >= 1
                                 ? 'Completed'
                                 : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               height: 1,
+                              color: context.theme.textColor.withOpacity(0.6),
                             ),
                           ),
                         ],
@@ -1211,9 +1217,9 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                 children: [
                   Text(
                     formatDailyOvertimeDuration(store),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: Colors.white60,
+                      color: context.theme.textColor.withOpacity(0.6),
                     ),
                   ),
                   const Spacer(),
@@ -1226,12 +1232,12 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
+                        Text(
                           'Working extra!',
                           textAlign: TextAlign.end,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white60,
+                            color: context.theme.textColor.withOpacity(0.6),
                           ),
                         ),
                         const SizedBox(width: 4),

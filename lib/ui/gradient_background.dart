@@ -10,6 +10,10 @@ class GradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = context.theme.brightness.isDark
+        ? context.theme.colorScheme.primary
+            .darken(context.theme.useMaterial3 ? 20 : 1)
+        : context.theme.colorScheme.primary.shade(1);
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -20,12 +24,10 @@ class GradientBackground extends StatelessWidget {
           child: Container(
             height: 320,
             decoration: BoxDecoration(
-              color: Colors.white,
               gradient: LinearGradient(
                 colors: [
-                  context.theme.colorScheme.primary
-                      .darken(context.theme.useMaterial3 ? 20 : 1),
-                  Colors.transparent,
+                  color,
+                  color.withOpacity(0),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
