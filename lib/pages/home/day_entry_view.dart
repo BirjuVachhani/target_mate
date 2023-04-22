@@ -28,6 +28,10 @@ class PerDayTimeEntryView extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
         color: context.theme.colorScheme.primary.withOpacity(0.05),
+        border: Border.all(
+          color: context.theme.colorScheme.primary.withOpacity(0.1),
+          width: 1,
+        ),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -62,7 +66,11 @@ class PerDayTimeEntryView extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1, thickness: 1),
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: context.theme.colorScheme.primary.withOpacity(0.15),
+          ),
           const SizedBox(height: 14),
           ListView.separated(
             physics: const NeverScrollableScrollPhysics(),
@@ -96,7 +104,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                                 'Running'.toUpperCase(),
                                 style: TextStyle(
                                   color: context.theme.colorScheme.primary,
-                                  fontVariations: FontVariations.w600,
+                                  fontVariations: FontVariations.semiBold,
                                   fontSize: 10,
                                 ),
                               ),
@@ -107,7 +115,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                                     : 'No Description',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  fontVariations: FontVariations.w500,
+                                  fontVariations: FontVariations.medium,
                                   color: item.description == null
                                       ? context.theme.textColor.withOpacity(0.4)
                                       : context.theme.textColor
@@ -127,7 +135,6 @@ class PerDayTimeEntryView extends StatelessWidget {
                             : 'No Description',
                         style: TextStyle(
                           fontSize: 13,
-                          fontVariations: FontVariations.w300,
                           color: item.description == null
                               ? context.theme.textColor.withOpacity(0.4)
                               : context.theme.textColor.withOpacity(0.7),
@@ -139,7 +146,6 @@ class PerDayTimeEntryView extends StatelessWidget {
                     formatDuration(item.duration),
                     style: TextStyle(
                       fontSize: 13,
-                      fontVariations: FontVariations.w300,
                       letterSpacing: 0.4,
                       color: context.theme.textColor.withOpacity(0.7),
                       fontFeatures: const [FontFeature.tabularFigures()],
@@ -151,8 +157,13 @@ class PerDayTimeEntryView extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           if (entry.isWorkingDay && (entry.target.inMinutes > 0)) ...[
-            const Divider(height: 0.5, thickness: 0.5),
-            Padding(
+            Divider(
+              height: 0.5,
+              thickness: 0.5,
+              color: context.theme.colorScheme.primary.withOpacity(0.15),
+            ),
+            Container(
+              color: context.theme.colorScheme.primary.withOpacity(0.02),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,7 +175,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                         const TextSpan(
                           text: 'Goal: ',
                           style: TextStyle(
-                            fontVariations: FontVariations.w500,
+                            fontVariations: FontVariations.medium,
                             color: Colors.grey,
                           ),
                         ),
@@ -175,7 +186,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                     ),
                     style: TextStyle(
                       fontSize: 13,
-                      fontVariations: FontVariations.w600,
+                      fontVariations: FontVariations.semiBold,
                       color: context.theme.textColor.withOpacity(0.8),
                       // color: Colors.grey,
                     ),
@@ -185,6 +196,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       color: context.theme.textColor.withOpacity(0.8),
+                      fontVariations: FontVariations.semiBold,
                     ),
                   ),
                 ],
