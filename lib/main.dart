@@ -59,7 +59,10 @@ void main() async {
 
   setupLogging();
 
-  runApp(MyApp(isFirstRun: isFirstRun));
+  final initialThemeMode =
+      await AdaptiveTheme.getThemeMode() ?? AdaptiveThemeMode.dark;
+
+  runApp(MyApp(isFirstRun: isFirstRun, initialThemeMode: initialThemeMode));
 }
 
 void setupLogging() {
@@ -159,8 +162,13 @@ Future<void> setupWindowManager({required bool isFirstRun}) async {
 
 class MyApp extends StatefulWidget {
   final bool isFirstRun;
+  final AdaptiveThemeMode initialThemeMode;
 
-  const MyApp({super.key, required this.isFirstRun});
+  const MyApp({
+    super.key,
+    required this.isFirstRun,
+    required this.initialThemeMode,
+  });
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -179,7 +187,7 @@ class _MyAppState extends State<MyApp> {
     final bool requiresMigration = Migrator.requiresMigration();
 
     return AdaptiveTheme(
-      initial: AdaptiveThemeMode.dark,
+      initial: widget.initialThemeMode,
       light: getLightTheme(primaryColor, useMaterial3: useMaterial3),
       dark: getDarkTheme(primaryColor, useMaterial3: useMaterial3),
       builder: (theme, darkTheme) => MaterialApp(
