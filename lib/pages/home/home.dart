@@ -310,11 +310,15 @@ class HomeAppBar extends StatelessWidget {
         return Row(
           children: [
             CircleAvatar(
-              backgroundColor: context.theme.scaffoldBackgroundColor,
+              backgroundColor: context.theme.colorScheme.primary.shade(1),
               radius: 18,
-              backgroundImage: store.user != null
+              foregroundImage: store.user != null
                   ? NetworkImage(store.user!.avatarUrl)
                   : null,
+              child: Icon(
+                Icons.person_rounded,
+                color: context.theme.colorScheme.primary,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
