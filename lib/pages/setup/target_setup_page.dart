@@ -24,7 +24,7 @@ import '../../ui/widgets.dart';
 import '../../utils/extensions.dart';
 import '../../utils/font_variations.dart';
 import '../../utils/utils.dart';
-import '../home.dart';
+import '../home/home.dart';
 import '../target_store.dart';
 
 class TargetSetupPageWrapper extends StatelessWidget {

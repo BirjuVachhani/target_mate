@@ -15,7 +15,7 @@ import '../ui/custom_scaffold.dart';
 import '../utils/extensions.dart';
 import '../utils/migration/migrator.dart';
 import '../utils/utils.dart';
-import 'home.dart';
+import 'home/home.dart';
 import 'setup/auth_page.dart';
 
 class MigrationPage extends StatefulWidget {

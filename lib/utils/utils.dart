@@ -15,7 +15,7 @@ import '../model/day_entry.dart';
 import '../model/project.dart';
 import '../model/user.dart';
 import '../model/workspace.dart';
-import '../pages/home_store.dart';
+import '../pages/home/home_store.dart';
 import '../pages/settings.dart';
 import '../pages/settings_store.dart';
 import '../pages/setup/auth_page.dart';

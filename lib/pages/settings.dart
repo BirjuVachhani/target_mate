@@ -29,7 +29,7 @@ import '../utils/extensions.dart';
 import '../utils/font_variations.dart';
 import '../utils/system_tray_manager.dart';
 import '../utils/utils.dart';
-import 'home_store.dart';
+import 'home/home_store.dart';
 import 'settings_store.dart';
 
 class SettingsPage extends StatefulWidget {
