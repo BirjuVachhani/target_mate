@@ -137,7 +137,7 @@ ThemeData getLightTheme(Color primaryColor, {bool useMaterial3 = false}) {
     // useMaterial3: true,
     // colorSchemeSeed: primaryColor,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: backgroundColor,
+    scaffoldBackgroundColor: colorScheme.background,
     fontFamily: 'SF Pro',
     snackBarTheme: SnackBarThemeData(
       backgroundColor: m3colorScheme.tertiary,

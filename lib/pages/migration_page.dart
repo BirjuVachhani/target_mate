@@ -87,13 +87,14 @@ class _MigrationPageState extends State<MigrationPage> {
                       label: const Text('Try again!'),
                     ),
                     const SizedBox(height: 56),
-                    const FractionallySizedBox(
+                    FractionallySizedBox(
                       widthFactor: 0.8,
                       child: Text(
                         'If nothing works, Reset your app. You will have to log in again!',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white54,
+                          color: context.theme.colorScheme.onSurface
+                              .withOpacity(0.6),
                           fontSize: 14,
                         ),
                       ),

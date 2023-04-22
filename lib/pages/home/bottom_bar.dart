@@ -79,7 +79,7 @@ class _BottomBarState extends State<BottomBar>
             : context.theme.colorScheme.primary.shade(1).shade(1),
         border: Border(
           top: BorderSide(
-            color: Colors.white.withOpacity(0.1),
+            color: context.theme.colorScheme.onSurface.withOpacity(0.1),
             width: 1,
           ),
         ),
