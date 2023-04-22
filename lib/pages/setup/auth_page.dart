@@ -370,7 +370,6 @@ class _BasicAuthUIState extends State<BasicAuthUI> {
               store.email = value;
               store.error = null;
             },
-            maxLength: 32,
             maxLines: 1,
             autofillHints: const [AutofillHints.email],
             keyboardType: TextInputType.emailAddress,
