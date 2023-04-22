@@ -142,15 +142,15 @@ class MonthlyStats extends StatelessObserverWidget {
   }
 
   String formatCompletedDuration(HomeStore store, TargetStore targetStore) {
-    return '${store.completed.inHours > 0 ? '${store.completed.inHours} h ' : ''}${store.completed.inMinutes.remainder(60)}m ';
+    return '${store.completed.inHours > 0 ? '${store.completed.inHours}h ' : ''}${store.completed.inMinutes.remainder(60)}m ';
   }
 
   String formatRemainingDuration(HomeStore store, TargetStore targetStore) {
-    return '${store.remaining.inHours > 0 ? '${store.remaining.inHours} h ' : ''}${store.remaining.inMinutes.remainder(60)}m ';
+    return '${store.remaining.inHours > 0 ? '${store.remaining.inHours}h ' : ''}${store.remaining.inMinutes.remainder(60)}m ';
   }
 
   String formatOvertimeDuration(HomeStore store, TargetStore targetStore) {
-    return '${store.overtime.inHours > 0 ? '${store.overtime.inHours} h ' : ''}${store.overtime.inMinutes.remainder(60)}m ';
+    return '${store.overtime.inHours > 0 ? '${store.overtime.inHours}h ' : ''}${store.overtime.inMinutes.remainder(60)}m ';
   }
 
   String formatTotalDuration(HomeStore store, TargetStore targetStore) {
@@ -203,7 +203,7 @@ class DailyStats extends StatelessObserverWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Daily average to achieve goal',
+                  'Daily average to maintain',
                   style: TextStyle(
                     fontSize: 14,
                     fontVariations: FontVariations.w600,
@@ -261,7 +261,7 @@ class DailyStats extends StatelessObserverWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              'Working days${settingsStore.showRemaining ? ' left' : ''}',
+              'Working days',
               style: TextStyle(
                 fontSize: 14,
                 fontVariations: FontVariations.w600,
@@ -274,7 +274,7 @@ class DailyStats extends StatelessObserverWidget {
                 text: '$days/${targetStore.effectiveDays.length}',
                 children: [
                   TextSpan(
-                    text: ' days',
+                    text: ' days${settingsStore.showRemaining ? ' left' : ''}',
                     style: TextStyle(
                       color: context.theme.textColor.withOpacity(0.6),
                       fontSize: 14,
