@@ -21,6 +21,7 @@ import '../../ui/custom_scaffold.dart';
 import '../../ui/custom_switch.dart';
 import '../../ui/gesture_detector_with_cursor.dart';
 import '../../ui/widgets.dart';
+import '../../utils/font_variations.dart';
 import '../../utils/utils.dart';
 import '../home.dart';
 import '../target_store.dart';
@@ -379,7 +380,7 @@ class WeekDaysSelection extends StatelessWidget {
                                 ? context.theme.colorScheme.onPrimary
                                 : Colors.white,
                             fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                            fontVariations: FontVariations.w600,
                           ),
                         ),
                       ),
@@ -435,7 +436,7 @@ class CalenderSelection2 extends StatelessWidget {
                 DateFormat('MMMM yyyy').format(DateTime(year, month)),
                 style: const TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.w600,
+                  fontVariations: FontVariations.w600,
                 ),
               ),
             );
@@ -492,7 +493,7 @@ class CalenderSelection extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.white,
                   letterSpacing: 1.2,
-                  fontWeight: FontWeight.w500,
+                  fontVariations: FontVariations.w500,
                 ),
               ),
               const SizedBox(height: 16),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/font_variations.dart';
+
 class FieldLabel extends StatelessWidget {
   final String label;
 
@@ -31,7 +33,7 @@ class SetupTitle extends StatelessWidget {
       child: Text(
         title,
         style: const TextStyle(
-          fontWeight: FontWeight.bold,
+          fontVariations: FontVariations.bold,
           fontSize: 20,
         ),
       ),

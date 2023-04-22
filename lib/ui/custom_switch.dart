@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/font_variations.dart';
 import 'gesture_detector_with_cursor.dart';
 
 class CustomSwitch extends StatelessWidget {
@@ -31,7 +32,7 @@ class CustomSwitch extends StatelessWidget {
                   label!,
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    fontVariations: FontVariations.w500,
                   ).merge(labelStyle),
                 ),
               ),

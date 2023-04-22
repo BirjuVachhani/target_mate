@@ -22,7 +22,7 @@ ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
     // colorSchemeSeed: primaryColor,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: backgroundColor,
-    fontFamily: 'Inter',
+    fontFamily: 'SF Pro',
     snackBarTheme: SnackBarThemeData(
       backgroundColor: m3colorScheme.tertiary,
       contentTextStyle: TextStyle(
@@ -94,7 +94,6 @@ ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       textStyle: TextStyle(
         fontSize: 12,
-        letterSpacing: 0.2,
         color:
             (useMaterial3 ? m3colorScheme.onPrimary : m2colorScheme.onPrimary),
       ),

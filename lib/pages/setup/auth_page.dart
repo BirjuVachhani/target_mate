@@ -25,6 +25,7 @@ import '../../resources/resources.dart';
 import '../../ui/custom_scaffold.dart';
 import '../../ui/gesture_detector_with_cursor.dart';
 import '../../ui/widgets.dart';
+import '../../utils/font_variations.dart';
 import '../../utils/utils.dart';
 import 'project_selection_page.dart';
 
@@ -89,7 +90,7 @@ class _AuthPageState extends State<AuthPage> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                        fontVariations: FontVariations.w500,
                         color: Colors.white70,
                       ),
                     ),
@@ -112,7 +113,7 @@ class _AuthPageState extends State<AuthPage> {
                             text: 'Toggl Track.',
                             recognizer: recognizer,
                             style: TextStyle(
-                              fontWeight: FontWeight.w600,
+                              fontVariations: FontVariations.w600,
                               color: context.theme.colorScheme.primary,
                             ),
                           ),
@@ -121,7 +122,7 @@ class _AuthPageState extends State<AuthPage> {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontVariations: FontVariations.w500,
                         color: Colors.white70,
                       ),
                     ),
@@ -203,7 +204,7 @@ class _ApiKeyUIState extends State<ApiKeyUI> {
                 style: TextStyle(
                   decoration: TextDecoration.underline,
                   decorationColor: context.theme.colorScheme.primary,
-                  fontWeight: FontWeight.w600,
+                  fontVariations: FontVariations.w600,
                   color: context.theme.colorScheme.primary,
                 ),
               ),
@@ -283,7 +284,7 @@ class _ApiKeyUIState extends State<ApiKeyUI> {
             child: Text(
               'Login with credentials.',
               style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontVariations: FontVariations.w600,
                 color: context.theme.colorScheme.primary,
               ),
             ),
@@ -330,7 +331,7 @@ class _BasicAuthUIState extends State<BasicAuthUI> {
                 recognizer: recognizer,
                 style: TextStyle(
                   decoration: TextDecoration.underline,
-                  fontWeight: FontWeight.w600,
+                  fontVariations: FontVariations.w600,
                   decorationColor: context.theme.colorScheme.primary,
                   color: context.theme.colorScheme.primary,
                 ),
@@ -434,7 +435,7 @@ class _BasicAuthUIState extends State<BasicAuthUI> {
             child: Text(
               'Login with API key',
               style: TextStyle(
-                fontWeight: FontWeight.w600,
+                fontVariations: FontVariations.w600,
                 color: context.theme.colorScheme.primary,
               ),
             ),

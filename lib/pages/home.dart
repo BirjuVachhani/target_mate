@@ -22,6 +22,7 @@ import '../resources/resources.dart';
 import '../ui/animated_horizontal_progress_bar.dart';
 import '../ui/custom_scaffold.dart';
 import '../utils/extensions.dart';
+import '../utils/font_variations.dart';
 import '../utils/utils.dart';
 import 'home_store.dart';
 import 'settings_store.dart';
@@ -239,7 +240,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> checkForUpdates() async {
     /// Only check for updates on desktop platforms.
-    if(!defaultTargetPlatform.isDesktop) return;
+    if (!defaultTargetPlatform.isDesktop) return;
 
     final Version? latestVersion = await store.getLatestRelease();
 
@@ -370,7 +371,7 @@ class _BottomBarState extends State<BottomBar>
                     'Syncing...',
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: FontWeight.w300,
+                      fontVariations: FontVariations.w300,
                       color: Colors.white.withOpacity(0.7),
                     ),
                   ),
@@ -392,7 +393,7 @@ class _BottomBarState extends State<BottomBar>
                         DateTime.now().difference(store.lastUpdated!)),
                     style: TextStyle(
                       fontSize: 12,
-                      fontWeight: FontWeight.w300,
+                      fontVariations: FontVariations.w300,
                       color: Colors.white.withOpacity(0.7),
                     ),
                   ),
@@ -407,7 +408,7 @@ class _BottomBarState extends State<BottomBar>
                 'Every ${formatFrequency(settingsStore.refreshFrequency)}',
                 style: TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w300,
+                  fontVariations: FontVariations.w300,
                   color: Colors.white.withOpacity(0.7),
                 ),
               ),
@@ -490,7 +491,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                     formatDate(date),
                     style: const TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                      fontVariations: FontVariations.w600,
                     ),
                   ),
                 ),
@@ -498,7 +499,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                   formatTotalDuration(totalDuration),
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                    fontVariations: FontVariations.w600,
                     color: entry.isTargetAchieved
                         ? Colors.green
                         : Colors.redAccent,
@@ -541,8 +542,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                                 'Running'.toUpperCase(),
                                 style: TextStyle(
                                   color: context.theme.colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 0.2,
+                                  fontVariations: FontVariations.w600,
                                   fontSize: 10,
                                 ),
                               ),
@@ -553,7 +553,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                                     : 'No Description',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  fontWeight: FontWeight.w500,
+                                  fontVariations: FontVariations.w500,
                                   color: item.description == null
                                       ? Colors.white.withOpacity(0.4)
                                       : Colors.white70,
@@ -572,7 +572,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                             : 'No Description',
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight: FontWeight.w300,
+                          fontVariations: FontVariations.w300,
                           color: item.description == null
                               ? Colors.white.withOpacity(0.4)
                               : Colors.white70,
@@ -584,7 +584,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                     formatDuration(item.duration),
                     style: const TextStyle(
                       fontSize: 13,
-                      fontWeight: FontWeight.w300,
+                      fontVariations: FontVariations.w300,
                       letterSpacing: 0.4,
                       color: Colors.white70,
                       fontFeatures: [FontFeature.tabularFigures()],
@@ -609,7 +609,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                         const TextSpan(
                           text: 'Goal: ',
                           style: TextStyle(
-                            fontWeight: FontWeight.w500,
+                            fontVariations: FontVariations.w500,
                             color: Colors.grey,
                           ),
                         ),
@@ -620,7 +620,7 @@ class PerDayTimeEntryView extends StatelessWidget {
                     ),
                     style: TextStyle(
                       fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                      fontVariations: FontVariations.w600,
                       color: Colors.white.withOpacity(0.8),
                       // color: Colors.grey,
                     ),
@@ -728,7 +728,7 @@ class HomeAppBar extends StatelessWidget {
                       store.user?.fullName ?? '',
                       style: const TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                        fontVariations: FontVariations.bold,
                       ),
                     ),
                     // Text(
@@ -855,8 +855,7 @@ class MonthlyStats extends StatelessObserverWidget {
                 DateFormat('MMMM yyyy').format(DateTime.now()).toUpperCase(),
                 style: const TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.2,
+                  fontVariations: FontVariations.w600,
                   color: Colors.white60,
                 ),
               ),
@@ -895,7 +894,7 @@ class MonthlyStats extends StatelessObserverWidget {
                         style: TextStyle(
                           color: Colors.white60,
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontVariations: FontVariations.w600,
                         ),
                       ),
                     if (settingsStore.showRemaining)
@@ -904,13 +903,13 @@ class MonthlyStats extends StatelessObserverWidget {
                         style: const TextStyle(
                           color: Colors.white60,
                           fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                          fontVariations: FontVariations.w600,
                         ),
                       ),
                   ],
                   style: const TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                    fontVariations: FontVariations.bold,
                   ),
                 ),
               ),
@@ -924,8 +923,7 @@ class MonthlyStats extends StatelessObserverWidget {
             backgroundColor: Colors.white.withOpacity(0.1),
             textStyle: const TextStyle(
               fontSize: 13,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.2,
+              fontVariations: FontVariations.w600,
             ),
           ),
           icon: const Icon(
@@ -1004,8 +1002,7 @@ class DailyStats extends StatelessObserverWidget {
                   'Goal achieved! ✌🏻🎉',
                   style: TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
+                    fontVariations: FontVariations.w600,
                   ),
                 ),
               ),
@@ -1021,8 +1018,7 @@ class DailyStats extends StatelessObserverWidget {
                   'Daily average to achieve goal',
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.2,
+                    fontVariations: FontVariations.w600,
                     color: Colors.white60,
                   ),
                 ),
@@ -1066,7 +1062,7 @@ class DailyStats extends StatelessObserverWidget {
                   ),
                   style: const TextStyle(
                     fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    fontVariations: FontVariations.bold,
                   ),
                 ),
               ],
@@ -1080,8 +1076,7 @@ class DailyStats extends StatelessObserverWidget {
               'Working days${settingsStore.showRemaining ? ' left' : ''}',
               style: const TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.2,
+                fontVariations: FontVariations.w600,
                 color: Colors.white60,
               ),
             ),
@@ -1100,7 +1095,7 @@ class DailyStats extends StatelessObserverWidget {
                 ],
                 style: const TextStyle(
                   fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                  fontVariations: FontVariations.bold,
                 ),
               ),
               textAlign: TextAlign.end,
@@ -1132,8 +1127,7 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                 "Today's Progress",
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.2,
+                  fontVariations: FontVariations.w600,
                   color: Colors.white60,
                 ),
               ),
@@ -1143,8 +1137,7 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                 formatTodayProgressPercentage(store),
                 style: const TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.2,
+                  fontVariations: FontVariations.w600,
                 ),
               ),
             const SizedBox(width: 2),
@@ -1199,7 +1192,6 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                             style: const TextStyle(
                               fontSize: 12,
                               height: 1,
-                              letterSpacing: 0.2,
                             ),
                           ),
                         ],
@@ -1221,7 +1213,6 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                     formatDailyOvertimeDuration(store),
                     style: const TextStyle(
                       fontSize: 12,
-                      letterSpacing: 0.2,
                       color: Colors.white60,
                     ),
                   ),
@@ -1240,7 +1231,6 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                           textAlign: TextAlign.end,
                           style: TextStyle(
                             fontSize: 12,
-                            letterSpacing: 0.2,
                             color: Colors.white60,
                           ),
                         ),

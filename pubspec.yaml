@@ -31,7 +31,7 @@ dependencies:
   json_annotation: ^4.8.0
   equatable: ^2.0.5
   adaptive_theme: ^3.2.0
-  window_manager: ^0.3.1
+  window_manager: ^0.3.2
   system_tray: ^2.0.3
   package_info_plus: ^3.1.0
   flutter_local_notifications: ^13.0.0
@@ -67,25 +67,8 @@ flutter:
     - assets/system_tray_icons/
 
   fonts:
-    - family: Inter
+    - family: SF Pro
       fonts:
-        - asset: assets/fonts/Inter-Thin.ttf
-          weight: 100
-        - asset: assets/fonts/Inter-ExtraLight.ttf
-          weight: 200
-        - asset: assets/fonts/Inter-Light.ttf
-          weight: 300
-        - asset: assets/fonts/Inter-Light.ttf
-          weight: 400
-        - asset: assets/fonts/Inter-Regular.ttf
-          weight: 500
-        - asset: assets/fonts/Inter-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Inter-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/Inter-ExtraBold.ttf
-          weight: 800
-        - asset: assets/fonts/Inter-Black.ttf
-          weight: 900
+        - asset: assets/fonts/SF-Pro.ttf
 
 scripts: scripts.yaml

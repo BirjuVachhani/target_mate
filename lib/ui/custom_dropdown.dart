@@ -3,6 +3,7 @@ import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 
 import '../resources/colors.dart';
 import '../utils/extensions.dart';
+import '../utils/font_variations.dart';
 import 'dropdown_button3.dart';
 
 /// Flutter's default dropdown.
@@ -48,7 +49,7 @@ class CustomMaterialDropdown<T> extends StatelessWidget {
             style: Theme.of(context)
                 .textTheme
                 .bodyLarge!
-                .copyWith(fontWeight: FontWeight.w400, height: 1),
+                .copyWith(fontVariations: FontVariations.w400, height: 1),
             // underline: const SizedBox.shrink(),
             // dropdownColor: Colors.red,
             decoration: InputDecoration(
@@ -157,7 +158,7 @@ class CustomDropdown<T> extends StatelessWidget {
             buttonPadding: const EdgeInsets.only(right: 12),
             underline: const SizedBox.shrink(),
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  fontWeight: FontWeight.w400,
+                  fontVariations: FontVariations.w400,
                   height: 1,
                 ),
             buttonDecoration: BoxDecoration(
@@ -225,7 +226,7 @@ class SearchBar extends StatelessWidget {
       child: TextField(
         controller: controller,
         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              fontWeight: FontWeight.w400,
+              fontVariations: FontVariations.w400,
               height: 1.2,
             ),
         decoration: InputDecoration(
