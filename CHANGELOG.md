@@ -1,4 +1,4 @@
-# 0.6.0 - [Unreleased]
+# 0.6.0 - 23rd April, 2023
 
 - Add support for light theme.
 - Improved fonts and colors.
