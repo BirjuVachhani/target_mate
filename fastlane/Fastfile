@@ -373,7 +373,7 @@ platform :mac do
       in_house: false, # if it is enterprise or not
     )
 
-    pkg_path = options[:path] || "ARTIFACT_NAME.pkg"
+    pkg_path = options[:path] || "#{ARTIFACT_NAME}.pkg"
 
     upload_to_app_store(
       force: true,
