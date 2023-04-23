@@ -1,3 +1,12 @@
+# 0.6.0 - [Unreleased]
+
+- Add support for light theme.
+- Improved fonts and colors.
+- Fix email input field for login not taking more than 32 characters.
+- Improved formats for displaying durations.
+- Fix swipe to go back gesture on iOS.
+- Improved UI for time entries.
+
 # 0.5.1 - 12th April, 2023
 
 - Disable auto backup for Android.
