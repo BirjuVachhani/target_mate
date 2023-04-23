@@ -33,7 +33,7 @@ jobs:
       - name: Update README.md
         run: dart scripts/update_download_links.dart ${{ steps.GetTag.outputs.tag }}
       - name: Commit & push changes
-        uses: EndBug/add-and-commit@v9.1
+        uses: EndBug/add-and-commit@v9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
