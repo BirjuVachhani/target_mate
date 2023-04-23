@@ -530,9 +530,11 @@ class SettingsSection extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           padding: padding ?? const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          decoration: ShapeDecoration(
+            shape: ContinuousRectangleBorder(
+              borderRadius: BorderRadius.circular(48),
+            ),
             color: context.theme.colorScheme.primary.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

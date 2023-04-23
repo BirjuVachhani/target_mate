@@ -8,10 +8,12 @@ import 'gesture_detector_with_cursor.dart';
 /// A button that allows to change the theme on the fly.
 class DebugFloatingThemeButton extends StatefulWidget {
   final Widget child;
+  final bool debugShow;
 
   const DebugFloatingThemeButton({
     super.key,
     required this.child,
+    this.debugShow = false,
   });
 
   @override
@@ -49,7 +51,7 @@ class _DebugFloatingThemeButtonState extends State<DebugFloatingThemeButton> {
 
   @override
   Widget build(BuildContext context) {
-    if (!kDebugMode) return widget.child;
+    if (kReleaseMode || !widget.debugShow) return widget.child;
 
     return Stack(
       fit: StackFit.expand,

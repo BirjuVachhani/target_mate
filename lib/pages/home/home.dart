@@ -24,6 +24,7 @@ import 'bottom_bar.dart';
 import 'day_entry_view.dart';
 import 'home_store.dart';
 import 'stats.dart';
+import 'update_dialog.dart';
 
 class HomePageWrapper extends StatelessWidget {
   const HomePageWrapper({super.key});
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       requestNotificationPermission();
-      checkForUpdates();
+      checkForUpdates(debugTest: false);
     });
     store.init(context);
   }
@@ -235,10 +236,13 @@ class _HomePageState extends State<HomePage> {
 
   void onDidReceiveNotificationResponse(NotificationResponse details) {}
 
-  Future<void> checkForUpdates() async {
-    /// Only check for updates on desktop platforms.
-    if (!defaultTargetPlatform.isDesktop) return;
+  Future<void> checkForUpdates({bool debugTest = false}) async {
+    final debugTestMode = debugTest && !kReleaseMode;
 
+    /// Only check for updates on desktop platforms.
+    if (!debugTestMode && !defaultTargetPlatform.isDesktop) return;
+
+    // final Version? latestVersion = await store.getLatestRelease();
     final Version? latestVersion = await store.getLatestRelease();
 
     if (latestVersion == null) return;
@@ -246,30 +250,23 @@ class _HomePageState extends State<HomePage> {
     final packageInfo = await PackageInfo.fromPlatform();
     final currentVersion = Version.parse(packageInfo.version);
 
-    // enable this for testing update UI.
-    // final currentVersion = Version(0, 0, 1);
-
-    if (latestVersion > currentVersion) {
+    if (latestVersion > currentVersion || debugTestMode) {
       showUpdateAvailableUI(latestVersion);
     }
   }
 
   void showUpdateAvailableUI(Version latestVersion) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('A new version is available!'),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 16, 16, 34),
-        showCloseIcon: true,
-        duration: const Duration(days: 1),
-        action: SnackBarAction(
-          label: 'Download',
-          onPressed: () {
-            launchUrlString(
-                'https://github.com/birjuvachhani/target_mate/releases/$latestVersion');
-          },
-        ),
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) => UpdateDialog(
+        latestVersion: latestVersion,
+        onUpdate: () {
+          launchUrlString(
+              'https://github.com/birjuvachhani/target_mate/releases/$latestVersion');
+        },
       ),
+      barrierDismissible: true,
     );
   }
 }

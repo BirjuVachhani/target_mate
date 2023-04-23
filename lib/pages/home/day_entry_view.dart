@@ -25,12 +25,14 @@ class PerDayTimeEntryView extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.only(top: 0, bottom: 0),
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(6),
+      decoration: ShapeDecoration(
         color: context.theme.colorScheme.primary.withOpacity(0.05),
-        border: Border.all(
-          color: context.theme.colorScheme.primary.withOpacity(0.1),
-          width: 1,
+        shape: ContinuousRectangleBorder(
+          borderRadius: BorderRadius.circular(48),
+          // side: BorderSide(
+          //   color: context.theme.colorScheme.primary.withOpacity(0.1),
+          //   width: 1,
+          // ),
         ),
       ),
       child: Column(
@@ -39,7 +41,7 @@ class PerDayTimeEntryView extends StatelessWidget {
         children: <Widget>[
           Container(
             color: context.theme.colorScheme.primary.withOpacity(0.05),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -72,62 +74,31 @@ class PerDayTimeEntryView extends StatelessWidget {
             color: context.theme.colorScheme.primary.withOpacity(0.15),
           ),
           const SizedBox(height: 14),
-          ListView.separated(
+          ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
+            padding: EdgeInsets.zero,
             itemCount: entry.entries.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 8),
+            // separatorBuilder: (context, index) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               final item = entry.entries[index];
-              return Row(
-                children: [
-                  if (item.isRunning)
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            color: context.theme.colorScheme.primary
-                                .withOpacity(0.2),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Running'.toUpperCase(),
-                                style: TextStyle(
-                                  color: context.theme.colorScheme.primary,
-                                  fontVariations: FontVariations.semiBold,
-                                  fontSize: 10,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                item.description?.isNotEmpty == true
-                                    ? item.description!
-                                    : 'No Description',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontVariations: FontVariations.medium,
-                                  color: item.description == null
-                                      ? context.theme.textColor.withOpacity(0.4)
-                                      : context.theme.textColor
-                                          .withOpacity(0.7),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+              return Padding(
+                padding: EdgeInsets.only(
+                  left: item.isRunning ? 0 : 18,
+                  right: 16,
+                  top: 6,
+                  bottom: 6,
+                ),
+                child: Row(
+                  children: [
+                    if (item.isRunning) ...[
+                      const SizedBox(width: 2),
+                      Icon(
+                        Icons.play_arrow_rounded,
+                        color: context.theme.colorScheme.primary,
+                        size: 16,
                       ),
-                    ),
-                  if (!item.isRunning)
+                    ],
                     Expanded(
                       child: Text(
                         item.description?.isNotEmpty == true
@@ -135,23 +106,26 @@ class PerDayTimeEntryView extends StatelessWidget {
                             : 'No Description',
                         style: TextStyle(
                           fontSize: 13,
-                          color: item.description == null
-                              ? context.theme.textColor.withOpacity(0.4)
-                              : context.theme.textColor.withOpacity(0.7),
+                          color: item.isRunning
+                              ? context.theme.primaryColor
+                              : item.description == null
+                                  ? context.theme.textColor.withOpacity(0.4)
+                                  : context.theme.textColor.withOpacity(0.7),
                         ),
                       ),
                     ),
-                  const SizedBox(width: 14),
-                  Text(
-                    formatDuration(item.duration),
-                    style: TextStyle(
-                      fontSize: 13,
-                      letterSpacing: 0.4,
-                      color: context.theme.textColor.withOpacity(0.7),
-                      fontFeatures: const [FontFeature.tabularFigures()],
+                    const SizedBox(width: 16),
+                    Text(
+                      formatDuration(item.duration),
+                      style: TextStyle(
+                        fontSize: 13,
+                        letterSpacing: 0.4,
+                        color: context.theme.textColor.withOpacity(0.7),
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             },
           ),
@@ -164,7 +138,7 @@ class PerDayTimeEntryView extends StatelessWidget {
             ),
             Container(
               color: context.theme.colorScheme.primary.withOpacity(0.02),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

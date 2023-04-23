@@ -201,6 +201,7 @@ class _MyAppState extends State<MyApp> {
           children: [
             Positioned.fill(
               child: DebugFloatingThemeButton(
+                debugShow: false,
                 child: child ?? const SizedBox.shrink(),
               ),
             ),

@@ -335,12 +335,17 @@ class TodayProgressIndicator extends StatelessObserverWidget {
         ),
         const SizedBox(height: 6),
         SizedBox(
-          height: 26,
+          height: 32,
           child: Stack(
             children: [
               Positioned.fill(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: ShapeDecoration(
+                    shape: ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    )
+                  ),
                   child: AnimatedHorizontalProgressBar(
                     value: store.todayPercentage,
                     backgroundColor: context.theme.textColor.withOpacity(0.15),
@@ -361,7 +366,7 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                 Positioned(
                   top: 0,
                   bottom: 0,
-                  right: 8,
+                  right: 12,
                   child: Builder(
                     builder: (context) {
                       return Row(
@@ -372,7 +377,7 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                             ImageIcon(
                               const AssetImage(SystemTrayIcons.iconDone),
                               color: context.theme.textColor,
-                              size: 16,
+                              size: 18,
                             ),
                           const SizedBox(width: 2),
                           Text(
@@ -380,7 +385,7 @@ class TodayProgressIndicator extends StatelessObserverWidget {
                                 ? 'Completed'
                                 : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 13,
                               height: 1,
                               color: context.theme.textColor.withOpacity(0.6),
                             ),
