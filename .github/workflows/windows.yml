@@ -58,6 +58,6 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: TargetMate-windows-${{ steps.GetTag.outputs.tag }}.msix
-          tag: refs/tags/${{ steps.GetTag.outputs.tag }}'
+          tag: refs/tags/${{ steps.GetTag.outputs.tag }}
           overwrite: true
           file_glob: true
