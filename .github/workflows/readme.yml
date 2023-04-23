@@ -33,10 +33,10 @@ jobs:
       - name: Update README.md
         run: dart scripts/update_download_links.dart ${{ steps.GetTag.outputs.tag }}
       - name: Commit & push changes
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v9.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           add: 'README.md'
           message: ":memo: [CI] Update Download links in README.md"
-          signoff: true
+          commit: --signoff
