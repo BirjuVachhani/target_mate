@@ -19,6 +19,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Configure git for long paths
+        run: git config --system core.longpaths true
       - name: Install Flutter
         uses: subosito/flutter-action@v2.8.0
         with:
