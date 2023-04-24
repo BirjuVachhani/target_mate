@@ -289,7 +289,7 @@ class StatsHeader extends StatelessWidget {
           SizedBox(height: 16),
           DailyStats(),
           SizedBox(height: 16),
-          TodayProgressIndicator(),
+          TodayProgressStats(),
         ],
       ),
     );

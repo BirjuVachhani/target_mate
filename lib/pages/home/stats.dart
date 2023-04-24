@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
 
 import '../../resources/resources.dart';
-import '../../ui/animated_horizontal_progress_bar.dart';
 import '../../utils/extensions.dart';
 import '../../utils/font_variations.dart';
 import '../../utils/utils.dart';
@@ -296,8 +296,8 @@ class DailyStats extends StatelessObserverWidget {
   }
 }
 
-class TodayProgressIndicator extends StatelessObserverWidget {
-  const TodayProgressIndicator({super.key});
+class TodayProgressStats extends StatelessWidget {
+  const TodayProgressStats({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -334,69 +334,9 @@ class TodayProgressIndicator extends StatelessObserverWidget {
           ],
         ),
         const SizedBox(height: 6),
-        SizedBox(
-          height: 32,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Container(
-                  clipBehavior: Clip.antiAlias,
-                  decoration: ShapeDecoration(
-                    shape: ContinuousRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    )
-                  ),
-                  child: AnimatedHorizontalProgressBar(
-                    value: store.todayPercentage,
-                    backgroundColor: context.theme.textColor.withOpacity(0.15),
-                    duration: 1.seconds,
-                    curve: Curves.fastOutSlowIn,
-                    valueColor: AlwaysStoppedAnimation(
-                      ColorTween(
-                        begin: Colors.redAccent,
-                        end: Colors.green.shade700,
-                      ).transform(
-                        store.todayPercentage.clamp(0, 1),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              if (!store.isLoading || store.isLoadingWithData)
-                Positioned(
-                  top: 0,
-                  bottom: 0,
-                  right: 12,
-                  child: Builder(
-                    builder: (context) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          if (store.isTodayTargetAchieved)
-                            ImageIcon(
-                              const AssetImage(SystemTrayIcons.iconDone),
-                              color: context.theme.textColor,
-                              size: 18,
-                            ),
-                          const SizedBox(width: 2),
-                          Text(
-                            store.todayPercentage >= 1
-                                ? 'Completed'
-                                : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
-                            style: TextStyle(
-                              fontSize: 13,
-                              height: 1,
-                              color: context.theme.textColor.withOpacity(0.6),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                )
-            ],
-          ),
+        Observer(
+          builder: (context) =>
+              CustomProgressIndicator(value: store.todayPercentage),
         ),
         Observer(
           builder: (context) {
@@ -477,5 +417,122 @@ class TodayProgressIndicator extends StatelessObserverWidget {
   String formatTodayProgressPercentage(HomeStore store) {
     final double percentage = (store.todayPercentage * 100).clamp(0, 100);
     return '${percentage.toFormattedStringAsFixed(2)}%';
+  }
+}
+
+class RectClipper extends CustomClipper<Rect> {
+  final double start;
+  final double end;
+
+  RectClipper({
+    this.start = 0,
+    required this.end,
+  });
+
+  @override
+  Rect getClip(Size size) {
+    return Rect.fromLTRB(
+      start * size.width,
+      0,
+      end * size.width,
+      size.height,
+    );
+  }
+
+  @override
+  bool shouldReclip(covariant RectClipper oldClipper) {
+    return true;
+  }
+}
+
+class CustomProgressIndicator extends StatefulWidget {
+  final double value;
+
+  const CustomProgressIndicator({super.key, required this.value});
+
+  @override
+  State<CustomProgressIndicator> createState() =>
+      _CustomProgressIndicatorState();
+}
+
+class _CustomProgressIndicatorState extends State<CustomProgressIndicator> {
+  late double initial = widget.value;
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.read<HomeStore>();
+
+    return ClipPath(
+      clipBehavior: Clip.antiAlias,
+      clipper: ShapeBorderClipper(
+        shape: ContinuousRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      child: SizedBox(
+        height: 32,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              color: context.theme.textColor.withOpacity(0.15),
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 12),
+              child: getText(context, context.theme.textColor, store),
+            ),
+            TweenAnimationBuilder<double>(
+              duration: 1.seconds,
+              curve: Curves.fastOutSlowIn,
+              tween: Tween<double>(begin: initial, end: widget.value),
+              builder: (context, value, child) {
+                final color = ColorTween(
+                  begin: Colors.redAccent,
+                  end: Colors.green.shade700,
+                ).transform(value.clamp(0, 1));
+                return ClipRect(
+                  clipper: RectClipper(start: 0, end: value),
+                  child: Container(
+                    color: color,
+                    padding: const EdgeInsets.only(right: 12),
+                    alignment: Alignment.centerRight,
+                    child: child,
+                  ),
+                );
+              },
+              child: getText(context, Colors.white, store),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget getText(BuildContext context, Color color, HomeStore store) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        if (store.isTodayTargetAchieved)
+          SvgPicture.asset(
+            Vectors.done,
+            colorFilter: ColorFilter.mode(
+              color,
+              BlendMode.srcIn,
+            ),
+            width: 16,
+          ),
+        const SizedBox(width: 4),
+        Text(
+          store.todayPercentage >= 1
+              ? 'Completed'
+              : 'Remaining: ${formatDailyTargetDuration(store.remainingForToday)}',
+          style: TextStyle(
+            fontSize: 13,
+            height: 1,
+            color: color,
+          ),
+        ),
+      ],
+    );
   }
 }

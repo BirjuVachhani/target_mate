@@ -45,6 +45,7 @@ dependencies:
   flutter_animate: ^4.1.1+1
   image: ^4.0.15
   upgrader: ^6.2.0
+  flutter_svg: ^2.0.5
 #  flutter_dynamic_icon: ^2.1.0
 
 dev_dependencies:
@@ -65,6 +66,7 @@ flutter:
     - assets/
     - assets/app_icons/
     - assets/fonts/
+    - assets/vectors/
     - assets/system_tray_icons/
 
   fonts:

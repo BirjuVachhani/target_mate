@@ -26,6 +26,9 @@ groups:
   - path: assets/
     class_name: Images
     types: [ .png, .jpg, .jpeg, .webp, .webm, .bmp ]
+  - path: assets/vectors
+    class_name: Vectors
+    types: [ .svg ]
   - path: assets/app_icons
     class_name: AppIcons
     types: [ .png, .jpg, .jpeg, .webp, .webm, .bmp ]
