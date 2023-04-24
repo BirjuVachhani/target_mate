@@ -1,3 +1,8 @@
+# 0.6.1 - [Unreleased]
+
+- Improved day progress indicator.
+- Fix day progress indicator text showing with incorrect color.
+
 # 0.6.0 - 23rd April, 2023
 
 - Add support for light theme.
