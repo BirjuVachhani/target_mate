@@ -427,7 +427,7 @@ platform :mac do
   lane :pkg do |options|
     setup_ci if ENV['CI']
 
-    app_path = options[:path] || "build/macos/Products/Release/#{ARTIFACT_NAME}.app"
+    app_path = options[:path] || "build/macos/Build/Products/Release/#{ARTIFACT_NAME}.app"
 
     Dir.chdir '..' do
       sh("./installers/pkg/create.sh", "#{app_path}") do |error|
