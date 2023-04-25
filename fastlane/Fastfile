@@ -19,6 +19,7 @@ Spaceship::ConnectAPI::App.const_set('ESSENTIAL_INCLUDES', 'appStoreVersions')
 
 DEFAULT_APP_IDENTIFIER = 'dev.birju.targetmate'
 ARTIFACT_NAME = 'TargetMate'
+INSTALLER_CERT_NAME = '3rd Party Mac Developer Installer: Birju Vachhani (TQ37FM6DBD)'
 
 default_platform(:ios)
 
@@ -199,10 +200,17 @@ platform :ios do
 end
 
 platform :mac do
-  desc "Publishes a new version to the App Store"
-  lane :release do
+  desc 'Publishes a new version to the App Store'
+  desc 'Params'
+  desc ''
+  desc '  fast:   Whether to skip rebuilding with xcode. [OPTIONAL]'
+  desc '          Defaults to false'
+  desc ''
+  desc 'Example'
+  desc '  fastlane release fast:true'
+  lane :release do | options |
     setup_ci if ENV['CI']
-    build_app_store
+    build_app_store options
     upload(path: "#{ARTIFACT_NAME}.pkg")
   end
 
@@ -214,9 +222,24 @@ platform :mac do
     dmg
   end
 
-  desc "Builds macOS app"
-  lane :build_app_store do
+  desc 'Builds macOS app'
+  desc 'Params'
+  desc ''
+  desc '  fast:   Whether to skip rebuilding with xcode. [OPTIONAL]'
+  desc '          Defaults to false'
+  desc ''
+  desc 'Example'
+  desc '  fastlane build_app_store fast:true'
+  lane :build_app_store do | options |
     setup_ci if ENV['CI']
+
+    # Get the fast flag
+    fast = false
+    unless options[:fast].nil?
+      fast = options[:fast]
+    end
+
+    UI.message "Building for App Store with fast: #{fast}"
 
     match(
       type: "appstore",
@@ -251,12 +274,19 @@ platform :mac do
       end
     end
 
-    build_mac_app(
-      workspace: 'macos/Runner.xcworkspace',
-      export_method: "app-store",
-      clean: false,
-      installer_cert_name: "3rd Party Mac Developer Installer: Birju Vachhani (TQ37FM6DBD)",
-    )
+    if fast
+      UI.message "Skipping xcodebuild"
+      pkg
+    else
+      UI.message "Building with xcodebuild"
+      # Build the app
+      build_mac_app(
+        workspace: 'macos/Runner.xcworkspace',
+        export_method: "app-store",
+        clean: false,
+        installer_cert_name: INSTALLER_CERT_NAME,
+      )
+    end
   end
 
   desc "Builds macOS app"
@@ -381,8 +411,32 @@ platform :mac do
       submit_for_review: false,
       pkg: pkg_path,
       skip_metadata: true,
+      platform: "osx",
       skip_screenshots: true,
     )
+  end
+
+  desc 'Create a signed pkg file from the built .app'
+  desc 'Params'
+  desc ''
+  desc '  path:        Path of the .app file to upload. [OPTIONAL]'
+  desc '               Defaults to ARTIFACT_NAME.app'
+  desc ''
+  desc 'Example'
+  desc '  fastlane pkg path:ARTIFACT_NAME.pkg'
+  lane :pkg do |options|
+    setup_ci if ENV['CI']
+
+    app_path = options[:path] || "build/macos/Products/Release/#{ARTIFACT_NAME}.app"
+
+    Dir.chdir '..' do
+      sh("./installers/pkg/create.sh", "#{app_path}") do |error|
+        unless error.exitstatus.eql? 0
+          UI.message error
+          UI.user_error! 'Unable to create pkg'
+        end
+      end
+    end
   end
 
   desc "Get certificates for local machine"

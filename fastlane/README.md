@@ -139,6 +139,20 @@ Generate new certificates
 
 Publishes a new version to the App Store
 
+Params
+
+
+
+  fast:   Whether to skip rebuilding with xcode. [OPTIONAL]
+
+          Defaults to false
+
+
+
+Example
+
+  fastlane release fast:true
+
 ### mac release_dev_id
 
 ```sh
@@ -154,6 +168,20 @@ Release a new notarized DevID build
 ```
 
 Builds macOS app
+
+Params
+
+
+
+  fast:   Whether to skip rebuilding with xcode. [OPTIONAL]
+
+          Defaults to false
+
+
+
+Example
+
+  fastlane build_app_store fast:true
 
 ### mac build_dev_id
 
@@ -228,6 +256,28 @@ Params
 Example
 
   fastlane upload path:ARTIFACT_NAME.pkg
+
+### mac pkg
+
+```sh
+[bundle exec] fastlane mac pkg
+```
+
+Create a signed pkg file from the built .app
+
+Params
+
+
+
+  path:        Path of the .app file to upload. [OPTIONAL]
+
+               Defaults to ARTIFACT_NAME.app
+
+
+
+Example
+
+  fastlane pkg path:ARTIFACT_NAME.pkg
 
 ### mac certificates
 

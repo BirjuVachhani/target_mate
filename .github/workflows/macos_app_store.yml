@@ -10,6 +10,11 @@ on:
         type: boolean
         required: true
         default: true
+      fast:
+        description: 'Use fast mode for building?'
+        type: boolean
+        required: true
+        default: true
 
 env:
   MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
@@ -40,7 +45,7 @@ jobs:
       - name: Get gem dependencies.
         run: bundle install
       - name: Run Fastlane Build
-        run: fastlane mac build_app_store
+        run: fastlane mac build_app_store fast:${{ inputs.fast || github.event_name == 'release' }}
       - name: Upload to App Store
         if: ${{ inputs.upload || github.event_name == 'release' }}
         run: fastlane mac upload
