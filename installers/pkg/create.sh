@@ -42,8 +42,10 @@ else
   fi
 fi
 
-# Copy the .app file to the current directory and rename it to given $app_name.
-cp -R "$app_path" "./$app_name"
+if [ "$app_path" != "$app_name" ]; then
+  # Copy the .app file to the current directory and rename it to given $app_name.
+  cp -R "$app_path" "./$app_name"
+fi
 
 # Check if a pkg already exists. delete it if it does.
 test -f "$output_file_name" && rm "$output_file_name"
