@@ -262,7 +262,10 @@ abstract class _HomeStore with Store {
       updateAppIcon();
 
       showTargetNotificationsIfRequired(
-          previousToday: previousToday, previousMonthly: previousMonthly);
+        previousToday: previousToday,
+        previousMonthly: previousMonthly,
+        debugTest: false,
+      );
     } catch (error, stackTrace) {
       log('Error', error: error, stackTrace: stackTrace);
       this.error = error.toString();
@@ -275,12 +278,17 @@ abstract class _HomeStore with Store {
   void showTargetNotificationsIfRequired({
     required bool previousMonthly,
     required bool previousToday,
+    bool debugTest = false,
   }) {
     // test notification on refresh
-    // showNotification(
-    //   title: 'Target Mate',
-    //   body: 'Synced successfully!',
-    // );
+    if (!kReleaseMode && debugTest) {
+      log('Showing test notification...');
+      showNotification(
+        title: 'Target Mate',
+        body: 'Synced successfully!',
+      );
+      return;
+    }
 
     if (!previousMonthly && isMonthlyTargetAchieved) {
       final isAlreadyShown =
