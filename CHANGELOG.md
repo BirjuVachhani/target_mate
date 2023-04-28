@@ -1,4 +1,4 @@
-# 0.6.1 - [Unreleased]
+# 0.6.1 - 28th April, 2023
 
 - Improved day progress indicator.
 - Fix day progress indicator text showing with incorrect color.
