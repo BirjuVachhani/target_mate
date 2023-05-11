@@ -17,7 +17,7 @@ class WidgetRenderer {
     logicalSize ??= size;
 
     final RenderView renderView = RenderView(
-      window: ui.window,
+      view: ui.PlatformDispatcher.instance.views.first,
       child: RenderPositionedBox(
           alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(

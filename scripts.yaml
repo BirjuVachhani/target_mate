@@ -29,9 +29,15 @@ bundle:
       - flutter pub run msix:create
       - git restore pubspec.yaml
 pod:
-  - cd macos && pod install
-  - cd ios && pod install
-  - dart scripts/pods_fix.dart
+  clean:
+    - cd macos && rm -rf Pods && rm -rf Podfile.lock && rm -rf .symlinks
+    - cd ios && rm -rf Pods && rm -rf Podfile.lock && rm -rf .symlinks
+  install:
+    - cd macos && pod install
+    - cd ios && pod install
+  update:
+    - cd macos && pod repo update
+    - cd ios && pod repo update
 genicons: flutter pub run flutter_launcher_icons
 
 check-notarized: spctl -a -vvv -t install TargetMate.app

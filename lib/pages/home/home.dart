@@ -276,12 +276,12 @@ class StatsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kSidePadding),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: kSidePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        children: const [
+        children: [
           SizedBox(height: 8),
           HomeAppBar(),
           SizedBox(height: 16),
