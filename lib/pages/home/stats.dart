@@ -8,10 +8,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../resources/resources.dart';
 import '../../utils/extensions.dart';
 import '../../utils/font_variations.dart';
+import '../../utils/rect_clipper.dart';
 import '../../utils/utils.dart';
 import '../settings_store.dart';
 import '../setup/target_setup_page.dart';
@@ -296,7 +298,7 @@ class DailyStats extends StatelessObserverWidget {
   }
 }
 
-class TodayProgressStats extends StatelessWidget {
+class TodayProgressStats extends StatelessObserverWidget {
   const TodayProgressStats({super.key});
 
   @override
@@ -334,59 +336,52 @@ class TodayProgressStats extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 6),
-        Observer(
-          builder: (context) =>
-              CustomProgressIndicator(value: store.todayPercentage),
-        ),
-        Observer(
-          builder: (context) {
-            if (!store.isWorkingExtra) return const SizedBox.shrink();
-            return Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Row(
-                children: [
-                  Text(
-                    formatDailyOvertimeDuration(store),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: context.theme.textColor.withOpacity(0.6),
-                    ),
+        CustomProgressIndicator(value: store.todayPercentage),
+        if (store.isWorkingExtra)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Row(
+              children: [
+                Text(
+                  formatDailyOvertimeDuration(store),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.theme.textColor.withOpacity(0.6),
                   ),
-                  const Spacer(),
-                  Tooltip(
-                    message: 'Today is not your working day!',
-                    waitDuration: const Duration(milliseconds: 500),
-                    textAlign: TextAlign.end,
-                    preferBelow: true,
-                    verticalOffset: 14,
-                    triggerMode: defaultTargetPlatform.isMobile
-                        ? TooltipTriggerMode.tap
-                        : null,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Working extra!',
-                          textAlign: TextAlign.end,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: context.theme.textColor.withOpacity(0.6),
-                          ),
+                ),
+                const Spacer(),
+                Tooltip(
+                  message: 'Today is not your working day!',
+                  waitDuration: const Duration(milliseconds: 500),
+                  textAlign: TextAlign.end,
+                  preferBelow: true,
+                  verticalOffset: 14,
+                  triggerMode: defaultTargetPlatform.isMobile
+                      ? TooltipTriggerMode.tap
+                      : null,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Working extra!',
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: context.theme.textColor.withOpacity(0.6),
                         ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          Icons.error_outline_rounded,
-                          size: 16,
-                          color: context.theme.colorScheme.primary,
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.error_outline_rounded,
+                        size: 16,
+                        color: context.theme.colorScheme.primary,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          },
-        ),
+                ),
+              ],
+            ),
+          ),
         const SizedBox(height: 8),
       ],
     );
@@ -417,31 +412,6 @@ class TodayProgressStats extends StatelessWidget {
   String formatTodayProgressPercentage(HomeStore store) {
     final double percentage = (store.todayPercentage * 100).clamp(0, 100);
     return '${percentage.toFormattedStringAsFixed(2)}%';
-  }
-}
-
-class RectClipper extends CustomClipper<Rect> {
-  final double start;
-  final double end;
-
-  RectClipper({
-    this.start = 0,
-    required this.end,
-  });
-
-  @override
-  Rect getClip(Size size) {
-    return Rect.fromLTRB(
-      start * size.width,
-      0,
-      end * size.width,
-      size.height,
-    );
-  }
-
-  @override
-  bool shouldReclip(covariant RectClipper oldClipper) {
-    return true;
   }
 }
 
@@ -478,7 +448,9 @@ class _CustomProgressIndicatorState extends State<CustomProgressIndicator> {
               color: context.theme.textColor.withOpacity(0.15),
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.only(right: 12),
-              child: getText(context, context.theme.textColor, store),
+              child: !store.isLoading || store.isLoadingWithData
+                  ? getText(context, context.theme.textColor, store)
+                  : const SizedBox.shrink(),
             ),
             TweenAnimationBuilder<double>(
               duration: 1.seconds,
@@ -501,6 +473,31 @@ class _CustomProgressIndicatorState extends State<CustomProgressIndicator> {
               },
               child: getText(context, Colors.white, store),
             ),
+            if (store.isLoading && !store.isLoadingWithData)
+              Shimmer.fromColors(
+                baseColor: context.theme.textColor.withOpacity(0.4),
+                highlightColor: context.theme.textColor.withOpacity(0.8),
+                child: Container(
+                  color: context.theme.textColor.withOpacity(0.3),
+                  padding: const EdgeInsets.only(right: 12),
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Icon(Icons.access_time, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Doing math!',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: context.theme.textColor.withOpacity(0.9),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
