@@ -15,8 +15,8 @@ dependencies:
   cupertino_icons: ^1.0.5
   intl: ^0.18.1
   collection: ^1.17.1
-  screwdriver: ^3.1.1
-  flutter_screwdriver: ^2.1.0
+  screwdriver: ^4.1.0
+  flutter_screwdriver: ^3.0.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   encrypted_shared_preferences: ^3.0.1
@@ -32,31 +32,32 @@ dependencies:
   json_annotation: ^4.8.1
   equatable: ^2.0.5
   adaptive_theme: ^3.2.1
-  window_manager: ^0.3.2
+  window_manager: ^0.3.4
   system_tray: ^2.0.3
   package_info_plus: ^3.1.2
-  flutter_local_notifications: ^14.0.0+1
+  flutter_local_notifications: ^14.1.0
   bitsdojo_window: ^0.1.5
   pub_semver: ^2.1.4
   material_color_utilities: ^0.2.0
-  chopper: ^6.1.1
+  chopper: ^6.1.2
   logging: ^1.1.1
   path_provider: ^2.0.15
   flutter_animate: ^4.1.1+1
   image: ^4.0.17
   upgrader: ^6.2.0
-  flutter_svg: ^2.0.5
+  flutter_svg: ^2.0.6
+  shimmer: ^3.0.0
 #  flutter_dynamic_icon: ^2.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  json_serializable: ^6.6.2
+  json_serializable: ^6.7.0
   flutter_lints: ^2.0.1
-  build_runner: ^2.4.2
+  build_runner: ^2.4.4
   mobx_codegen: ^2.3.0
-  chopper_generator: ^6.0.0
-  msix: ^3.11.1
+  chopper_generator: ^6.0.1
+  msix: ^3.13.1
   flutter_launcher_icons: ^0.13.1
 
 dependency_overrides:
