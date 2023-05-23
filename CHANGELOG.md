@@ -1,3 +1,8 @@
+# 0.6.2 - 23rd May, 2023
+
+- Fix today's progress showing incorrect time initially while loading.
+- Add nice loading indicator for today's progress bar.
+
 # 0.6.1 - 28th April, 2023
 
 - Improved day progress indicator.
