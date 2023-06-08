@@ -3,7 +3,7 @@ description: A target calculator for reaching required hours for Toggl time trac
 
 publish_to: 'none'
 
-version: 0.6.2+20
+version: 0.6.3+21
 
 environment:
   sdk: '>=3.0.0 <4.0.0'

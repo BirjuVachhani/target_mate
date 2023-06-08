@@ -1,3 +1,10 @@
+# 0.6.3 - 8th June, 2023
+
+- Only show working extra badge when working extra and timer is actually running.
+- Show Expected Finish Time when timer is running.
+- Show proper error when incorrect max hours are provided.
+- Fix number formatting for working hours and max hours.
+
 # 0.6.2 - 23rd May, 2023
 
 - Fix today's progress showing incorrect time initially while loading.
