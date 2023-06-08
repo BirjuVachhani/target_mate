@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
+import 'package:paged_vertical_calendar/utils/date_utils.dart';
 import 'package:screwdriver/screwdriver.dart';
 
 import '../resources/keys.dart';
@@ -162,6 +163,13 @@ abstract class _TargetStore with Store {
         maxMonthlyWorkingHoursController.text.trim().isNotEmpty) {
       error = 'Invalid max monthly working hours.';
       return false;
+    }
+    if (maxMonthlyWorkingHours != null) {
+      if (maxMonthlyWorkingHours! > DateTime.now().daysInMonth * 24) {
+        error =
+            'There are only ${DateTime.now().daysInMonth * 24} hours in this month!';
+        return false;
+      }
     }
     log('saving...');
 

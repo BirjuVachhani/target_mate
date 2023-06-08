@@ -337,59 +337,43 @@ class TodayProgressStats extends StatelessObserverWidget {
         ),
         const SizedBox(height: 6),
         CustomProgressIndicator(value: store.todayPercentage),
-        if (store.isWorkingExtra)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Row(
-              children: [
-                Text(
-                  formatDailyOvertimeDuration(store),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: context.theme.textColor.withOpacity(0.6),
-                  ),
-                ),
-                const Spacer(),
-                Tooltip(
-                  message: 'Today is not your working day!',
-                  waitDuration: const Duration(milliseconds: 500),
-                  textAlign: TextAlign.end,
-                  preferBelow: true,
-                  verticalOffset: 14,
-                  triggerMode: defaultTargetPlatform.isMobile
-                      ? TooltipTriggerMode.tap
-                      : null,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Working extra!',
-                        textAlign: TextAlign.end,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: context.theme.textColor.withOpacity(0.6),
-                        ),
+        if (store.isTimerRunning || store.isWorkingExtra)
+          const SizedBox(height: 8),
+        Row(
+          children: [
+            if (store.isWorkingExtra && store.didOvertimeToday)
+              Text.rich(
+                TextSpan(
+                  text: 'Overtime: ',
+                  children: [
+                    TextSpan(
+                      text: formatDailyOvertimeDuration(store),
+                      style: TextStyle(
+                        color: context.theme.textColor,
+                        fontVariations: FontVariations.w600,
                       ),
-                      const SizedBox(width: 4),
-                      Icon(
-                        Icons.error_outline_rounded,
-                        size: 16,
-                        color: context.theme.colorScheme.primary,
-                      ),
-                    ],
-                  ),
+                    )
+                  ],
                 ),
-              ],
-            ),
-          ),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: context.theme.textColor.withOpacity(0.6),
+                ),
+              )
+            else
+              const TimeToCompleteStat(),
+            const Spacer(),
+            if (store.isWorkingExtra && store.isTimerRunning)
+              const WorkingExtraBadge(),
+          ],
+        ),
         const SizedBox(height: 8),
       ],
     );
   }
 
   String formatDailyOvertimeDuration(HomeStore store) {
-    final Duration duration =
-        store.todayDuration - store.dailyAverageTargetTillToday;
+    final Duration duration = store.overtimeToday;
     final int hours = duration.inHours;
     final int minutes = duration.inMinutes.remainder(60);
     String time = '';
@@ -403,7 +387,7 @@ class TodayProgressStats extends StatelessObserverWidget {
       final percentage =
           (duration.inMinutes / store.dailyAverageTargetTillToday.inMinutes) *
               100;
-      return 'Overtime: $time ${percentage.toInt() > 0 ? '(${percentage.toFormattedStringAsFixed(0)}%)' : ''}';
+      return '$time ${percentage.toInt() > 0 ? '(${percentage.toFormattedStringAsFixed(0)}%)' : ''}';
     }
 
     return '';
@@ -530,6 +514,97 @@ class _CustomProgressIndicatorState extends State<CustomProgressIndicator> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class TimeToCompleteStat extends StatelessObserverWidget {
+  const TimeToCompleteStat({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.read<HomeStore>();
+
+    if (store.isLoading && !store.isLoadingWithData) {
+      return const SizedBox.shrink();
+    }
+
+    if (!store.isTimerRunning) return const SizedBox.shrink();
+
+    if (store.remainingForToday.isNegative ||
+        store.remainingForToday == Duration.zero) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      children: [
+        Icon(
+          Icons.access_time,
+          size: 14,
+          color: context.theme.textColor.withOpacity(0.6),
+        ),
+        const SizedBox(width: 4),
+        Text.rich(
+          TextSpan(
+            text: 'Finishing Time: ',
+            children: [
+              TextSpan(
+                text: formatTime(DateTime.now().add(store.remainingForToday)),
+                style: TextStyle(
+                  color: context.theme.textColor,
+                  fontVariations: FontVariations.w600,
+                ),
+              ),
+            ],
+          ),
+          style: TextStyle(
+            fontSize: 12,
+            color: context.theme.textColor.withOpacity(0.6),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String formatTime(DateTime dateTime) =>
+      DateFormat('hh:mm a').format(dateTime);
+}
+
+class WorkingExtraBadge extends StatelessObserverWidget {
+  const WorkingExtraBadge({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.read<TargetStore>();
+    return Tooltip(
+      message: store.isTodayWorkingDay
+          ? 'You finished your goal for today!'
+          : 'Today is not your working day!',
+      waitDuration: const Duration(milliseconds: 500),
+      textAlign: TextAlign.end,
+      preferBelow: true,
+      verticalOffset: 14,
+      triggerMode:
+          defaultTargetPlatform.isMobile ? TooltipTriggerMode.tap : null,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Working extra!',
+            textAlign: TextAlign.end,
+            style: TextStyle(
+              fontSize: 12,
+              color: context.theme.textColor.withOpacity(0.6),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Icon(
+            Icons.error_outline_rounded,
+            size: 16,
+            color: context.theme.colorScheme.primary,
+          ),
+        ],
+      ),
     );
   }
 }

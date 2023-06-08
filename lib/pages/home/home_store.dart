@@ -143,6 +143,12 @@ abstract class _HomeStore with Store {
   bool get isTodayTargetAchieved => todayPercentage >= 1;
 
   @computed
+  bool get didOvertimeToday => todayDuration > dailyAverageTargetTillToday;
+
+  @computed
+  Duration get overtimeToday => todayDuration - dailyAverageTargetTillToday;
+
+  @computed
   Duration get remainingForToday {
     final diff = dailyAverageTargetTillToday - todayDuration;
     if (diff.isNegative) return Duration.zero;

@@ -178,7 +178,7 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
                             controller: store.workingHoursController,
                             keyboardType: TextInputType.number,
                             maxLines: 1,
-                            maxLength: 4,
+                            maxLength: 5,
                             textInputAction: TextInputAction.next,
                             onChanged: (value) {
                               store.workingHours = double.tryParse(value);
@@ -187,8 +187,11 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
                               store.workingHours = double.tryParse(value);
                             },
                             inputFormatters: [
+                              // only allows mqx 2 digits before decimal
+                              // and 2 after decimal.
+                              // e.g. 13, 12.34, 1.45, 2.3
                               FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}'),
+                                RegExp(r'^\d{1,2}(\.(\d{1,2})?)?'),
                               ),
                             ],
                             decoration: InputDecoration(
@@ -219,7 +222,7 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
                             controller: store.maxMonthlyWorkingHoursController,
                             keyboardType: TextInputType.number,
                             maxLines: 1,
-                            maxLength: 5,
+                            maxLength: 6,
                             onChanged: (value) {
                               store.maxMonthlyWorkingHours =
                                   double.tryParse(value);
@@ -229,8 +232,12 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
                                   double.tryParse(value);
                             },
                             inputFormatters: [
+                              // A month can have max 31 * 24 = 744 hours.
+                              // only allows mqx 3 digits before decimal
+                              // and 2 after decimal.
+                              // e.g. 123, 12.34, 123.45, 1.23, 12.3
                               FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d+\.?\d{0,2}'),
+                                RegExp(r'^\d{1,3}(\.(\d{1,2})?)?'),
                               ),
                             ],
                             decoration: InputDecoration(
