@@ -50,6 +50,16 @@ ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
         ),
       ),
     ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: FilledButton.styleFrom(
+        elevation: 0,
+        visualDensity: VisualDensity.standard,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
+      ),
+    ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         elevation: 0,
