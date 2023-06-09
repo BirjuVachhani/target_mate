@@ -226,18 +226,25 @@ class _MyAppState extends State<MyApp> {
         ),
         home: requiresMigration
             ? const MigrationPage()
+            // Rules for automatic upgrade dialog:
+            //    1. Don't display when not onboarded.
+            //    2. Don't display when using GitHub distribution channel.
             : isOnboarded
-                ? UpgradeAlert(
-                    upgrader: Upgrader(
-                      shouldPopScope: () => true,
-                      canDismissDialog: true,
-                      showIgnore: false,
-                      dialogStyle: defaultTargetPlatform.isIOS
-                          ? UpgradeDialogStyle.cupertino
-                          : UpgradeDialogStyle.material,
-                    ),
-                    child: const HomePageWrapper(),
-                  )
+                ? !distributionChannel.isGithub
+                    ? UpgradeAlert(
+                        upgrader: Upgrader(
+                          shouldPopScope: () => true,
+                          canDismissDialog: true,
+                          showIgnore: false,
+                          // debugDisplayAlways: true,
+                          durationUntilAlertAgain: const Duration(seconds: 10),
+                          dialogStyle: defaultTargetPlatform.isIOS
+                              ? UpgradeDialogStyle.cupertino
+                              : UpgradeDialogStyle.material,
+                        ),
+                        child: const HomePageWrapper(),
+                      )
+                    : const HomePageWrapper()
                 : const AuthPageWrapper(),
       ),
     );

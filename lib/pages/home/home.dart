@@ -14,6 +14,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:screwdriver/screwdriver.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import '../../distribution_channel.dart';
 import '../../ui/custom_scaffold.dart';
 import '../../utils/extensions.dart';
 import '../../utils/font_variations.dart';
@@ -239,20 +240,51 @@ class _HomePageState extends State<HomePage> {
   Future<void> checkForUpdates({bool debugTest = false}) async {
     final debugTestMode = debugTest && !kReleaseMode;
 
-    /// Only check for updates on desktop platforms.
-    if (!debugTestMode && !defaultTargetPlatform.isDesktop) return;
+    // Only check for updates on desktop platforms.
+    // Rules for manual update dialog:
+    //    1. Display only on Github distribution channel.
+    if (!debugTestMode && !distributionChannel.isGithub) return;
 
     // final Version? latestVersion = await store.getLatestRelease();
-    final Version? latestVersion = await store.getLatestRelease();
+    final result = await store.getLatestRelease();
 
-    if (latestVersion == null) return;
+    if (result == null) return;
+
+    final Version latestVersion = result.$1;
+    final JsonMap responseData = result.$2;
 
     final packageInfo = await PackageInfo.fromPlatform();
     final currentVersion = Version.parse(packageInfo.version);
 
     if (latestVersion > currentVersion || debugTestMode) {
+      // So there is an update available on Github. But we need to check if
+      // the artifact is available for the current platform.
+
+      if (!isArtifactAvailable(responseData)) {
+        log('An update is available but no artifact available for the current platform!');
+        return;
+      }
+
       showUpdateAvailableUI(latestVersion);
     }
+  }
+
+  /// Checks if the latest release has an artifact available for the current
+  /// platform.
+  bool isArtifactAvailable(JsonMap data) {
+    final String artifactExtension = switch (defaultTargetPlatform) {
+      TargetPlatform.android => '.apk',
+      TargetPlatform.iOS => throw UnsupportedError('iOS is not supported'),
+      TargetPlatform.linux => '.AppImage',
+      TargetPlatform.macOS => '.dmg',
+      TargetPlatform.windows => '.exe',
+      TargetPlatform.fuchsia =>
+        throw UnsupportedError('Fuchsia is not supported'),
+    };
+    if (data['assets'] == null) return false;
+
+    final assets = List.of(data['assets']);
+    return assets.any((asset) => asset['name'].endsWith(artifactExtension));
   }
 
   void showUpdateAvailableUI(Version latestVersion) {

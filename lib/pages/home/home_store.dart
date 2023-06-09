@@ -434,7 +434,7 @@ abstract class _HomeStore with Store {
     }
   }
 
-  Future<Version?> getLatestRelease() async {
+  Future<(Version, JsonMap)?> getLatestRelease() async {
     try {
       final response = await http.get(
         Uri.parse(
@@ -445,8 +445,8 @@ abstract class _HomeStore with Store {
         throw response.body;
       }
 
-      final data = jsonDecode(response.body);
-      return Version.parse(data['tag_name'].toString());
+      final data = jsonDecode(response.body) as JsonMap;
+      return (Version.parse(data['tag_name'].toString()), data);
     } catch (error, stackTrace) {
       log(error.toString());
       log(stackTrace.toString());
