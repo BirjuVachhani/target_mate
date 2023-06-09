@@ -82,14 +82,6 @@ class CustomScaffold extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                            MoveWindow(),
-                            // moved to material app.
-                            // if (defaultTargetPlatform.isWindows)
-                            //   const Positioned(
-                            //     top: 0,
-                            //     right: 0,
-                            //     child: WindowButtons(),
-                            //   ),
                           ],
                         ),
                       )

@@ -21,6 +21,7 @@ import 'pages/setup/auth_page.dart';
 import 'resources/colors.dart';
 import 'resources/keys.dart';
 import 'resources/theme.dart';
+import 'ui/custom_scaffold.dart';
 import 'ui/debug_floating_theme_buttons.dart';
 import 'ui/window_border.dart';
 import 'utils/app_icon_manager.dart';
@@ -211,6 +212,13 @@ class _MyAppState extends State<MyApp> {
                 right: 0,
                 child: WindowButtons(),
               ),
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              height: getToolbarHeight(),
+              child: MoveWindow(),
+            ),
           ],
         ),
         home: requiresMigration
