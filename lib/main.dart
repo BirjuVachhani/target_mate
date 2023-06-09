@@ -15,6 +15,7 @@ import 'package:upgrader/upgrader.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'api/toggl_api_service.dart';
+import 'distribution_channel.dart';
 import 'pages/home/home.dart';
 import 'pages/migration_page.dart';
 import 'pages/setup/auth_page.dart';
@@ -62,6 +63,8 @@ void main() async {
 
   final initialThemeMode =
       await AdaptiveTheme.getThemeMode() ?? AdaptiveThemeMode.dark;
+
+  log('Distribution channel: ${distributionChannel.name}');
 
   runApp(MyApp(isFirstRun: isFirstRun, initialThemeMode: initialThemeMode));
 }
