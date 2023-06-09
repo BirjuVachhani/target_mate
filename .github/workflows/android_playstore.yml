@@ -9,7 +9,7 @@ on:
         description: 'Release Tag'
         required: true
       upload:
-        description: 'Upload to release?'
+        description: 'Upload to Play Store?'
         type: boolean
         required: true
         default: false
@@ -53,15 +53,15 @@ jobs:
       - name: Create keystore.properties file
         run: echo "${{ secrets.KEYSTORE_PROPERTIES }}" > android/keystore.properties
       - name: Build APK
-        run: flutter build apk --release --dart-define-from-file=configs/github.json
+        run: flutter build apk --release --dart-define-from-file=configs/playstore.json
       - name: Build AAB
-        run: flutter build appbundle --release --dart-define-from-file=configs/github.json
-#      - name: Upload
-#        if: ${{ inputs.upload_to_play_store || github.event_name == 'release' }}
-#        run: |
-#          gem install fastlane
-#          bundle install
-#          fastlane android upload
+        run: flutter build appbundle --release --dart-define-from-file=configs/playstore.json
+      - name: Upload
+        if: ${{ inputs.upload || github.event_name == 'release' }}
+        run: |
+          gem install fastlane
+          bundle install
+          fastlane android upload
       - name: Rename APK
         run: mv build/app/outputs/flutter-apk/app-release.apk TargetMate-android-${{ steps.GetTag.outputs.tag }}.apk
       - name: Rename AppBundle
@@ -78,24 +78,6 @@ jobs:
           path: TargetMate-android-${{ steps.GetTag.outputs.tag }}.aab
           if-no-files-found: error
           retention-days: 5
-      - name: Upload APK to release
-        if: ${{ inputs.upload || github.event_name == 'release' }}
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: TargetMate-android-${{ steps.GetTag.outputs.tag }}.apk
-          tag: refs/tags/${{ steps.GetTag.outputs.tag }}
-          overwrite: true
-          file_glob: true
-      - name: Upload AppBundle to release
-        if: ${{ inputs.upload || github.event_name == 'release' }}
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: TargetMate-android-${{ steps.GetTag.outputs.tag }}.aab
-          tag: refs/tags/${{ steps.GetTag.outputs.tag }}
-          overwrite: true
-          file_glob: true
       - name: Clean up keystore and keystore.properties
         if: ${{ always() }}
         run: |

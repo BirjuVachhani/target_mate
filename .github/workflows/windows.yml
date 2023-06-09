@@ -41,7 +41,7 @@ jobs:
         run: echo "version=$(dart scripts/pubspec_version.dart)" >> $GITHUB_OUTPUT
       # <-------- END: Utility scripts -------->
       - name: Build
-        run: flutter build windows
+        run: flutter build windows --dart-define-from-file=configs/github.json
       - name: Setup MSIX configs
         run: dart installers\msix\setup.dart installers\msix\ci.yaml ${{ secrets.WIN_CERT_PASSWORD }}
       - name: Create MSIX Installer

@@ -117,7 +117,7 @@ platform :ios do
     )
 
     Dir.chdir '..' do
-      sh 'flutter build ipa --release --export-method app-store' do |error|
+      sh 'flutter build ipa --release --export-method app-store --dart-define-from-file=configs/appstore.json' do |error|
         unless error.exitstatus.eql? 0
           UI.message error
           UI.user_error! 'Unable to run flutter build command'
@@ -266,7 +266,7 @@ platform :mac do
     )
 
     Dir.chdir '..' do
-      sh 'flutter build macos --release' do |error|
+      sh 'flutter build macos --release --dart-define-from-file=configs/appstore.json' do |error|
         unless error.exitstatus.eql? 0
           UI.message error
           UI.user_error! 'Unable to run flutter build command'
@@ -325,7 +325,7 @@ platform :mac do
     )
 
     Dir.chdir '..' do
-      sh 'flutter build macos --release' do |error|
+      sh 'flutter build macos --release --dart-define-from-file=configs/github.json' do |error|
         unless error.exitstatus.eql? 0
           UI.message error
           UI.user_error! 'Unable to run flutter build command'
