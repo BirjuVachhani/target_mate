@@ -1,3 +1,9 @@
+# 0.6.4 - Unreleased
+
+- Fix button size in update dialog.
+- Fix window not movable when update dialog is showing.
+- Improve update dialog configuration.
+
 # 0.6.3 - 8th June, 2023
 
 - Only show working extra badge when working extra and timer is actually running.
