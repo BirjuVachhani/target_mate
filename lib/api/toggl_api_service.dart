@@ -57,7 +57,7 @@ abstract class TogglApiService extends ChopperService {
   Future<Response<Workspace>> getWorkspace(@Path('workspace_id') int id);
 }
 
-class AuthInterceptor extends RequestInterceptor {
+class AuthInterceptor implements RequestInterceptor {
   @override
   FutureOr<Request> onRequest(Request request) {
     final String authKey = getSecretsBox().get(HiveKeys.authKey);
