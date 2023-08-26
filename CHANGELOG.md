@@ -1,8 +1,9 @@
-# 0.6.4 - Unreleased
+# 0.6.4 - 26th August, 2023
 
 - Fix button size in update dialog.
 - Fix window not movable when update dialog is showing.
 - Improve update dialog configuration.
+- Add `Extra` section in settings screen.
 
 # 0.6.3 - 8th June, 2023
 
