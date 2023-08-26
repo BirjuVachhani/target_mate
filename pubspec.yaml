@@ -47,6 +47,8 @@ dependencies:
   upgrader: ^8.1.0
   flutter_svg: ^2.0.7
   shimmer: ^3.0.0
+  flutter_markdown: ^0.6.17+1
+  rive: ^0.11.14
 #  flutter_dynamic_icon: ^2.1.0
 
 dev_dependencies:

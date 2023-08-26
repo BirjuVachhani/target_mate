@@ -19,7 +19,7 @@ import '../../ui/custom_scaffold.dart';
 import '../../utils/extensions.dart';
 import '../../utils/font_variations.dart';
 import '../../utils/utils.dart';
-import '../settings_store.dart';
+import '../settings/settings_store.dart';
 import '../target_store.dart';
 import 'bottom_bar.dart';
 import 'day_entry_view.dart';

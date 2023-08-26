@@ -1843,7 +1843,6 @@ class CustomDropdownButtonState<T> extends State<CustomDropdownButton<T>>
               return DefaultTextStyle(
                 style: _textStyle!.copyWith(color: Theme.of(context).hintColor),
                 child: IgnorePointer(
-                  ignoringSemantics: false,
                   child: _DropdownMenuItemContainer(
                     alignment: widget.alignment,
                     child: displayedHint,

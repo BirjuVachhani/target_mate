@@ -7,7 +7,7 @@ import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:provider/provider.dart';
 
 import '../../utils/extensions.dart';
-import '../settings_store.dart';
+import '../settings/settings_store.dart';
 import 'home_store.dart';
 
 class BottomBar extends StatefulWidget {

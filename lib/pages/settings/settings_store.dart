@@ -8,11 +8,11 @@ import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
 import 'package:screwdriver/screwdriver.dart';
 
-import '../api/toggl_api_service.dart';
-import '../model/project.dart';
-import '../model/workspace.dart';
-import '../resources/keys.dart';
-import '../utils/utils.dart';
+import '../../api/toggl_api_service.dart';
+import '../../model/project.dart';
+import '../../model/workspace.dart';
+import '../../resources/keys.dart';
+import '../../utils/utils.dart';
 
 part 'settings_store.g.dart';
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -10,26 +11,30 @@ import 'package:get_it/get_it.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:screwdriver/screwdriver.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
-import '../model/project.dart';
-import '../model/user.dart';
-import '../model/workspace.dart';
-import '../resources/colors.dart';
-import '../resources/resources.dart';
-import '../resources/theme.dart';
-import '../ui/back_button.dart';
-import '../ui/custom_dropdown.dart';
-import '../ui/custom_safe_area.dart';
-import '../ui/custom_scaffold.dart';
-import '../ui/custom_switch.dart';
-import '../ui/dropdown_button3.dart';
-import '../ui/gesture_detector_with_cursor.dart';
-import '../ui/widgets.dart';
-import '../utils/extensions.dart';
-import '../utils/font_variations.dart';
-import '../utils/system_tray_manager.dart';
-import '../utils/utils.dart';
-import 'home/home_store.dart';
+import '../../model/project.dart';
+import '../../model/user.dart';
+import '../../model/workspace.dart';
+import '../../resources/colors.dart';
+import '../../resources/resources.dart';
+import '../../resources/theme.dart';
+import '../../resources/urls.dart';
+import '../../ui/back_button.dart';
+import '../../ui/custom_dropdown.dart';
+import '../../ui/custom_safe_area.dart';
+import '../../ui/custom_scaffold.dart';
+import '../../ui/custom_switch.dart';
+import '../../ui/dropdown_button3.dart';
+import '../../ui/gesture_detector_with_cursor.dart';
+import '../../ui/network_markdown_page.dart';
+import '../../ui/svg_icon.dart';
+import '../../ui/widgets.dart';
+import '../../utils/extensions.dart';
+import '../../utils/font_variations.dart';
+import '../../utils/system_tray_manager.dart';
+import '../../utils/utils.dart';
+import '../home/home_store.dart';
 import 'settings_store.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -68,8 +73,8 @@ class _SettingsPageState extends State<SettingsPage> {
             padding:
                 const EdgeInsets.fromLTRB(kSidePadding, 8, kSidePadding, 24),
             child: Center(
-              child: SizedBox(
-                width: 400,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -83,6 +88,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     const SyncSettings(),
                     const SizedBox(height: 24),
                     const ProjectSettings(),
+                    const SizedBox(height: 24),
+                    const MoreInfoSection(),
                     const SizedBox(height: 24),
                     const AccountSettings(),
                     const SizedBox(height: 40),
@@ -418,6 +425,10 @@ class ProjectSettings extends StatelessObserverWidget {
           title: 'Workspace & Project',
           children: [
             const SettingItemTitle('Workspace'),
+            Text(
+              'Select a workspace to track time for its projects.',
+              style: subtitleTextStyle(context),
+            ),
             const SizedBox(height: 8),
             CustomDropdown<Workspace>(
               value: store.selectedWorkspace,
@@ -435,6 +446,10 @@ class ProjectSettings extends StatelessObserverWidget {
             ),
             const SizedBox(height: 16),
             const SettingItemTitle('Project'),
+            Text(
+              'Select a project to track your time for.',
+              style: subtitleTextStyle(context),
+            ),
             const SizedBox(height: 8),
             CustomDropdown<Project>(
               value: store.selectedProject,
@@ -497,6 +512,221 @@ class ProjectSettings extends StatelessObserverWidget {
   }
 }
 
+class MoreInfoSection extends StatelessObserverWidget {
+  const MoreInfoSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SettingsSection(
+      title: 'Extra',
+      padding: EdgeInsets.zero,
+      children: [
+        SettingsTile(
+          label: "What's new",
+          subtitle: 'See what has changed in the latest version.',
+          leading: const Icon(Icons.auto_awesome),
+          shape: const ContinuousRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(48),
+              topRight: Radius.circular(48),
+            ),
+          ),
+          onTap: () async {
+            final packageInfo = await PackageInfo.fromPlatform();
+            navigator.push(
+              CupertinoPageRoute(
+                builder: (_) => NetworkMarkdownPage(
+                  title: "What's new ✨",
+                  url: Urls.changelogMarkdown
+                      .replaceAll('{version}', packageInfo.version),
+                ),
+              ),
+            );
+          },
+          trailing: const Icon(Icons.arrow_forward_ios_rounded),
+        ),
+        if (defaultTargetPlatform
+            case TargetPlatform.android ||
+                TargetPlatform.iOS ||
+                TargetPlatform.macOS)
+          SettingsTile(
+            label: 'Rate the app',
+            leading: const Icon(Icons.star_border),
+            subtitle:
+                'If you like the app, rate us tell others what you think about the app.',
+            onTap: () {
+              final url = switch (defaultTargetPlatform) {
+                TargetPlatform.android => Urls.playStore,
+                TargetPlatform.iOS => Urls.iosAppStore,
+                TargetPlatform.macOS => Urls.macOSAppStore,
+                _ => '',
+              };
+              if (url.isNotEmpty) launchUrlString(url);
+            },
+            trailing: const Icon(Icons.open_in_new),
+          ),
+        SettingsTile(
+          label: 'Report an issue',
+          leading: const Icon(Icons.bug_report_outlined),
+          subtitle:
+              'Found a bug? Report it on Github and we will fix it as soon as possible.',
+          onTap: () => launchUrlString(Urls.reportIssue),
+          trailing: const Icon(Icons.open_in_new),
+        ),
+        SettingsTile(
+          label: 'Donate',
+          subtitle:
+              'If you like the app, consider donating whatever you can to support it.',
+          leading: const Icon(Icons.paid_outlined),
+          onTap: () => launchUrlString(Urls.githubSponsor),
+          trailing: const Icon(Icons.open_in_new),
+        ),
+        SettingsTile(
+          label: 'View on Github',
+          subtitle: 'Star the repo on Github if you like the app.',
+          leading: const SvgIcon.asset(Vectors.github, size: 24),
+          onTap: () => launchUrlString(Urls.github),
+          trailing: const Icon(Icons.open_in_new),
+        ),
+        SettingsTile(
+          label: 'Privacy Policy',
+          leading: const Icon(Icons.article_outlined),
+          onTap: () {
+            navigator.push(
+              CupertinoPageRoute(
+                builder: (_) =>
+                    const NetworkMarkdownPage(url: Urls.privacyPolicyMarkdown),
+              ),
+            );
+          },
+          trailing: const Icon(Icons.arrow_forward_ios_rounded),
+        ),
+        SettingsTile(
+          label: 'License',
+          leading: const Icon(Icons.article_outlined),
+          onTap: () {
+            navigator.push(
+              CupertinoPageRoute(
+                builder: (_) => const NetworkMarkdownPage(
+                  title: 'License',
+                  url: Urls.licenseMarkdown,
+                ),
+              ),
+            );
+          },
+          trailing: const Icon(Icons.arrow_forward_ios_rounded),
+        ),
+        SettingsTile(
+          label: 'Third party licenses',
+          leading: const Icon(Icons.article_outlined),
+          onTap: () async {
+            final packageInfo = await PackageInfo.fromPlatform();
+            navigator.push(
+              CupertinoPageRoute(
+                builder: (_) =>
+                    ThirdPartyLicensesPage(packageInfo: packageInfo),
+              ),
+            );
+          },
+          trailing: const Icon(Icons.arrow_forward_ios_rounded),
+          shape: const ContinuousRectangleBorder(
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(48),
+              bottomRight: Radius.circular(48),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class SettingsTile extends StatelessWidget {
+  final String label;
+  final Widget? leading;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final EdgeInsets? padding;
+  final String? subtitle;
+  final ShapeBorder? shape;
+
+  const SettingsTile({
+    super.key,
+    required this.label,
+    this.leading,
+    this.trailing,
+    this.onTap,
+    this.padding,
+    this.subtitle,
+    this.shape,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      customBorder: shape,
+      overlayColor: MaterialStateProperty.all(
+          context.theme.colorScheme.primary.withOpacity(0.1)),
+      child: Padding(
+        padding: padding ?? const EdgeInsets.fromLTRB(12, 12, 16, 12),
+        child: Row(
+          children: [
+            if (leading != null) ...[
+              SizedBox.square(
+                dimension: 24,
+                child: IconTheme(
+                  data: IconTheme.of(context).copyWith(
+                    size: 20,
+                    color: context.theme.colorScheme.onSurface.withOpacity(0.5),
+                  ),
+                  child: Center(child: leading),
+                ),
+              ),
+              const SizedBox(width: 12),
+            ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontVariations: FontVariations.medium,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontVariations: FontVariations.normal,
+                        color: context.theme.textColor.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (trailing != null) ...[
+              const SizedBox(width: 12),
+              IconTheme(
+                data: IconTheme.of(context).copyWith(
+                  size: 16,
+                  color: context.theme.colorScheme.onSurface.withOpacity(0.5),
+                ),
+                child: trailing!,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class SettingsSection extends StatelessWidget {
   final String? title;
   final List<Widget> children;
@@ -530,6 +760,7 @@ class SettingsSection extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           padding: padding ?? const EdgeInsets.all(16),
+          clipBehavior: Clip.antiAlias,
           decoration: ShapeDecoration(
             shape: ContinuousRectangleBorder(
               borderRadius: BorderRadius.circular(48),
@@ -657,6 +888,44 @@ class SettingItemTitle extends StatelessWidget {
             fontSize: 14,
             fontVariations: FontVariations.semiBold,
           ),
+    );
+  }
+}
+
+class ThirdPartyLicensesPage extends StatelessWidget {
+  final PackageInfo packageInfo;
+
+  const ThirdPartyLicensesPage({super.key, required this.packageInfo});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScaffold(
+      body: CustomSafeArea(
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            appBarTheme: const AppBarTheme(
+              iconTheme: IconThemeData(
+                size: 20,
+              ),
+              centerTitle: false,
+              titleTextStyle: TextStyle(
+                fontSize: 18,
+                fontVariations: FontVariations.semiBold,
+              ),
+            ),
+            scaffoldBackgroundColor: context.theme.scaffoldBackgroundColor,
+            cardColor: context.theme.scaffoldBackgroundColor,
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  surface: context.theme.scaffoldBackgroundColor,
+                  surfaceTint: context.theme.scaffoldBackgroundColor,
+                ),
+          ),
+          child: LicensePage(
+            applicationName: packageInfo.appName,
+            applicationVersion: packageInfo.version,
+          ),
+        ),
+      ),
     );
   }
 }

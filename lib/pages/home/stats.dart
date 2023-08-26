@@ -15,7 +15,7 @@ import '../../utils/extensions.dart';
 import '../../utils/font_variations.dart';
 import '../../utils/rect_clipper.dart';
 import '../../utils/utils.dart';
-import '../settings_store.dart';
+import '../settings/settings_store.dart';
 import '../setup/target_setup_page.dart';
 import '../target_store.dart';
 import 'home_store.dart';
