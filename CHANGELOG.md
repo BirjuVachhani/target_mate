@@ -1,3 +1,7 @@
+# 0.6.5 - Unreleased
+
+- Fix handling of duration conversion when value is zero.
+
 # 0.6.4 - 26th August, 2023
 
 - Fix button size in update dialog.
