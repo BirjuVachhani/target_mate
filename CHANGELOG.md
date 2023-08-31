@@ -1,4 +1,4 @@
-# 0.6.5 - Unreleased
+# 0.6.5 - 31st August, 2023
 
 - Fix handling of duration conversion when value is zero.
 
