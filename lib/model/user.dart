@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../utils/utils.dart';
+import '../utils/json_converters.dart';
 
 part 'user.g.dart';
 
@@ -28,13 +28,14 @@ class User with EquatableMixin {
   final bool openidEnabled;
   @JsonKey(name: 'openid_email')
   final String openidEmail;
-  @JsonKey(
-      name: 'updated_at', fromJson: dateTimeFromJson, toJson: dateTimeToJson)
+  @JsonKey(name: 'updated_at')
+  @DateTimeConverter()
   final DateTime updatedAt;
-  @JsonKey(
-      name: 'created_at', fromJson: dateTimeFromJson, toJson: dateTimeToJson)
+  @JsonKey(name: 'created_at')
+  @DateTimeConverter()
   final DateTime createdAt;
-  @JsonKey(name: 'at', fromJson: dateTimeFromJson, toJson: dateTimeToJson)
+  @JsonKey(name: 'at')
+  @DateTimeConverter()
   final DateTime at;
 
   User({

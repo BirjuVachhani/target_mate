@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:screwdriver/screwdriver.dart';
 
+import '../utils/json_converters.dart';
 import '../utils/utils.dart';
 
 part 'time_entry.g.dart';
@@ -17,11 +18,11 @@ class TimeEntry with EquatableMixin {
   @JsonKey(name: 'task_id')
   final int? taskId;
   final String? description;
-  @JsonKey(fromJson: dateTimeFromJson, toJson: dateTimeToJson)
+  @DateTimeConverter()
   final DateTime start;
-  @JsonKey(fromJson: stopDateTimeFromJson, toJson: dateTimeToJson)
+  @NullableDateTimeConverter()
   final DateTime stop;
-  @JsonKey(fromJson: durationFromJson, toJson: durationToJson)
+  @DurationConverter()
   final Duration duration;
   @JsonKey(name: 'user_id')
   final int userId;
@@ -93,17 +94,3 @@ class TimeEntry with EquatableMixin {
         billable,
       ];
 }
-
-DateTime stopDateTimeFromJson(String? json) {
-  if (json == null) return DateTime.now();
-  return DateTime.parse(json);
-}
-
-/// For running entries should be -1 * (Unix start time)
-Duration durationFromJson(int value) {
-  if (value >= 0) return Duration(seconds: value);
-  return DateTime.now()
-      .difference(DateTime.fromMillisecondsSinceEpoch(value * -1000));
-}
-
-int durationToJson(Duration duration) => duration.inSeconds;

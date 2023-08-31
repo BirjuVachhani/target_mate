@@ -22,9 +22,11 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       hasPassword: json['has_password'] as bool? ?? false,
       openidEnabled: json['openid_enabled'] as bool? ?? false,
       openidEmail: json['openid_email'] as String? ?? '',
-      updatedAt: dateTimeFromJson(json['updated_at'] as String),
-      createdAt: dateTimeFromJson(json['created_at'] as String),
-      at: dateTimeFromJson(json['at'] as String),
+      updatedAt:
+          const DateTimeConverter().fromJson(json['updated_at'] as String),
+      createdAt:
+          const DateTimeConverter().fromJson(json['created_at'] as String),
+      at: const DateTimeConverter().fromJson(json['at'] as String),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -40,7 +42,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'has_password': instance.hasPassword,
       'openid_enabled': instance.openidEnabled,
       'openid_email': instance.openidEmail,
-      'updated_at': dateTimeToJson(instance.updatedAt),
-      'created_at': dateTimeToJson(instance.createdAt),
-      'at': dateTimeToJson(instance.at),
+      'updated_at': const DateTimeConverter().toJson(instance.updatedAt),
+      'created_at': const DateTimeConverter().toJson(instance.createdAt),
+      'at': const DateTimeConverter().toJson(instance.at),
     };

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../utils/json_converters.dart';
 import '../utils/utils.dart';
 
 part 'project.g.dart';
@@ -14,10 +15,10 @@ class Project with EquatableMixin {
   @JsonKey(name: 'is_private')
   final bool isPrivate;
   final bool active;
-  @JsonKey(fromJson: dateTimeFromJson, toJson: dateTimeToJson)
+  @DateTimeConverter()
   final DateTime at;
-  @JsonKey(
-      name: 'created_at', fromJson: dateTimeFromJson, toJson: dateTimeToJson)
+  @JsonKey(name: 'created_at')
+  @DateTimeConverter()
   final DateTime createdAt;
   @JsonKey(name: 'server_deleted_at', fromJson: deletedFromJson)
   final bool isDeleted;

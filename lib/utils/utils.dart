@@ -204,10 +204,6 @@ void openSettings(BuildContext context) {
 
 bool deletedFromJson(dynamic value) => value != null;
 
-DateTime dateTimeFromJson(String json) => DateTime.parse(json).toLocal();
-
-String dateTimeToJson(DateTime dateTime) => dateTime.toIso8601String();
-
 final Project emptyProject = Project(
   id: -1,
   workspaceId: -1,
