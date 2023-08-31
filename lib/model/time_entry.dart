@@ -101,7 +101,7 @@ DateTime stopDateTimeFromJson(String? json) {
 
 /// For running entries should be -1 * (Unix start time)
 Duration durationFromJson(int value) {
-  if (value > 0) return Duration(seconds: value);
+  if (value >= 0) return Duration(seconds: value);
   return DateTime.now()
       .difference(DateTime.fromMillisecondsSinceEpoch(value * -1000));
 }
