@@ -205,6 +205,16 @@ class _NetworkMarkdownPageState extends State<NetworkMarkdownPage> {
                             em: baseStyle.copyWith(
                               fontStyle: FontStyle.italic,
                             ),
+                            code: baseStyle.copyWith(
+                              height: 1.2,
+                              color: context.colorScheme.tertiary,
+                              letterSpacing: 1,
+                              textBaseline: TextBaseline.ideographic,
+                              leadingDistribution:
+                                  TextLeadingDistribution.proportional,
+                              backgroundColor:
+                                  context.colorScheme.tertiary.withOpacity(0.1),
+                            ),
                           ),
                           styleSheetTheme:
                               MarkdownStyleSheetBaseTheme.cupertino,
