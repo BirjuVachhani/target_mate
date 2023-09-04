@@ -1,3 +1,9 @@
+# 0.6.6 - 4th September, 2023
+
+- Remove donation link.
+- Fix inline code-block styling in markdown viewer.
+- Remove Rive and its usages.
+
 # 0.6.5 - 31st August, 2023
 
 - Fix handling of duration conversion when value is zero.
