@@ -1,12 +1,10 @@
-import 'dart:math';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
-import 'package:rive/rive.dart' hide LinearGradient;
 
 import '../utils/extensions.dart';
 import '../utils/font_variations.dart';
@@ -50,7 +48,7 @@ class _NetworkMarkdownPageState extends State<NetworkMarkdownPage> {
       if (response.statusCode == 200) {
         markdownSource = response.body;
       } else {
-        error = 'Ooops, something went wrong!';
+        error = 'Oops, something went wrong!';
       }
 
       isLoading = false;
@@ -60,7 +58,7 @@ class _NetworkMarkdownPageState extends State<NetworkMarkdownPage> {
         if (mounted) setState(() {});
       });
     } catch (e) {
-      error = 'Ooops, something went wrong!';
+      error = 'Oops, something went wrong!';
       isLoading = false;
       if (mounted) setState(() {});
     }
@@ -119,51 +117,48 @@ class _NetworkMarkdownPageState extends State<NetworkMarkdownPage> {
               else if (error != null)
                 SliverFillRemaining(
                   child: Center(
-                    child: SizedBox(
-                      width: min(500, MediaQuery.sizeOf(context).width * 0.7),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SizedBox(
-                            height: min(
-                                300, MediaQuery.sizeOf(context).width * 0.4),
-                            child: const RiveAnimation.asset(
-                              'assets/playing_cat.riv',
-                              fit: BoxFit.fitWidth,
-                            ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          CupertinoIcons.exclamationmark_circle,
+                          size: 100,
+                          color: context.colorScheme.error,
+                        ),
+                        const SizedBox(height: 32),
+                        Text(
+                          error ?? '',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontVariations: FontVariations.semiBold,
+                            color: context.theme.textColor.withOpacity(0.7),
                           ),
-                          const SizedBox(height: 32),
-                          Text(
-                            error ?? '',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontVariations: FontVariations.semiBold,
-                              color: context.theme.textColor.withOpacity(0.7),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
+                        ),
+                        const SizedBox(height: 8),
+                        FractionallySizedBox(
+                          widthFactor: 0.75,
+                          child: Text(
                             'Please check your internet connection and try again.',
                             textAlign: TextAlign.center,
                             style: context.textTheme.bodyMedium?.copyWith(
                               color: context.theme.textColor.withOpacity(0.5),
                             ),
                           ),
-                          const SizedBox(height: 32),
-                          FilledButton.tonal(
-                            style: FilledButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 32,
-                                vertical: 12,
-                              ),
+                        ),
+                        const SizedBox(height: 32),
+                        FilledButton.tonal(
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 12,
                             ),
-                            onPressed: loadFromUrl,
-                            child: const Text('Retry'),
                           ),
-                        ],
-                      ),
+                          onPressed: loadFromUrl,
+                          child: const Text('Retry'),
+                        ),
+                      ],
                     ),
                   ),
                 )
