@@ -573,14 +573,15 @@ class MoreInfoSection extends StatelessObserverWidget {
           onTap: () => launchUrlString(Urls.reportIssue),
           trailing: const Icon(Icons.open_in_new),
         ),
-        SettingsTile(
-          label: 'Donate',
-          subtitle:
-              'If you like the app, consider donating whatever you can to support it.',
-          leading: const Icon(Icons.paid_outlined),
-          onTap: () => launchUrlString(Urls.githubSponsor),
-          trailing: const Icon(Icons.open_in_new),
-        ),
+        // Apple rejects apps that have donation links.
+        // SettingsTile(
+        //   label: 'Donate',
+        //   subtitle:
+        //       'If you like the app, consider donating whatever you can to support it.',
+        //   leading: const Icon(Icons.paid_outlined),
+        //   onTap: () => launchUrlString(Urls.githubSponsor),
+        //   trailing: const Icon(Icons.open_in_new),
+        // ),
         SettingsTile(
           label: 'View on Github',
           subtitle: 'Star the repo on Github if you like the app.',
