@@ -15,39 +15,39 @@ dependencies:
   cupertino_icons: ^1.0.6
   intl: ^0.18.1
   collection: ^1.17.2
-  screwdriver: ^5.2.0
+  screwdriver: ^5.3.0
   flutter_screwdriver: ^3.1.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   encrypted_shared_preferences: ^3.0.1
-  get_it: ^7.6.0
+  get_it: ^7.6.4
   mobx: ^2.2.0
-  flutter_mobx: ^2.0.6+5
+  flutter_mobx: ^2.1.0
   provider: ^6.0.5
   http: ^1.1.0
-  url_launcher: ^6.1.13
+  url_launcher: ^6.1.14
   flutter_spinkit: ^5.2.0
   paged_vertical_calendar: ^1.1.6
   awesome_calendar: ^1.1.3
   json_annotation: ^4.8.1
   equatable: ^2.0.5
-  adaptive_theme: ^3.3.0
+  adaptive_theme: ^3.4.1
   window_manager: ^0.3.6
   system_tray: ^2.0.3
   package_info_plus: ^4.1.0
-  flutter_local_notifications: ^15.1.1
+  flutter_local_notifications: ^15.1.2
   bitsdojo_window: ^0.1.5
   pub_semver: ^2.1.4
   material_color_utilities: ^0.5.0
-  chopper: ^7.0.5
+  chopper: ^7.0.6
   logging: ^1.2.0
   path_provider: ^2.1.1
   flutter_animate: ^4.2.0+1
-  image: ^4.0.17
+  image: ^4.1.3
   upgrader: ^8.1.0
   flutter_svg: ^2.0.7
   shimmer: ^3.0.0
-  flutter_markdown: ^0.6.17+2
+  flutter_markdown: ^0.6.17+4
 #  flutter_dynamic_icon: ^2.1.0
 
 dev_dependencies:
@@ -55,15 +55,15 @@ dev_dependencies:
     sdk: flutter
   json_serializable: ^6.7.1
   flutter_lints: ^2.0.3
-  build_runner: 2.4.5
-  mobx_codegen: ^2.3.0
-  chopper_generator: ^7.0.2
-  msix: ^3.16.1
+  build_runner: ^2.4.6
+  mobx_codegen: ^2.4.0
+  chopper_generator: ^7.0.4
+  msix: ^3.16.4
   flutter_launcher_icons: ^0.13.1
 
 dependency_overrides:
   intl: ^0.18.1
-  win32: ^5.0.7
+  win32: ^5.0.9
 
 flutter:
   uses-material-design: true
