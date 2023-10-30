@@ -65,15 +65,46 @@ abstract class _TargetStore with Store {
 
   @computed
   int get currentDay {
-    return effectiveDays.indexWhere((date) => date.day >= DateTime.now().day) +
-        1;
+    final today = DateTime.now().day;
+    final currentIndex = effectiveDays.indexWhere((date) => date.day == today);
+    // if current index is -1 then it means that the current day is not in the list
+    // so we return the last day in the list.
+    if (currentIndex == -1) {
+      return effectiveDays.fold(
+          0,
+          (previousValue, date) =>
+              date.day < today ? previousValue + 1 : previousValue);
+    }
+    return currentIndex + 1;
   }
 
   @computed
-  int get daysRemaining => (effectiveDays.length) - currentDay + 1;
+  int get daysRemaining {
+    final currentIndex =
+        effectiveDays.indexWhere((date) => date.day == DateTime.now().day);
+    if (currentIndex != -1) {
+      return (effectiveDays.length) - currentIndex + 1;
+    }
+    final remaining = effectiveDays.fold(
+        0,
+        (previousValue, date) =>
+            date.day > DateTime.now().day ? previousValue + 1 : previousValue);
+    return remaining;
+  }
 
   @computed
-  int get daysRemainingAfterToday => (effectiveDays.length) - currentDay;
+  int get daysRemainingAfterToday {
+    final currentIndex =
+        effectiveDays.indexWhere((date) => date.day == DateTime.now().day);
+    if (currentIndex != -1) {
+      return (effectiveDays.length) - currentIndex;
+    }
+    final remaining = effectiveDays.fold(
+        0,
+        (previousValue, date) =>
+            date.day > DateTime.now().day ? previousValue + 1 : previousValue);
+    return remaining;
+  }
 
   @computed
   List<DateTime> get effectiveDays {
