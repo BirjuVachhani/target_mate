@@ -1,3 +1,8 @@
+# 0.6.7 - 30th October, 2023
+
+- Fixed daily remaining calculation when no more working days are remaining and goal is not achieved.
+- Upgrade dependencies and maintenance.
+
 # 0.6.6 - 4th September, 2023
 
 - Remove donation link.
