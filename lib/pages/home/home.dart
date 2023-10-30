@@ -122,7 +122,7 @@ class _HomePageState extends State<HomePage> {
         await store.flutterLocalNotificationsPlugin
             .resolvePlatformSpecificImplementation<
                 AndroidFlutterLocalNotificationsPlugin>()
-            ?.requestPermission();
+            ?.requestNotificationsPermission();
       }
     } catch (error, stackTrace) {
       log('Error initializing notifications');

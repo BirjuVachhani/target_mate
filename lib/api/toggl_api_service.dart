@@ -13,12 +13,13 @@ import '../utils/utils.dart';
 
 part 'toggl_api_service.chopper.dart';
 
-@ChopperApi(baseUrl: TogglApiService.baseUrl)
+@ChopperApi(baseUrl: '/api/v9')
 abstract class TogglApiService extends ChopperService {
-  static const String baseUrl = 'https://api.track.toggl.com/api/v9';
+  static const String baseUrl = 'https://api.track.toggl.com';
 
   static TogglApiService create([ChopperClient? client]) {
     client = ChopperClient(
+      baseUrl: Uri.parse(baseUrl),
       interceptors: [
         AuthInterceptor(),
         if (!kReleaseMode) HttpLoggingInterceptor(),
