@@ -14,6 +14,7 @@ import 'package:screwdriver/screwdriver.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../model/project.dart';
+import '../../model/time_entry.dart';
 import '../../model/workspace.dart';
 import '../../resources/keys.dart';
 import '../../ui/back_button.dart';
@@ -128,6 +129,35 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
                     );
                   },
                 ),
+                const SizedBox(height: 24),
+                const FieldLabel('What to track?'),
+                Observer(
+                  name: 'TimeEntryType-dropdown',
+                  builder: (context) {
+                    return CustomDropdown<TimeEntryType>(
+                      value: store.selectedEntryType,
+                      isExpanded: true,
+                      items: TimeEntryType.values,
+                      onSelected: (value) => store.selectedEntryType = value,
+                      itemBuilder: (context, item) {
+                        return CustomDropdownMenuItem<TimeEntryType>(
+                          value: item,
+                          child: Text(
+                            item.prettify,
+                            style: TextStyle(
+                              color: item.name.isEmpty
+                                  ? context.theme.textColor.withOpacity(0.5)
+                                  : null,
+                              fontStyle: item.name.isNotEmpty
+                                  ? null
+                                  : FontStyle.italic,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
                 const SizedBox(height: 32),
                 Observer(
                   name: 'ProjectSelection-NextButton',
@@ -227,6 +257,9 @@ abstract class _ProjectSelectionStore with Store {
   @observable
   Project? selectedProject;
 
+  @observable
+  TimeEntryType selectedEntryType = TimeEntryType.all;
+
   @action
   void onWorkspaceSelected(Workspace value) {
     selectedWorkspace = value;
@@ -241,14 +274,20 @@ abstract class _ProjectSelectionStore with Store {
     isLoading = true;
     error = null;
     try {
+      // Save workspace
       await box.put(
           HiveKeys.workspace, json.encode(selectedWorkspace!.toJson()));
 
+      // Save project
       if (selectedProject == null || selectedProject!.id == -1) {
         await box.delete(HiveKeys.projectId);
       } else {
         await box.put(HiveKeys.project, json.encode(selectedProject!.toJson()));
       }
+
+      // Save entry type
+      await getAppSettingsBox().put(HiveKeys.entryType, selectedEntryType.name);
+
       isLoading = false;
       return true;
     } catch (err, stacktrace) {

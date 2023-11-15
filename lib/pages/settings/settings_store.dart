@@ -10,6 +10,7 @@ import 'package:screwdriver/screwdriver.dart';
 
 import '../../api/toggl_api_service.dart';
 import '../../model/project.dart';
+import '../../model/time_entry.dart';
 import '../../model/workspace.dart';
 import '../../resources/keys.dart';
 import '../../utils/utils.dart';
@@ -52,6 +53,9 @@ abstract class _SettingsStore with Store {
   Project? selectedProject;
 
   @observable
+  TimeEntryType selectedTimeEntryType = TimeEntryType.all;
+
+  @observable
   List<Workspace> workspaces = [];
 
   @observable
@@ -76,6 +80,10 @@ abstract class _SettingsStore with Store {
 
     selectedWorkspace = getWorkspaceFromStorage()!;
     selectedProject = getProjectFromStorage() ?? emptyProject;
+
+    final entryTypeValue =
+        box.get(HiveKeys.entryType, defaultValue: TimeEntryType.all.name);
+    selectedTimeEntryType = TimeEntryType.values.byName(entryTypeValue);
 
     useMaterial3 = box.get(HiveKeys.useMaterial3, defaultValue: true);
     showRemaining = box.get(HiveKeys.showRemaining, defaultValue: false);
@@ -167,6 +175,12 @@ abstract class _SettingsStore with Store {
     } else {
       await secretsBox.put(HiveKeys.project, json.encode(project.toJson()));
     }
+  }
+
+  @action
+  Future<void> onTimeEntryTypeSelected(TimeEntryType type) async {
+    selectedTimeEntryType = type;
+    await box.put(HiveKeys.entryType, type.name);
   }
 
   void dispose() {

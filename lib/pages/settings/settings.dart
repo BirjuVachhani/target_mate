@@ -14,6 +14,7 @@ import 'package:screwdriver/screwdriver.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../model/project.dart';
+import '../../model/time_entry.dart';
 import '../../model/user.dart';
 import '../../model/workspace.dart';
 import '../../resources/colors.dart';
@@ -478,6 +479,37 @@ class ProjectSettings extends StatelessObserverWidget {
                 emptyProject,
                 ...store.filteredProjects,
               ],
+            ),
+            const SizedBox(height: 16),
+            const SettingItemTitle('What to track?'),
+            Text(
+              'Select what type of time entries you want to track.',
+              style: subtitleTextStyle(context),
+            ),
+            const SizedBox(height: 8),
+            CustomDropdown<TimeEntryType>(
+              value: store.selectedTimeEntryType,
+              isExpanded: true,
+              items: TimeEntryType.values,
+              onSelected: (value) async {
+                await store.onTimeEntryTypeSelected(value);
+                homeStore.refreshData();
+              },
+              itemBuilder: (context, item) {
+                return CustomDropdownMenuItem<TimeEntryType>(
+                  value: item,
+                  child: Text(
+                    item.prettify,
+                    style: TextStyle(
+                      color: item.name.isEmpty
+                          ? context.theme.textColor.withOpacity(0.5)
+                          : null,
+                      fontStyle: item.name.isNotEmpty ? null : FontStyle.italic,
+                      fontSize: 14,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),

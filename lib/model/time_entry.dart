@@ -8,6 +8,35 @@ import '../utils/utils.dart';
 
 part 'time_entry.g.dart';
 
+/// The type of time entry. Stored as name in the database.
+enum TimeEntryType {
+  /// All time entries.
+  all,
+
+  /// Only billable time entries.
+  billable,
+
+  /// Only non-billable time entries.
+  nonBillable;
+
+  bool get isBillable => this == billable;
+
+  bool get isNonBillable => this == nonBillable;
+
+  bool get isAll => this == all;
+
+  factory TimeEntryType.fromBool(bool billable) => switch (billable) {
+        true => TimeEntryType.billable,
+        false => TimeEntryType.nonBillable,
+      };
+
+  String get prettify => switch (this) {
+        billable => 'Billable Hours Only',
+        nonBillable => 'Non-billable Hours Only',
+        all => 'Everything',
+      };
+}
+
 @JsonSerializable()
 class TimeEntry with EquatableMixin {
   final int id;
@@ -33,6 +62,8 @@ class TimeEntry with EquatableMixin {
   @JsonKey(name: 'server_deleted_at', fromJson: deletedFromJson)
   final bool isDeleted;
   final bool isRunning;
+
+  TimeEntryType get type => TimeEntryType.fromBool(billable);
 
   TimeEntry({
     required this.id,

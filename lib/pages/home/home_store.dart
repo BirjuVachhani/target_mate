@@ -333,6 +333,10 @@ abstract class _HomeStore with Store {
     final int? projectId = getProjectFromStorage()?.id;
     final int? workspaceId = getWorkspaceFromStorage()?.id;
 
+    final TimeEntryType selectedTimeEntryType = TimeEntryType.values.byName(
+        settingsBox.get(HiveKeys.entryType,
+            defaultValue: TimeEntryType.all.name));
+
     List<TimeEntry> filtered = entries.where((item) {
       if (item.projectId == projectId && item.workspaceId == workspaceId) {
         return true;
@@ -346,6 +350,10 @@ abstract class _HomeStore with Store {
         return false;
       }
       return true;
+    }).where((entry) {
+      if (entry.type == selectedTimeEntryType) return true;
+      log('Skipping entry [${entry.id}]: ${entry.description} because entry type does not match!');
+      return false;
     }).toList();
 
     // Group entries by day and convert to DayEntry.
