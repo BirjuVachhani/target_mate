@@ -33,6 +33,7 @@ class HiveKeys {
   static const String workspace = 'workspace';
   static const String project = 'project';
   static const String showRemaining = 'show_remaining';
+  static const String entryType = 'entry_type';
 }
 
 class HiveBoxes {

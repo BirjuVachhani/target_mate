@@ -89,6 +89,22 @@ mixin _$ProjectSelectionStore on _ProjectSelectionStore, Store {
     });
   }
 
+  late final _$selectedEntryTypeAtom =
+      Atom(name: '_ProjectSelectionStore.selectedEntryType', context: context);
+
+  @override
+  TimeEntryType get selectedEntryType {
+    _$selectedEntryTypeAtom.reportRead();
+    return super.selectedEntryType;
+  }
+
+  @override
+  set selectedEntryType(TimeEntryType value) {
+    _$selectedEntryTypeAtom.reportWrite(value, super.selectedEntryType, () {
+      super.selectedEntryType = value;
+    });
+  }
+
   late final _$saveAndContinueAsyncAction =
       AsyncAction('_ProjectSelectionStore.saveAndContinue', context: context);
 
@@ -118,7 +134,8 @@ isLoading: ${isLoading},
 error: ${error},
 filteredProjects: ${filteredProjects},
 selectedWorkspace: ${selectedWorkspace},
-selectedProject: ${selectedProject}
+selectedProject: ${selectedProject},
+selectedEntryType: ${selectedEntryType}
     ''';
   }
 }

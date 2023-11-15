@@ -121,6 +121,23 @@ mixin _$SettingsStore on _SettingsStore, Store {
     });
   }
 
+  late final _$selectedTimeEntryTypeAtom =
+      Atom(name: '_SettingsStore.selectedTimeEntryType', context: context);
+
+  @override
+  TimeEntryType get selectedTimeEntryType {
+    _$selectedTimeEntryTypeAtom.reportRead();
+    return super.selectedTimeEntryType;
+  }
+
+  @override
+  set selectedTimeEntryType(TimeEntryType value) {
+    _$selectedTimeEntryTypeAtom.reportWrite(value, super.selectedTimeEntryType,
+        () {
+      super.selectedTimeEntryType = value;
+    });
+  }
+
   late final _$workspacesAtom =
       Atom(name: '_SettingsStore.workspaces', context: context);
 
@@ -195,6 +212,15 @@ mixin _$SettingsStore on _SettingsStore, Store {
         .run(() => super.onProjectSelected(project));
   }
 
+  late final _$onTimeEntryTypeSelectedAsyncAction =
+      AsyncAction('_SettingsStore.onTimeEntryTypeSelected', context: context);
+
+  @override
+  Future<void> onTimeEntryTypeSelected(TimeEntryType type) {
+    return _$onTimeEntryTypeSelectedAsyncAction
+        .run(() => super.onTimeEntryTypeSelected(type));
+  }
+
   late final _$_SettingsStoreActionController =
       ActionController(name: '_SettingsStore', context: context);
 
@@ -263,6 +289,7 @@ refreshFrequency: ${refreshFrequency},
 isLoadingProjects: ${isLoadingProjects},
 selectedWorkspace: ${selectedWorkspace},
 selectedProject: ${selectedProject},
+selectedTimeEntryType: ${selectedTimeEntryType},
 workspaces: ${workspaces},
 filteredProjects: ${filteredProjects},
 error: ${error}
