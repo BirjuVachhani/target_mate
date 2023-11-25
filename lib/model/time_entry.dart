@@ -101,6 +101,43 @@ class TimeEntry with EquatableMixin {
         billable = false,
         isRunning = false;
 
+  /// CopyWith
+  TimeEntry copyWith({
+    int? id,
+    int? workspaceId,
+    int? projectId,
+    int? taskId,
+    String? description,
+    DateTime? start,
+    DateTime? stop,
+    Duration? duration,
+    int? userId,
+    int? uid,
+    int? wid,
+    int? pid,
+    bool? billable,
+    bool? isDeleted,
+    bool? isRunning,
+  }) {
+    return TimeEntry(
+      id: id ?? this.id,
+      workspaceId: workspaceId ?? this.workspaceId,
+      projectId: projectId ?? this.projectId,
+      taskId: taskId ?? this.taskId,
+      description: description ?? this.description,
+      start: start ?? this.start,
+      stop: stop ?? this.stop,
+      duration: duration ?? this.duration,
+      userId: userId ?? this.userId,
+      uid: uid ?? this.uid,
+      wid: wid ?? this.wid,
+      pid: pid ?? this.pid,
+      billable: billable ?? this.billable,
+      isDeleted: isDeleted ?? this.isDeleted,
+      isRunning: isRunning ?? this.isRunning,
+    );
+  }
+
   factory TimeEntry.fromJson(Map<String, dynamic> json) {
     json['isRunning'] =
         json['stop'] == null || (json['stop'] is int && json['stop'] < 0);
