@@ -1,3 +1,7 @@
+# 0.6.8 - 25th November, 2023
+
+- Add option to filter tracking for billable/non-billable/everything entries.
+
 # 0.6.7 - 30th October, 2023
 
 - Fixed daily remaining calculation when no more working days are remaining and goal is not achieved.
