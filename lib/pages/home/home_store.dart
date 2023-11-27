@@ -351,6 +351,7 @@ abstract class _HomeStore with Store {
       }
       return true;
     }).where((entry) {
+      if (selectedTimeEntryType.isAll) return true;
       if (entry.type == selectedTimeEntryType) return true;
       log('Skipping entry [${entry.id}]: ${entry.description} because entry type does not match!');
       return false;
