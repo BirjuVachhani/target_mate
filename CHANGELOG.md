@@ -1,3 +1,7 @@
+# 0.6.9 - 27th November, 2023
+
+- Hotfix billable filter not working properly.
+
 # 0.6.8 - 25th November, 2023
 
 - Add option to filter tracking for billable/non-billable/everything entries.
