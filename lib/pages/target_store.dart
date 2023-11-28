@@ -7,6 +7,7 @@ import 'package:paged_vertical_calendar/utils/date_utils.dart';
 import 'package:screwdriver/screwdriver.dart';
 
 import '../resources/keys.dart';
+import '../utils/calculator.dart';
 import '../utils/extensions.dart';
 import '../utils/utils.dart';
 
@@ -79,32 +80,15 @@ abstract class _TargetStore with Store {
   }
 
   @computed
-  int get daysRemaining {
-    final currentIndex =
-        effectiveDays.indexWhere((date) => date.day == DateTime.now().day);
-    if (currentIndex != -1) {
-      return (effectiveDays.length) - currentIndex + 1;
-    }
-    final remaining = effectiveDays.fold(
-        0,
-        (previousValue, date) =>
-            date.day > DateTime.now().day ? previousValue + 1 : previousValue);
-    return remaining;
-  }
+  int get daysRemaining =>
+      Calculator.calculateDaysRemaining(DateTime.now(), effectiveDays);
 
   @computed
-  int get daysRemainingAfterToday {
-    final currentIndex =
-        effectiveDays.indexWhere((date) => date.day == DateTime.now().day);
-    if (currentIndex != -1) {
-      return (effectiveDays.length) - currentIndex;
-    }
-    final remaining = effectiveDays.fold(
-        0,
-        (previousValue, date) =>
-            date.day > DateTime.now().day ? previousValue + 1 : previousValue);
-    return remaining;
-  }
+  int get daysRemainingAfterToday => Calculator.calculateDaysRemaining(
+        DateTime.now(),
+        effectiveDays,
+        includeTargetDate: false,
+      );
 
   @computed
   List<DateTime> get effectiveDays {

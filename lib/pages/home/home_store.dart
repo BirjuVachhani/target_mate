@@ -392,6 +392,7 @@ abstract class _HomeStore with Store {
     log('remaining: $remaining');
     log('remainingTillToday: $remainingTillToday');
     log('currentDay: ${targetStore.currentDay}');
+    log('daysRemaining: ${targetStore.daysRemaining}');
     log('daysRemainingAfterToday: ${targetStore.daysRemainingAfterToday}');
     log('effectiveDays: ${targetStore.effectiveDays.length}');
     log('dailyAverageTarget: $dailyAverageTarget');
