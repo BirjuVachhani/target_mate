@@ -61,3 +61,5 @@ fastlane/report.xml
 fastlane/.env.default
 
 shorebird.yaml
+
+coverage/
