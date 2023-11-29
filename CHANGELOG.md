@@ -1,3 +1,7 @@
+# 0.7.0 - 29th November, 2023
+
+- Fix daily average calculation.
+
 # 0.6.9 - 27th November, 2023
 
 - Hotfix billable filter not working properly.
