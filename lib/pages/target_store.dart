@@ -81,10 +81,10 @@ abstract class _TargetStore with Store {
 
   @computed
   int get daysRemaining =>
-      Calculator.calculateDaysRemaining(DateTime.now(), effectiveDays);
+      Calculator.calculateDaysRemainingFor(DateTime.now(), effectiveDays);
 
   @computed
-  int get daysRemainingAfterToday => Calculator.calculateDaysRemaining(
+  int get daysRemainingAfterToday => Calculator.calculateDaysRemainingFor(
         DateTime.now(),
         effectiveDays,
         includeTargetDate: false,
