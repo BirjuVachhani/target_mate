@@ -337,8 +337,7 @@ class TodayProgressStats extends StatelessObserverWidget {
         ),
         const SizedBox(height: 6),
         CustomProgressIndicator(value: store.todayPercentage),
-        if (store.isTimerRunning || store.isWorkingExtra)
-          const SizedBox(height: 8),
+        const SizedBox(height: 8),
         Row(
           children: [
             if (store.isWorkingExtra && store.didOvertimeToday)
@@ -529,7 +528,41 @@ class TimeToCompleteStat extends StatelessObserverWidget {
       return const SizedBox.shrink();
     }
 
-    if (!store.isTimerRunning) return const SizedBox.shrink();
+    if (!store.isTimerRunning) {
+      // show estimated time to complete.
+      return Row(
+        children: [
+          Icon(
+            Icons.access_time,
+            size: 14,
+            color: context.theme.textColor.withOpacity(0.6),
+          ),
+          const SizedBox(width: 4),
+          TickingWidget(
+            mode: TickingMode.minute,
+            builder: (context, current, child) => Text.rich(
+              TextSpan(
+                text: 'Finishing Time: ',
+                children: [
+                  TextSpan(
+                    text:
+                        formatTime(DateTime.now().add(store.remainingForToday)),
+                    style: TextStyle(
+                      color: context.theme.textColor,
+                      fontVariations: FontVariations.w600,
+                    ),
+                  ),
+                ],
+              ),
+              style: TextStyle(
+                fontSize: 12,
+                color: context.theme.textColor.withOpacity(0.6),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
 
     if (store.remainingForToday.isNegative ||
         store.remainingForToday == Duration.zero) {
