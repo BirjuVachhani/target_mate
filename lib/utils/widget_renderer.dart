@@ -21,7 +21,8 @@ class WidgetRenderer {
       child: RenderPositionedBox(
           alignment: Alignment.center, child: repaintBoundary),
       configuration: ViewConfiguration(
-        size: logicalSize,
+        physicalConstraints: BoxConstraints.tight(logicalSize),
+        logicalConstraints: BoxConstraints.tight(logicalSize),
         devicePixelRatio: 1,
       ),
     );

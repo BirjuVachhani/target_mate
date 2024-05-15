@@ -58,16 +58,22 @@ abstract class TogglApiService extends ChopperService {
   Future<Response<Workspace>> getWorkspace(@Path('workspace_id') int id);
 }
 
-class AuthInterceptor implements RequestInterceptor {
+class AuthInterceptor implements Interceptor {
   @override
-  FutureOr<Request> onRequest(Request request) {
+  FutureOr<Response<BodyType>> intercept<BodyType>(
+      Chain<BodyType> chain) async {
     final String authKey = getSecretsBox().get(HiveKeys.authKey);
-    return request.copyWith(
-      headers: {
-        ...request.headers,
-        'Authorization': 'Basic $authKey',
-      },
+    final request = chain.request;
+    final Response<BodyType> response = await chain.proceed(
+      request.copyWith(
+        headers: {
+          ...request.headers,
+          'Authorization': 'Basic $authKey',
+        },
+      ),
     );
+
+    return response;
   }
 }
 

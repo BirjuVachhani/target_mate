@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,21 +11,26 @@ import 'gradient_background.dart';
 class CustomScaffold extends StatelessWidget {
   final Widget body;
   final Color? systemNavigationBarColor;
-  final Future<bool> Function()? onWillPop;
+
+  // final Future<bool> Function()? onWillPop;
   final bool? resizeToAvoidBottomInset;
   final Color? backgroundColor;
   final bool gradientBackground;
   final PreferredSizeWidget? appBar;
+  final PopInvokedCallback? onPopInvoked;
+  final bool canPop;
 
   const CustomScaffold({
     super.key,
     required this.body,
     this.systemNavigationBarColor,
-    this.onWillPop,
+    // this.onWillPop,
     this.resizeToAvoidBottomInset,
     this.backgroundColor,
     this.gradientBackground = false,
     this.appBar,
+    this.canPop = true,
+    this.onPopInvoked,
   });
 
   @override
@@ -46,9 +49,9 @@ class CustomScaffold extends StatelessWidget {
             brightness.isDark ? Brightness.dark : Brightness.light,
         systemNavigationBarDividerColor: Colors.transparent,
       ),
-      child: WillPopScope(
-        onWillPop: onWillPop ??
-            (!defaultTargetPlatform.isIOS ? () => Future.value(true) : null),
+      child: PopScope(
+        canPop: canPop,
+        onPopInvoked: onPopInvoked,
         child: ColoredBox(
           color: context.theme.scaffoldBackgroundColor,
           child: GradientBackground(
@@ -77,7 +80,7 @@ class CustomScaffold extends StatelessWidget {
                                     fit: BoxFit.fitHeight,
                                     height: 16,
                                     color: context.theme.brightness.isDark
-                                        ? context.theme.colorScheme.background
+                                        ? context.theme.colorScheme.surface
                                         : context.theme.textColor,
                                   ),
                                 ),

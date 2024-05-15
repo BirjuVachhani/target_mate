@@ -1247,7 +1247,7 @@ class CustomDropdownButton<T> extends StatefulWidget {
   final Color? buttonHighlightColor;
 
   /// The overlay color of the button's Inkwell
-  final MaterialStateProperty<Color?>? buttonOverlayColor;
+  final WidgetStateProperty<Color?>? buttonOverlayColor;
 
   /// The padding of menu items
   final EdgeInsetsGeometry? itemPadding;
@@ -1752,10 +1752,10 @@ class CustomDropdownButtonState<T> extends State<CustomDropdownButton<T>>
   // Similarly, we don't reduce the height of the button so much that its icon
   // would be clipped.
   double get _denseButtonHeight {
-    final double textScaleFactor = MediaQuery.of(context).textScaleFactor;
+    final scaler = MediaQuery.of(context).textScaler;
     final double fontSize = _textStyle!.fontSize ??
         Theme.of(context).textTheme.titleMedium!.fontSize!;
-    final double scaledFontSize = textScaleFactor * fontSize;
+    final double scaledFontSize = scaler.scale(fontSize);
     return math.max(
         scaledFontSize, math.max(widget.iconSize, _kDenseButtonHeight));
   }
@@ -1931,10 +1931,10 @@ class CustomDropdownButtonState<T> extends State<CustomDropdownButton<T>>
     }
 
     final MouseCursor effectiveMouseCursor =
-        MaterialStateProperty.resolveAs<MouseCursor>(
-      MaterialStateMouseCursor.clickable,
-      <MaterialState>{
-        if (!_enabled) MaterialState.disabled,
+        WidgetStateProperty.resolveAs<MouseCursor>(
+      WidgetStateMouseCursor.clickable,
+      <WidgetState>{
+        if (!_enabled) WidgetState.disabled,
       },
     );
 
@@ -2026,7 +2026,7 @@ class CustomDropdownButtonFormField<T> extends FormField<T> {
     int? buttonElevation,
     Color? buttonSplashColor,
     Color? buttonHighlightColor,
-    MaterialStateProperty<Color?>? buttonOverlayColor,
+    WidgetStateProperty<Color?>? buttonOverlayColor,
     EdgeInsetsGeometry? itemPadding,
     Color? itemSplashColor,
     Color? itemHighlightColor,

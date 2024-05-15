@@ -55,17 +55,16 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      onWillPop: store.secretsBox.containsKey(HiveKeys.onboarded)
-          ? null
-          : () async {
-              if (!store.secretsBox.containsKey(HiveKeys.onboarded)) {
-                // user has not been onboarded yet. Allow returning without discarding.
-                return true;
-              }
-              log('Discarding changes');
-              store.init();
-              return true;
-            },
+      onPopInvoked: (didPop) {
+        if (store.secretsBox.containsKey(HiveKeys.onboarded)) return;
+
+        if (!store.secretsBox.containsKey(HiveKeys.onboarded)) {
+          // user has not been onboarded yet. Allow returning without discarding.
+          return;
+        }
+        log('Discarding changes');
+        store.init();
+      },
       body: CustomSafeArea(
         child: Center(
           child: SingleChildScrollView(

@@ -23,7 +23,6 @@ import 'resources/colors.dart';
 import 'resources/keys.dart';
 import 'resources/theme.dart';
 import 'ui/custom_scaffold.dart';
-import 'ui/debug_floating_theme_buttons.dart';
 import 'ui/window_border.dart';
 import 'utils/app_icon_manager.dart';
 import 'utils/extensions.dart';
@@ -203,12 +202,7 @@ class _MyAppState extends State<MyApp> {
         builder: (context, child) => Stack(
           fit: StackFit.expand,
           children: [
-            Positioned.fill(
-              child: DebugFloatingThemeButton(
-                debugShow: false,
-                child: child ?? const SizedBox.shrink(),
-              ),
-            ),
+            child!,
             if (defaultTargetPlatform.isWindows)
               const Positioned(
                 top: 0,
@@ -232,16 +226,14 @@ class _MyAppState extends State<MyApp> {
             : isOnboarded
                 ? !distributionChannel.isGithub
                     ? UpgradeAlert(
-                        upgrader: Upgrader(
-                          shouldPopScope: () => true,
-                          canDismissDialog: true,
-                          showIgnore: false,
-                          // debugDisplayAlways: true,
-                          durationUntilAlertAgain: const Duration(seconds: 10),
-                          dialogStyle: defaultTargetPlatform.isIOS
-                              ? UpgradeDialogStyle.cupertino
-                              : UpgradeDialogStyle.material,
-                        ),
+                        shouldPopScope: () => true,
+                        // canDismissDialog: true,
+                        showIgnore: false,
+                        // debugDisplayAlways: true,
+                        // durationUntilAlertAgain: const Duration(seconds: 10),
+                        dialogStyle: defaultTargetPlatform.isIOS
+                            ? UpgradeDialogStyle.cupertino
+                            : UpgradeDialogStyle.material,
                         child: const HomePageWrapper(),
                       )
                     : const HomePageWrapper()

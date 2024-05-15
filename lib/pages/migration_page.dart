@@ -41,7 +41,7 @@ class _MigrationPageState extends State<MigrationPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      onWillPop: () async => false,
+      canPop: false,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),

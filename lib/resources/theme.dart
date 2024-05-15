@@ -12,7 +12,7 @@ ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
   final m2colorScheme = ColorScheme.fromSwatch(
     primarySwatch: primaryColor.toMaterialColor(),
     brightness: Brightness.dark,
-  ).copyWith(background: backgroundColor);
+  ).copyWith(surface: backgroundColor);
 
   final colorScheme = useMaterial3 ? m3colorScheme : m2colorScheme;
 
@@ -97,7 +97,7 @@ ThemeData getDarkTheme(Color primaryColor, {bool useMaterial3 = false}) {
     scrollbarTheme: ScrollbarThemeData(
       interactive: true,
       crossAxisMargin: 4,
-      thickness: MaterialStateProperty.all(4),
+      thickness: WidgetStateProperty.all(4),
     ),
     tooltipTheme: TooltipThemeData(
       decoration: BoxDecoration(
@@ -138,7 +138,7 @@ ThemeData getLightTheme(Color primaryColor, {bool useMaterial3 = false}) {
   final textColor = colorScheme.primary.darken(70);
 
   final Color backgroundColor = useMaterial3
-      ? m3colorScheme.background
+      ? m3colorScheme.surface
       : m2colorScheme.primary.shade(1).shade(1).shade(1).shade(10);
   return ThemeData(
     useMaterial3: true,
@@ -223,7 +223,7 @@ ThemeData getLightTheme(Color primaryColor, {bool useMaterial3 = false}) {
     scrollbarTheme: ScrollbarThemeData(
       interactive: true,
       crossAxisMargin: 4,
-      thickness: MaterialStateProperty.all(4),
+      thickness: WidgetStateProperty.all(4),
     ),
     tooltipTheme: TooltipThemeData(
       decoration: BoxDecoration(

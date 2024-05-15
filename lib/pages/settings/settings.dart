@@ -699,7 +699,7 @@ class SettingsTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       customBorder: shape,
-      overlayColor: MaterialStateProperty.all(
+      overlayColor: WidgetStateProperty.all(
           context.theme.colorScheme.primary.withOpacity(0.1)),
       child: Padding(
         padding: padding ?? const EdgeInsets.fromLTRB(12, 12, 16, 12),
