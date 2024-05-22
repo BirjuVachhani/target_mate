@@ -42,13 +42,13 @@ platform :android do
           UI.user_error! 'Unable to run flutter build command'
         end
       end
-      sh 'flutter build appbundle --release' do |error|
+      sh 'flutter build appbundle --release --dart-define-from-file=configs/playstore.json' do |error|
         unless error.exitstatus.eql? 0
           UI.message error
           UI.user_error! 'Unable to run flutter build command'
         end
       end
-      sh 'flutter build apk --release' do |error|
+      sh 'flutter build apk --release --dart-define-from-file=configs/playstore.json' do |error|
         unless error.exitstatus.eql? 0
           UI.message error
           UI.user_error! 'Unable to run flutter build command'
