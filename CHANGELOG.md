@@ -1,3 +1,8 @@
+# 0.7.1 - 22th May, 2024
+
+- Show finishing time even when timer is not running.
+- Miscellaneous improvements.
+
 # 0.7.0 - 29th November, 2023
 
 - Fix daily average calculation.
