@@ -84,9 +84,4 @@ Or You can
 
 <a href="https://www.buymeacoffee.com/birjuvachhani" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-blue.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
 
-# Sponsers
-
-<img width="100%" src='https://github.com/BirjuVachhani/target_mate/raw/main/.github/assets/sponsors_light.svg#gh-light-mode-only'/>    
-<img width="100%" src='https://github.com/BirjuVachhani/target_mate/raw/main/.github/assets/sponsors_dark.svg#gh-dark-mode-only'/>
-
 [toggl]: https://toggl.com/track/
