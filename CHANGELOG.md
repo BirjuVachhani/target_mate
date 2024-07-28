@@ -1,4 +1,8 @@
-# 0.7.1 - 22th May, 2024
+# 0.7.2 - 28th July, 2024
+
+- Better handling of errors when fetching data.
+
+# 0.7.1 - 22nd May, 2024
 
 - Show finishing time even when timer is not running.
 - Miscellaneous improvements.
