@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -272,9 +273,14 @@ abstract class _HomeStore with Store {
         previousMonthly: previousMonthly,
         debugTest: false,
       );
+    } on SocketException catch (error, stackTrace) {
+      log('Error', error: error, stackTrace: stackTrace);
+      this.error = 'No internet connection!';
+      isLoading = false;
     } catch (error, stackTrace) {
       log('Error', error: error, stackTrace: stackTrace);
-      this.error = error.toString();
+      this.error =
+          'Unable to load time entries at the moment! Please try again!';
       isLoading = false;
     } finally {
       systemTrayManager.setRefreshOption(enabled: true);
