@@ -437,7 +437,7 @@
 				PRODUCT_MODULE_NAME = TargetMate;
 				PRODUCT_NAME = TargetMate;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match Development dev.birju.targetmate macos 1722148109";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match Development dev.birju.targetmate macos 1723020253";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Profile;
@@ -574,7 +574,7 @@
 				PRODUCT_MODULE_NAME = TargetMate;
 				PRODUCT_NAME = TargetMate;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match Development dev.birju.targetmate macos 1722148109";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match Development dev.birju.targetmate macos 1723020253";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -605,7 +605,7 @@
 				PRODUCT_MODULE_NAME = TargetMate;
 				PRODUCT_NAME = TargetMate;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match AppStore dev.birju.targetmate macos";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "match AppStore dev.birju.targetmate macos 1723020290";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

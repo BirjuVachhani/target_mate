@@ -391,7 +391,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.birju.targetmate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development dev.birju.targetmate";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development dev.birju.targetmate 1723020005";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -529,7 +529,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.birju.targetmate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development dev.birju.targetmate";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development dev.birju.targetmate 1723020005";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -561,7 +561,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.birju.targetmate;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore dev.birju.targetmate";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore dev.birju.targetmate 1723020182";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
