@@ -1,4 +1,4 @@
-name: Android Release
+name: Android PlayStore
 
 on:
   release:
