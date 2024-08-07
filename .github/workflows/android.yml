@@ -28,7 +28,8 @@ jobs:
           distribution: 'zulu'
           java-version: "17.x"
           cache: 'gradle'
-      - uses: subosito/flutter-action@v2
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
