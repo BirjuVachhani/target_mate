@@ -1,5 +1,6 @@
-# 0.7.2 - 28th July, 2024
+# 0.8.0 - 7th August, 2024
 
+- Add support for clients.
 - Better handling of errors when fetching data.
 
 # 0.7.1 - 22nd May, 2024
