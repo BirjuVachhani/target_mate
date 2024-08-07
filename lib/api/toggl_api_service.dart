@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import '../model/project.dart';
 import '../model/time_entry.dart';
+import '../model/toggl_client.dart';
 import '../model/user.dart';
 import '../model/workspace.dart';
 import '../resources/keys.dart';
@@ -36,12 +37,15 @@ abstract class TogglApiService extends ChopperService {
   @Get(path: '/me')
   Future<Response<User>> getProfile();
 
-  @Get(path: '/me/time_entries')
+  @Get(path: '/me/time_entries?meta=true')
   Future<Response<List<TimeEntry>>> getTimeEntries(
       @Query('start_date') String startDate, @Query('end_date') String endDate);
 
   @Get(path: '/workspaces')
   Future<Response<List<Workspace>>> getAllWorkspaces();
+
+  @Get(path: '/me/clients')
+  Future<Response<List<TogglClient>>> getAllClients();
 
   @Get(path: '/me/projects')
   Future<Response<List<Project>>> getAllProjects();
@@ -110,6 +114,7 @@ Map<Type, Object Function(Map<String, dynamic>)> registry = {
   User: User.fromJson,
   Workspace: Workspace.fromJson,
   Project: Project.fromJson,
+  TogglClient: TogglClient.fromJson,
   TimeEntry: TimeEntry.fromJson,
   Map<String, dynamic>: (Map<String, dynamic> json) => json,
 };

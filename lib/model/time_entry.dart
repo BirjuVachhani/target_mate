@@ -62,6 +62,8 @@ class TimeEntry with EquatableMixin {
   @JsonKey(name: 'server_deleted_at', fromJson: deletedFromJson)
   final bool isDeleted;
   final bool isRunning;
+  @JsonKey(name: 'client_name')
+  final String? clientName;
 
   TimeEntryType get type => TimeEntryType.fromBool(billable);
 
@@ -81,6 +83,7 @@ class TimeEntry with EquatableMixin {
     required this.billable,
     required this.isDeleted,
     this.isRunning = false,
+    this.clientName,
   });
 
   @visibleForTesting
@@ -99,7 +102,8 @@ class TimeEntry with EquatableMixin {
         wid = -1,
         pid = -1,
         billable = false,
-        isRunning = false;
+        isRunning = false,
+        clientName = null;
 
   /// CopyWith
   TimeEntry copyWith({
@@ -118,6 +122,7 @@ class TimeEntry with EquatableMixin {
     bool? billable,
     bool? isDeleted,
     bool? isRunning,
+    String? clientName,
   }) {
     return TimeEntry(
       id: id ?? this.id,
@@ -135,6 +140,7 @@ class TimeEntry with EquatableMixin {
       billable: billable ?? this.billable,
       isDeleted: isDeleted ?? this.isDeleted,
       isRunning: isRunning ?? this.isRunning,
+      clientName: clientName ?? this.clientName,
     );
   }
 
@@ -160,5 +166,8 @@ class TimeEntry with EquatableMixin {
         wid,
         pid,
         billable,
+        isDeleted,
+        isRunning,
+        clientName,
       ];
 }

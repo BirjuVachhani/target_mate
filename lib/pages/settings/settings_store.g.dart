@@ -121,6 +121,22 @@ mixin _$SettingsStore on _SettingsStore, Store {
     });
   }
 
+  late final _$selectedClientAtom =
+      Atom(name: '_SettingsStore.selectedClient', context: context);
+
+  @override
+  TogglClient? get selectedClient {
+    _$selectedClientAtom.reportRead();
+    return super.selectedClient;
+  }
+
+  @override
+  set selectedClient(TogglClient? value) {
+    _$selectedClientAtom.reportWrite(value, super.selectedClient, () {
+      super.selectedClient = value;
+    });
+  }
+
   late final _$selectedTimeEntryTypeAtom =
       Atom(name: '_SettingsStore.selectedTimeEntryType', context: context);
 
@@ -170,6 +186,22 @@ mixin _$SettingsStore on _SettingsStore, Store {
     });
   }
 
+  late final _$filteredClientsAtom =
+      Atom(name: '_SettingsStore.filteredClients', context: context);
+
+  @override
+  List<TogglClient> get filteredClients {
+    _$filteredClientsAtom.reportRead();
+    return super.filteredClients;
+  }
+
+  @override
+  set filteredClients(List<TogglClient> value) {
+    _$filteredClientsAtom.reportWrite(value, super.filteredClients, () {
+      super.filteredClients = value;
+    });
+  }
+
   late final _$errorAtom = Atom(name: '_SettingsStore.error', context: context);
 
   @override
@@ -185,13 +217,12 @@ mixin _$SettingsStore on _SettingsStore, Store {
     });
   }
 
-  late final _$loadWorkspacesAndProjectsAsyncAction =
-      AsyncAction('_SettingsStore.loadWorkspacesAndProjects', context: context);
+  late final _$loadFiltersAsyncAction =
+      AsyncAction('_SettingsStore.loadFilters', context: context);
 
   @override
-  Future<void> loadWorkspacesAndProjects() {
-    return _$loadWorkspacesAndProjectsAsyncAction
-        .run(() => super.loadWorkspacesAndProjects());
+  Future<void> loadFilters() {
+    return _$loadFiltersAsyncAction.run(() => super.loadFilters());
   }
 
   late final _$onWorkspaceSelectedAsyncAction =
@@ -201,6 +232,15 @@ mixin _$SettingsStore on _SettingsStore, Store {
   Future<void> onWorkspaceSelected(Workspace workspace) {
     return _$onWorkspaceSelectedAsyncAction
         .run(() => super.onWorkspaceSelected(workspace));
+  }
+
+  late final _$onClientSelectedAsyncAction =
+      AsyncAction('_SettingsStore.onClientSelected', context: context);
+
+  @override
+  Future<void> onClientSelected(TogglClient client) {
+    return _$onClientSelectedAsyncAction
+        .run(() => super.onClientSelected(client));
   }
 
   late final _$onProjectSelectedAsyncAction =
@@ -289,9 +329,11 @@ refreshFrequency: ${refreshFrequency},
 isLoadingProjects: ${isLoadingProjects},
 selectedWorkspace: ${selectedWorkspace},
 selectedProject: ${selectedProject},
+selectedClient: ${selectedClient},
 selectedTimeEntryType: ${selectedTimeEntryType},
 workspaces: ${workspaces},
 filteredProjects: ${filteredProjects},
+filteredClients: ${filteredClients},
 error: ${error}
     ''';
   }

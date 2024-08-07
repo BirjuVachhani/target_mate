@@ -57,6 +57,22 @@ mixin _$ProjectSelectionStore on _ProjectSelectionStore, Store {
     });
   }
 
+  late final _$filteredClientsAtom =
+      Atom(name: '_ProjectSelectionStore.filteredClients', context: context);
+
+  @override
+  List<TogglClient> get filteredClients {
+    _$filteredClientsAtom.reportRead();
+    return super.filteredClients;
+  }
+
+  @override
+  set filteredClients(List<TogglClient> value) {
+    _$filteredClientsAtom.reportWrite(value, super.filteredClients, () {
+      super.filteredClients = value;
+    });
+  }
+
   late final _$selectedWorkspaceAtom =
       Atom(name: '_ProjectSelectionStore.selectedWorkspace', context: context);
 
@@ -86,6 +102,22 @@ mixin _$ProjectSelectionStore on _ProjectSelectionStore, Store {
   set selectedProject(Project? value) {
     _$selectedProjectAtom.reportWrite(value, super.selectedProject, () {
       super.selectedProject = value;
+    });
+  }
+
+  late final _$selectedClientAtom =
+      Atom(name: '_ProjectSelectionStore.selectedClient', context: context);
+
+  @override
+  TogglClient? get selectedClient {
+    _$selectedClientAtom.reportRead();
+    return super.selectedClient;
+  }
+
+  @override
+  set selectedClient(TogglClient? value) {
+    _$selectedClientAtom.reportWrite(value, super.selectedClient, () {
+      super.selectedClient = value;
     });
   }
 
@@ -128,13 +160,26 @@ mixin _$ProjectSelectionStore on _ProjectSelectionStore, Store {
   }
 
   @override
+  void onClientSelected(TogglClient value) {
+    final _$actionInfo = _$_ProjectSelectionStoreActionController.startAction(
+        name: '_ProjectSelectionStore.onClientSelected');
+    try {
+      return super.onClientSelected(value);
+    } finally {
+      _$_ProjectSelectionStoreActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
 isLoading: ${isLoading},
 error: ${error},
 filteredProjects: ${filteredProjects},
+filteredClients: ${filteredClients},
 selectedWorkspace: ${selectedWorkspace},
 selectedProject: ${selectedProject},
+selectedClient: ${selectedClient},
 selectedEntryType: ${selectedEntryType}
     ''';
   }

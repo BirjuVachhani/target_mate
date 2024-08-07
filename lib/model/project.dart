@@ -27,6 +27,9 @@ class Project with EquatableMixin {
   final String? currency;
   final bool recurring;
   final int? wid;
+  @JsonKey(name: 'client_id')
+  final int? clientId;
+  final int? cid;
 
   Project({
     required this.id,
@@ -42,6 +45,8 @@ class Project with EquatableMixin {
     required this.currency,
     this.recurring = false,
     this.wid,
+    this.clientId,
+    this.cid,
   });
 
   factory Project.fromJson(Map<String, dynamic> json) =>

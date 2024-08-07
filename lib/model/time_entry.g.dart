@@ -7,21 +7,23 @@ part of 'time_entry.dart';
 // **************************************************************************
 
 TimeEntry _$TimeEntryFromJson(Map<String, dynamic> json) => TimeEntry(
-      id: json['id'] as int,
-      workspaceId: json['workspace_id'] as int,
-      projectId: json['project_id'] as int?,
-      taskId: json['task_id'] as int?,
+      id: (json['id'] as num).toInt(),
+      workspaceId: (json['workspace_id'] as num).toInt(),
+      projectId: (json['project_id'] as num?)?.toInt(),
+      taskId: (json['task_id'] as num?)?.toInt(),
       description: json['description'] as String?,
       start: const DateTimeConverter().fromJson(json['start'] as String),
       stop: const NullableDateTimeConverter().fromJson(json['stop'] as String?),
-      duration: const DurationConverter().fromJson(json['duration'] as int),
-      userId: json['user_id'] as int,
-      uid: json['uid'] as int,
-      wid: json['wid'] as int?,
-      pid: json['pid'] as int?,
+      duration:
+          const DurationConverter().fromJson((json['duration'] as num).toInt()),
+      userId: (json['user_id'] as num).toInt(),
+      uid: (json['uid'] as num).toInt(),
+      wid: (json['wid'] as num?)?.toInt(),
+      pid: (json['pid'] as num?)?.toInt(),
       billable: json['billable'] as bool,
       isDeleted: deletedFromJson(json['server_deleted_at']),
       isRunning: json['isRunning'] as bool? ?? false,
+      clientName: json['client_name'] as String?,
     );
 
 Map<String, dynamic> _$TimeEntryToJson(TimeEntry instance) => <String, dynamic>{
@@ -40,4 +42,5 @@ Map<String, dynamic> _$TimeEntryToJson(TimeEntry instance) => <String, dynamic>{
       'billable': instance.billable,
       'server_deleted_at': instance.isDeleted,
       'isRunning': instance.isRunning,
+      'client_name': instance.clientName,
     };

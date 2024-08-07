@@ -5,6 +5,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_screwdriver/flutter_screwdriver.dart';
@@ -18,6 +19,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../api/toggl_api_service.dart';
 import '../../model/project.dart';
+import '../../model/toggl_client.dart';
 import '../../model/user.dart';
 import '../../model/workspace.dart';
 import '../../resources/keys.dart';
@@ -65,11 +67,18 @@ class _AuthPageState extends State<AuthPage> {
   late bool restoreTheme = widget.restoreTheme;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     if (restoreTheme) {
       restoreTheme = false;
-      Future.delayed(Duration.zero, () => AdaptiveTheme.of(context).reset());
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        AdaptiveTheme.of(context).reset();
+      });
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return CustomScaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -160,6 +169,7 @@ class _AuthPageState extends State<AuthPage> {
         builder: (_) => ProjectSelectionPageWrapper(
           workspaces: store.workspaces,
           projects: store.projects,
+          clients: store.clients,
         ),
       ),
     );
@@ -477,6 +487,8 @@ abstract class _AuthStore with Store {
 
   List<Project> projects = [];
 
+  List<TogglClient> clients = [];
+
   @observable
   bool loginWithAPIKey = false;
 
@@ -542,12 +554,21 @@ abstract class _AuthStore with Store {
       // Load projects.
       final projectsResponse = await apiService.getAllProjects();
 
-      isLoading = false;
       if (!projectsResponse.isSuccessful) {
         error = projectsResponse.bodyString;
         return false;
       }
       projects = projectsResponse.body ?? [];
+
+      // Load clients.
+      final clientsResponse = await apiService.getAllClients();
+
+      isLoading = false;
+      if (!clientsResponse.isSuccessful) {
+        error = clientsResponse.bodyString;
+        return false;
+      }
+      clients = clientsResponse.body ?? [];
 
       await box.putAll({
         HiveKeys.authKey: authKey,

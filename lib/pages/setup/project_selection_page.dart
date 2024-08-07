@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../model/project.dart';
 import '../../model/time_entry.dart';
+import '../../model/toggl_client.dart';
 import '../../model/workspace.dart';
 import '../../resources/keys.dart';
 import '../../ui/back_button.dart';
@@ -31,17 +32,19 @@ part 'project_selection_page.g.dart';
 class ProjectSelectionPageWrapper extends StatelessWidget {
   final List<Workspace> workspaces;
   final List<Project> projects;
+  final List<TogglClient> clients;
 
   const ProjectSelectionPageWrapper({
     super.key,
     required this.workspaces,
     required this.projects,
+    required this.clients,
   });
 
   @override
   Widget build(BuildContext context) {
     return Provider(
-      create: (context) => ProjectSelectionStore(workspaces, projects),
+      create: (context) => ProjectSelectionStore(workspaces, projects, clients),
       // dispose: (context, store) => store.dispose(),
       child: const ProjectSelectionPage(),
     );
@@ -94,6 +97,38 @@ class _ProjectSelectionPageState extends State<ProjectSelectionPage> {
                         child: Text(item.name),
                       ),
                       items: store.workspaces,
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+                const FieldLabel('Select Client'),
+                Observer(
+                  name: 'ClientSelection-dropdown',
+                  builder: (context) {
+                    return CustomDropdown<TogglClient>(
+                      value: store.selectedClient,
+                      isExpanded: true,
+                      onSelected: (value) => store.onClientSelected(value),
+                      itemBuilder: (context, item) {
+                        return CustomDropdownMenuItem<TogglClient>(
+                          value: item,
+                          child: Text(
+                            item.name.isNotEmpty ? item.name : 'Untitled',
+                            style: TextStyle(
+                              color: item.name.isEmpty
+                                  ? context.theme.textColor.withOpacity(0.5)
+                                  : null,
+                              fontStyle: item.name.isNotEmpty
+                                  ? null
+                                  : FontStyle.italic,
+                            ),
+                          ),
+                        );
+                      },
+                      items: [
+                        emptyClient,
+                        ...store.filteredClients,
+                      ],
                     );
                   },
                 ),
@@ -229,11 +264,24 @@ class ProjectSelectionStore = _ProjectSelectionStore
     with _$ProjectSelectionStore;
 
 abstract class _ProjectSelectionStore with Store {
-  _ProjectSelectionStore(this.workspaces, this.projects) {
+  _ProjectSelectionStore(this.workspaces, this.projects, this.clients) {
     selectedWorkspace = workspaces.firstOrNull;
     authKey = box.get(HiveKeys.authKey);
+
     selectedProject = emptyProject;
-    filteredProjects = [...projects];
+    selectedClient = emptyClient;
+
+    if (selectedWorkspace != null) {
+      filteredProjects = projects
+          .where((element) => element.workspaceId == selectedWorkspace!.id)
+          .toList();
+      filteredClients = clients
+          .where((element) => element.wid == selectedWorkspace!.id)
+          .toList();
+    } else {
+      filteredProjects = [...projects];
+      filteredClients = [...clients];
+    }
   }
 
   late final Box box = getSecretsBox();
@@ -246,10 +294,14 @@ abstract class _ProjectSelectionStore with Store {
 
   final List<Workspace> workspaces;
   final List<Project> projects;
+  final List<TogglClient> clients;
   late final String authKey;
 
   @observable
   List<Project> filteredProjects = [];
+
+  @observable
+  List<TogglClient> filteredClients = [];
 
   @observable
   Workspace? selectedWorkspace;
@@ -258,14 +310,47 @@ abstract class _ProjectSelectionStore with Store {
   Project? selectedProject;
 
   @observable
+  TogglClient? selectedClient;
+
+  @observable
   TimeEntryType selectedEntryType = TimeEntryType.all;
 
   @action
   void onWorkspaceSelected(Workspace value) {
     selectedWorkspace = value;
+    // Set selected project to All.
     selectedProject = emptyProject;
+    // Set selected client to All.
+    selectedClient = emptyClient;
+
+    // Filter clients by selected workspace.
+    filteredClients =
+        clients.where((element) => element.wid == value.id).toList();
+
+    // Filter projects by selected workspace.
     filteredProjects =
         projects.where((element) => element.workspaceId == value.id).toList();
+  }
+
+  @action
+  void onClientSelected(TogglClient value) {
+    selectedClient = value;
+
+    // Set selected project to All.
+    selectedProject = emptyProject;
+
+    if (selectedClient == emptyClient) {
+      // Load all projects in selected workspace.
+      filteredProjects = projects
+          .where((element) => element.workspaceId == selectedWorkspace!.id)
+          .toList();
+    } else {
+      // Load projects filtered by selected client.
+      filteredProjects = projects
+          .where((element) =>
+              element.clientId == value.id || element.cid == value.id)
+          .toList();
+    }
   }
 
   @action
@@ -283,6 +368,13 @@ abstract class _ProjectSelectionStore with Store {
         await box.delete(HiveKeys.projectId);
       } else {
         await box.put(HiveKeys.project, json.encode(selectedProject!.toJson()));
+      }
+
+      // Save client
+      if (selectedClient == null || selectedClient!.id == -1) {
+        await box.delete(HiveKeys.clientId);
+      } else {
+        await box.put(HiveKeys.client, json.encode(selectedClient!.toJson()));
       }
 
       // Save entry type

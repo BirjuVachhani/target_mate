@@ -13,6 +13,7 @@ import 'package:screwdriver/screwdriver.dart';
 import '../main.dart';
 import '../model/day_entry.dart';
 import '../model/project.dart';
+import '../model/toggl_client.dart';
 import '../model/user.dart';
 import '../model/workspace.dart';
 import '../pages/home/home_store.dart';
@@ -48,6 +49,13 @@ Project? getProjectFromStorage() {
   if (!getSecretsBox().containsKey(HiveKeys.project)) return null;
 
   return Project.fromJson(json.decode(getSecretsBox().get(HiveKeys.project)));
+}
+
+TogglClient? getClientFromStorage() {
+  if (!getSecretsBox().containsKey(HiveKeys.client)) return null;
+
+  return TogglClient.fromJson(
+      json.decode(getSecretsBox().get(HiveKeys.client)));
 }
 
 List<int> getMonthDaysFromWeekDays(DateTime month, List<int> weekDays) {
@@ -214,6 +222,15 @@ final Project emptyProject = Project(
   createdAt: DateTime.now(),
   isDeleted: false,
   currency: 'USD',
+);
+
+final TogglClient emptyClient = TogglClient(
+  id: -1,
+  wid: -1,
+  name: 'All',
+  archived: false,
+  createdAt: DateTime.now(),
+  creatorId: -1,
 );
 
 const double kSidePadding = 16;

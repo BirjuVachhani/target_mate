@@ -7,8 +7,8 @@ part of 'workspace.dart';
 // **************************************************************************
 
 Workspace _$WorkspaceFromJson(Map<String, dynamic> json) => Workspace(
-      id: json['id'] as int,
-      organizationId: json['organization_id'] as int,
+      id: (json['id'] as num).toInt(),
+      organizationId: (json['organization_id'] as num).toInt(),
       name: json['name'] as String,
       defaultCurrency: json['default_currency'] as String,
       projectsBillableByDefault: json['projects_billable_by_default'] as bool,

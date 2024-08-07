@@ -11,6 +11,7 @@ class HiveKeys {
   static const String workspaceId = 'workspace_id';
   static const String workspaceName = 'workspace_name';
   static const String projectId = 'project_id';
+  static const String clientId = 'client_id';
   static const String projectName = 'project_name';
   static const String workingDays = 'working_days';
   static const String weekDays = 'week_days';
@@ -32,6 +33,7 @@ class HiveKeys {
   static const String user = 'user';
   static const String workspace = 'workspace';
   static const String project = 'project';
+  static const String client = 'client';
   static const String showRemaining = 'show_remaining';
   static const String entryType = 'entry_type';
 }

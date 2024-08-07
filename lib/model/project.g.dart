@@ -7,8 +7,8 @@ part of 'project.dart';
 // **************************************************************************
 
 Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
-      id: json['id'] as int,
-      workspaceId: json['workspace_id'] as int,
+      id: (json['id'] as num).toInt(),
+      workspaceId: (json['workspace_id'] as num).toInt(),
       name: json['name'] as String,
       isPrivate: json['is_private'] as bool,
       active: json['active'] as bool,
@@ -20,7 +20,9 @@ Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
       billable: json['billable'] as bool? ?? false,
       currency: json['currency'] as String?,
       recurring: json['recurring'] as bool? ?? false,
-      wid: json['wid'] as int?,
+      wid: (json['wid'] as num?)?.toInt(),
+      clientId: (json['client_id'] as num?)?.toInt(),
+      cid: (json['cid'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
@@ -37,4 +39,6 @@ Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
       'currency': instance.currency,
       'recurring': instance.recurring,
       'wid': instance.wid,
+      'client_id': instance.clientId,
+      'cid': instance.cid,
     };

@@ -55,7 +55,7 @@ class _TargetSetupPageState extends State<TargetSetupPage> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (store.secretsBox.containsKey(HiveKeys.onboarded)) return;
 
         if (!store.secretsBox.containsKey(HiveKeys.onboarded)) {

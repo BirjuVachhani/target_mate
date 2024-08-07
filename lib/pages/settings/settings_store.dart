@@ -11,6 +11,7 @@ import 'package:screwdriver/screwdriver.dart';
 import '../../api/toggl_api_service.dart';
 import '../../model/project.dart';
 import '../../model/time_entry.dart';
+import '../../model/toggl_client.dart';
 import '../../model/workspace.dart';
 import '../../resources/keys.dart';
 import '../../utils/utils.dart';
@@ -53,6 +54,9 @@ abstract class _SettingsStore with Store {
   Project? selectedProject;
 
   @observable
+  TogglClient? selectedClient;
+
+  @observable
   TimeEntryType selectedTimeEntryType = TimeEntryType.all;
 
   @observable
@@ -62,6 +66,11 @@ abstract class _SettingsStore with Store {
   List<Project> filteredProjects = [];
 
   List<Project> projects = [];
+
+  @observable
+  List<TogglClient> filteredClients = [];
+
+  List<TogglClient> clients = [];
 
   @observable
   String? error;
@@ -88,7 +97,7 @@ abstract class _SettingsStore with Store {
     useMaterial3 = box.get(HiveKeys.useMaterial3, defaultValue: true);
     showRemaining = box.get(HiveKeys.showRemaining, defaultValue: false);
 
-    loadWorkspacesAndProjects();
+    loadFilters();
   }
 
   void refresh() {
@@ -122,7 +131,7 @@ abstract class _SettingsStore with Store {
   }
 
   @action
-  Future<void> loadWorkspacesAndProjects() async {
+  Future<void> loadFilters() async {
     try {
       isLoadingProjects = true;
       error = null;
@@ -145,10 +154,20 @@ abstract class _SettingsStore with Store {
           .where((project) => project.workspaceId == selectedWorkspace!.id)
           .toList();
 
+      final clientsResponse = await apiService.getAllClients();
+      if (!clientsResponse.isSuccessful) {
+        throw clientsResponse.error ?? clientsResponse.bodyString;
+      }
+
+      clients = clientsResponse.body!;
+      filteredClients = clients
+          .where((client) => client.wid == selectedWorkspace!.id)
+          .toList();
+
       isLoadingProjects = false;
-      log('Workspaces and projects loaded successfully!');
+      log('Workspaces, clients, and projects loaded successfully!');
     } catch (err, stacktrace) {
-      log('Failed to load workspaces and projects');
+      log('Failed to load workspaces, clients, and projects');
       log(err.toString());
       log(stacktrace.toString());
       error = err.toString();
@@ -159,11 +178,43 @@ abstract class _SettingsStore with Store {
   @action
   Future<void> onWorkspaceSelected(Workspace workspace) async {
     selectedWorkspace = workspace;
+    // Filter projects by selected workspace.
     filteredProjects = projects
         .where((project) => project.workspaceId == workspace.id)
         .toList();
+    // Set selected project to All
     selectedProject = emptyProject;
+
+    // Filter clients by selected workspace.
+    filteredClients =
+        clients.where((client) => client.wid == workspace.id).toList();
+
+    // Set selected client to All
+    selectedClient = emptyClient;
     await secretsBox.put(HiveKeys.workspace, json.encode(workspace.toJson()));
+    await secretsBox.delete(HiveKeys.client);
+    await secretsBox.delete(HiveKeys.project);
+  }
+
+  @action
+  Future<void> onClientSelected(TogglClient client) async {
+    selectedClient = client;
+    if (client == emptyClient) {
+      // load all projects in selected workspace.
+      filteredProjects = projects
+          .where((project) => project.workspaceId == selectedWorkspace!.id)
+          .toList();
+    } else {
+      // load projects filtered by selected client.
+      filteredProjects = projects
+          .where((project) =>
+              project.clientId == client.id || project.cid == client.id)
+          .toList();
+    }
+
+    // Set selected project to All
+    selectedProject = emptyProject;
+    await secretsBox.put(HiveKeys.client, json.encode(client.toJson()));
     await secretsBox.delete(HiveKeys.project);
   }
 

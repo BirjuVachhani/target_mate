@@ -7,14 +7,14 @@ part of 'user.dart';
 // **************************************************************************
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       email: json['email'] as String,
       fullName: json['fullname'] as String,
       avatarUrl: json['image_url'] as String,
       timezone: json['timezone'] as String,
-      defaultWorkspaceId: json['default_workspace_id'] as int?,
-      beginningOfWeek: json['beginning_of_week'] as int? ?? 1,
-      countryId: json['country_id'] as int? ?? -1,
+      defaultWorkspaceId: (json['default_workspace_id'] as num?)?.toInt(),
+      beginningOfWeek: (json['beginning_of_week'] as num?)?.toInt() ?? 1,
+      countryId: (json['country_id'] as num?)?.toInt() ?? -1,
       oauthProviders: (json['oauth_providers'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??

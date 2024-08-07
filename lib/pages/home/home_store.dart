@@ -15,8 +15,11 @@ import 'package:screwdriver/screwdriver.dart';
 
 import '../../api/toggl_api_service.dart';
 import '../../model/day_entry.dart';
+import '../../model/project.dart';
 import '../../model/time_entry.dart';
+import '../../model/toggl_client.dart';
 import '../../model/user.dart';
+import '../../model/workspace.dart';
 import '../../resources/keys.dart';
 import '../../utils/app_icon_manager.dart';
 import '../../utils/extensions.dart';
@@ -336,27 +339,50 @@ abstract class _HomeStore with Store {
   void processTimeEntries(List<TimeEntry> entries) {
     log('Processing time entries...');
 
-    final int? projectId = getProjectFromStorage()?.id;
-    final int? workspaceId = getWorkspaceFromStorage()?.id;
+    final Project? project = getProjectFromStorage();
+    final TogglClient? client = getClientFromStorage();
+    final Workspace? workspace = getWorkspaceFromStorage();
 
     final TimeEntryType selectedTimeEntryType = TimeEntryType.values.byName(
         settingsBox.get(HiveKeys.entryType,
             defaultValue: TimeEntryType.all.name));
 
-    List<TimeEntry> filtered = entries.where((item) {
-      if (item.projectId == projectId && item.workspaceId == workspaceId) {
-        return true;
-      }
-      if (workspaceId != null && item.workspaceId != workspaceId) {
-        log('Skipping entry [${item.id}]: ${item.description} because workspaceId does not match!');
-        return false;
-      }
-      if (projectId != null && item.projectId != projectId) {
-        log('Skipping entry [${item.id}]: ${item.description} because projectId does not match!');
-        return false;
-      }
-      return true;
-    }).where((entry) {
+    List<TimeEntry> filtered = [...entries];
+    if (workspace != null && workspace.id != -1) {
+      // filter by workspace.
+      filtered = filtered
+          .where((entry) =>
+              entry.workspaceId == workspace.id || entry.wid == workspace.id)
+          .toList();
+    }
+    if (client != null && client.id != -1) {
+      // filter by client.
+      filtered =
+          filtered.where((entry) => entry.clientName == client.name).toList();
+    }
+    if (project != null && project.id != -1) {
+      // filter by client.
+      filtered =
+          filtered.where((entry) => entry.projectId == project.id).toList();
+    }
+
+    // List<TimeEntry> filtered = entries.where((item) {
+    //   // when a specific project is selected.
+    //   if (item.projectId == project?.id && item.workspaceId == workspace.id) {
+    //     return true;
+    //   }
+    //   if (workspace != null && item.workspaceId != workspace.id) {
+    //     log('Skipping entry [${item.id}]: ${item.description} because workspaceId does not match!');
+    //     return false;
+    //   }
+    //   if (project != null && item.projectId != project.id) {
+    //     log('Skipping entry [${item.id}]: ${item.description} because projectId does not match!');
+    //     return false;
+    //   }
+    //   return true;
+    // }).toList();
+
+    filtered = filtered.where((entry) {
       if (selectedTimeEntryType.isAll) return true;
       if (entry.type == selectedTimeEntryType) return true;
       log('Skipping entry [${entry.id}]: ${entry.description} because entry type does not match!');

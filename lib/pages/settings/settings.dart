@@ -15,6 +15,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../model/project.dart';
 import '../../model/time_entry.dart';
+import '../../model/toggl_client.dart';
 import '../../model/user.dart';
 import '../../model/workspace.dart';
 import '../../resources/colors.dart';
@@ -423,7 +424,7 @@ class ProjectSettings extends StatelessObserverWidget {
     return Stack(
       children: [
         SettingsSection(
-          title: 'Workspace & Project',
+          title: 'Filters',
           children: [
             const SettingItemTitle('Workspace'),
             Text(
@@ -444,6 +445,38 @@ class ProjectSettings extends StatelessObserverWidget {
                 child: Text(item.name),
               ),
               items: store.workspaces,
+            ),
+            const SizedBox(height: 16),
+            const SettingItemTitle('Client'),
+            Text(
+              'Select a client to track time for its projects.',
+              style: subtitleTextStyle(context),
+            ),
+            const SizedBox(height: 8),
+            CustomDropdown<TogglClient>(
+              value: store.selectedClient,
+              isExpanded: true,
+              onSelected: (value) async {
+                if (value.id == store.selectedClient?.id) return;
+                await store.onClientSelected(value);
+                homeStore.refreshData();
+              },
+              itemBuilder: (context, item) {
+                return CustomDropdownMenuItem<TogglClient>(
+                  value: item,
+                  child: Text(
+                    item.name.isNotEmpty ? item.name : 'Untitled',
+                    style: TextStyle(
+                      color: item.name.isEmpty
+                          ? context.theme.textColor.withOpacity(0.5)
+                          : null,
+                      fontStyle: item.name.isNotEmpty ? null : FontStyle.italic,
+                      fontSize: 14,
+                    ),
+                  ),
+                );
+              },
+              items: [emptyClient, ...store.filteredClients],
             ),
             const SizedBox(height: 16),
             const SettingItemTitle('Project'),
@@ -475,10 +508,7 @@ class ProjectSettings extends StatelessObserverWidget {
                   ),
                 );
               },
-              items: [
-                emptyProject,
-                ...store.filteredProjects,
-              ],
+              items: [emptyProject, ...store.filteredProjects],
             ),
             const SizedBox(height: 16),
             const SettingItemTitle('What to track?'),
@@ -524,7 +554,7 @@ class ProjectSettings extends StatelessObserverWidget {
               splashRadius: 12,
               constraints: const BoxConstraints(),
               padding: const EdgeInsets.all(6),
-              onPressed: store.loadWorkspacesAndProjects,
+              onPressed: store.loadFilters,
               icon: Observer(builder: (context) {
                 const icon = Icon(Icons.sync);
                 if (store.isLoadingProjects) {

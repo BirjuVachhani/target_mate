@@ -17,7 +17,7 @@ class CustomScaffold extends StatelessWidget {
   final Color? backgroundColor;
   final bool gradientBackground;
   final PreferredSizeWidget? appBar;
-  final PopInvokedCallback? onPopInvoked;
+  final PopInvokedWithResultCallback? onPopInvokedWithResult;
   final bool canPop;
 
   const CustomScaffold({
@@ -30,7 +30,7 @@ class CustomScaffold extends StatelessWidget {
     this.gradientBackground = false,
     this.appBar,
     this.canPop = true,
-    this.onPopInvoked,
+    this.onPopInvokedWithResult,
   });
 
   @override
@@ -51,7 +51,7 @@ class CustomScaffold extends StatelessWidget {
       ),
       child: PopScope(
         canPop: canPop,
-        onPopInvoked: onPopInvoked,
+        onPopInvokedWithResult: onPopInvokedWithResult,
         child: ColoredBox(
           color: context.theme.scaffoldBackgroundColor,
           child: GradientBackground(

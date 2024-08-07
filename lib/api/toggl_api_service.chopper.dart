@@ -6,6 +6,7 @@ part of 'toggl_api_service.dart';
 // ChopperGenerator
 // **************************************************************************
 
+// coverage:ignore-file
 // ignore_for_file: type=lint
 final class _$TogglApiService extends TogglApiService {
   _$TogglApiService([ChopperClient? client]) {
@@ -14,7 +15,7 @@ final class _$TogglApiService extends TogglApiService {
   }
 
   @override
-  final definitionType = TogglApiService;
+  final Type definitionType = TogglApiService;
 
   @override
   Future<Response<User>> getProfile() {
@@ -32,7 +33,7 @@ final class _$TogglApiService extends TogglApiService {
     String startDate,
     String endDate,
   ) {
-    final Uri $url = Uri.parse('/api/v9/me/time_entries');
+    final Uri $url = Uri.parse('/api/v9/me/time_entries?meta=true');
     final Map<String, dynamic> $params = <String, dynamic>{
       'start_date': startDate,
       'end_date': endDate,
@@ -55,6 +56,17 @@ final class _$TogglApiService extends TogglApiService {
       client.baseUrl,
     );
     return client.send<List<Workspace>, Workspace>($request);
+  }
+
+  @override
+  Future<Response<List<TogglClient>>> getAllClients() {
+    final Uri $url = Uri.parse('/api/v9/me/clients');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<TogglClient>, TogglClient>($request);
   }
 
   @override
