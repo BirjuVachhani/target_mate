@@ -227,7 +227,7 @@ GEM
       trailblazer-option (>= 0.1.1, < 0.2.0)
       uber (< 0.2.0)
     retriable (3.1.2)
-    rexml (3.3.3)
+    rexml (3.3.6)
       strscan
     rouge (2.0.7)
     ruby-macho (2.5.1)
@@ -284,7 +284,7 @@ DEPENDENCIES
   cocoapods
   dotenv
   fastlane
-  rexml (= 3.3.3)
+  rexml (= 3.3.6)
 
 BUNDLED WITH
    2.4.10
